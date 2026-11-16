@@ -49,14 +49,22 @@ def _ensure_initialized(project=None):
     _EE_INITIALIZED = True
 
 
-def fetch_sentinel2_bands(lat, lon, buffer_m=500, days_back=30, project=None):
-    """Returns mean band reflectance over a buffer around (lat, lon), from
-    the least cloudy Sentinel-2 scene in the last `days_back` days."""
+def fetch_sentinel2_bands(lat, lon, buffer_m=500, days_back=30, project=None, polygon_coords=None):
+    """Returns mean band reflectance over the region of interest, from the
+    least cloudy Sentinel-2 scene in the last `days_back` days.
+
+    By default the region is a circular buffer around (lat, lon). If
+    `polygon_coords` is given (a list of [lon, lat] pairs, as drawn by the
+    user on the map), that exact polygon is used instead — a real area of
+    interest rather than a fixed-radius point."""
     _ensure_initialized(project)
     import ee
 
-    point = ee.Geometry.Point([lon, lat])
-    region = point.buffer(buffer_m)
+    if polygon_coords:
+        region = ee.Geometry.Polygon([polygon_coords])
+    else:
+        point = ee.Geometry.Point([lon, lat])
+        region = point.buffer(buffer_m)
 
     end = datetime.date.today()
     start = end - datetime.timedelta(days=days_back)
@@ -87,6 +95,68 @@ def fetch_sentinel2_bands(lat, lon, buffer_m=500, days_back=30, project=None):
         "acquisition_date": acquisition_date,
         "cloud_pct": round(cloud_pct, 1) if cloud_pct is not None else None,
     }
+
+
+def fetch_precipitation_mm(lat, lon, days_back=30, project=None, polygon_coords=None):
+    """Total rainfall (mm) over the last `days_back` days around this site,
+    from CHIRPS (UCSB-CHG/CHIRPS/DAILY) — already available through the
+    same Earth Engine account, no extra credential needed. Explains WHY a
+    water level moved: a drop despite heavy recent rain is abnormal (leak,
+    extraction), while a drop with little/no rain is expected."""
+    _ensure_initialized(project)
+    import ee
+
+    if polygon_coords:
+        region = ee.Geometry.Polygon([polygon_coords])
+    else:
+        region = ee.Geometry.Point([lon, lat]).buffer(500)
+
+    end = datetime.date.today()
+    start = end - datetime.timedelta(days=days_back)
+
+    daily_precip = ee.ImageCollection("UCSB-CHG/CHIRPS/DAILY").filterDate(str(start), str(end))
+    total_image = daily_precip.sum()
+    value = total_image.reduceRegion(reducer=ee.Reducer.mean(), geometry=region, scale=5000).getInfo()
+    return round(value.get("precipitation") or 0.0, 1)
+
+
+def interpret_rainfall(precipitation_mm, days_back=30):
+    if precipitation_mm > 80:
+        level = "forte"
+    elif precipitation_mm > 20:
+        level = "modérée"
+    else:
+        level = "faible"
+    return {
+        "mm": precipitation_mm,
+        "days": days_back,
+        "level": level,
+        "note": f"Pluviométrie {level} : {precipitation_mm} mm cumulés sur les {days_back} derniers jours.",
+    }
+
+
+def explain_level_change(water_area_pct_change, rainfall):
+    """Cross-references the observed water level trend with actual rainfall
+    to flag whether a drop looks natural (no rain) or abnormal (dropping
+    despite rain — possible leak, unauthorized extraction, evaporation
+    well above normal)."""
+    if water_area_pct_change is None:
+        return None
+    if water_area_pct_change < -5 and rainfall["level"] in {"modérée", "forte"}:
+        return (
+            "Baisse du niveau malgré une pluviométrie {} récente ({} mm) — "
+            "anormal, à investiguer (fuite, surconsommation, évaporation excessive)."
+        ).format(rainfall["level"], rainfall["mm"])
+    if water_area_pct_change < -5:
+        return (
+            "Baisse du niveau cohérente avec la faible pluviométrie récente "
+            "({} mm sur {} jours)."
+        ).format(rainfall["mm"], rainfall["days"])
+    if water_area_pct_change > 5 and rainfall["level"] in {"modérée", "forte"}:
+        return (
+            "Hausse du niveau cohérente avec la pluviométrie {} récente ({} mm)."
+        ).format(rainfall["level"], rainfall["mm"])
+    return None
 
 
 def compute_indices(bands):
@@ -130,8 +200,85 @@ def recommend_usage_from_indices(indices):
     }
 
 
-def analyze_site_live(lat, lon, buffer_m=500, days_back=30, project=None):
-    result = fetch_sentinel2_bands(lat, lon, buffer_m=buffer_m, days_back=days_back, project=project)
+def assess_water_balance(water_pct_change, ndvi_change):
+    """Cross-references the dam's water level trend (supply) with the
+    trend in surrounding vegetation/irrigated land, NDVI (a proxy for
+    agricultural water demand). The interesting case is a mismatch: supply
+    dropping while demand (NDVI) holds or grows means consumption isn't
+    adjusting to the shortage — a genuine water-management concern, not
+    just "the dam is low"."""
+    if water_pct_change is None or ndvi_change is None:
+        return None
+
+    if water_pct_change < -5 and ndvi_change >= -0.02:
+        return (
+            "Offre en baisse mais demande (végétation/irrigation) stable ou en hausse — "
+            "la consommation ne s'adapte pas à la baisse de disponibilité, risque de "
+            "surexploitation."
+        )
+    if water_pct_change < -5 and ndvi_change < -0.02:
+        return (
+            "Offre et demande baissent ensemble — ajustement cohérent de la consommation "
+            "à la ressource disponible."
+        )
+    if water_pct_change > 5 and ndvi_change > 0.02:
+        return "Offre et demande augmentent ensemble — situation équilibrée."
+    return None
+
+
+def backfill_monthly_history(lat, lon, months_back=6, project=None, polygon_coords=None):
+    """Pulls one NDWI-based water-area estimate per month over the last
+    `months_back` months, directly from the Sentinel-2 archive — so a
+    site's history chart starts with real multi-month context instead of
+    only the points accumulated from the moment someone starts clicking.
+    Skips months with no usable image rather than failing the whole call.
+    Several sequential GEE round trips — run this as a background task,
+    not inline in a request handler."""
+    _ensure_initialized(project)
+    import ee
+
+    if polygon_coords:
+        region = ee.Geometry.Polygon([polygon_coords])
+    else:
+        region = ee.Geometry.Point([lon, lat]).buffer(500)
+
+    today = datetime.date.today()
+    results = []
+    for i in range(months_back, 0, -1):
+        month_end = today - datetime.timedelta(days=30 * (i - 1))
+        month_start = today - datetime.timedelta(days=30 * i)
+
+        collection = (
+            ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+            .filterBounds(region)
+            .filterDate(str(month_start), str(month_end))
+            .sort("CLOUDY_PIXEL_PERCENTAGE")
+        )
+        image = collection.first()
+        if image.getInfo() is None:
+            continue
+
+        means = image.select(["B3", "B8"]).reduceRegion(
+            reducer=ee.Reducer.mean(), geometry=region, scale=10
+        ).getInfo()
+        b3, b8 = means.get("B3"), means.get("B8")
+        if b3 is None or b8 is None:
+            continue
+
+        ndwi = (b3 - b8) / (b3 + b8 + 1e-6)
+        water_area_pct = round(max(0.0, min(100.0, (ndwi + 1) * 50)), 1)
+        date_ms = image.get("system:time_start").getInfo()
+        date = datetime.datetime.utcfromtimestamp(date_ms / 1000).date().isoformat()
+        results.append({"date": date, "water_area_pct": water_area_pct})
+
+    return results
+
+
+def analyze_site_live(lat, lon, buffer_m=500, days_back=30, project=None, polygon_coords=None):
+    result = fetch_sentinel2_bands(
+        lat, lon, buffer_m=buffer_m, days_back=days_back, project=project,
+        polygon_coords=polygon_coords,
+    )
     indices = compute_indices(result["bands"])
     usage = recommend_usage_from_indices(indices)
 
@@ -140,10 +287,16 @@ def analyze_site_live(lat, lon, buffer_m=500, days_back=30, project=None):
         else "peu de végétation détectée autour du site"
     )
 
+    precipitation_mm = fetch_precipitation_mm(
+        lat, lon, days_back=days_back, project=project, polygon_coords=polygon_coords
+    )
+    rainfall = interpret_rainfall(precipitation_mm, days_back=days_back)
+
     return {
         "acquisition_date": result["acquisition_date"],
         "cloud_pct": result["cloud_pct"],
         "indices": indices,
         "vegetation_note": vegetation_note,
         "usage": usage,
+        "rainfall": rainfall,
     }

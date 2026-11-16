@@ -1,10 +1,12 @@
-"""Image preprocessing stage: cleans and standardizes the product catalog
-before any embedding is computed. This is the explicit Computer Vision step
-of the pipeline (classical CV techniques, no deep model involved here).
-"""
-import json
-import os
+"""Classical computer vision preprocessing (no deep model involved here).
 
+`standardize` and `sharpness_score` are used directly in the live
+`/predict` path (src/serve.py) before the image reaches the segmentation
+model. `preprocess_catalog`, `remove_background` and `is_readable` are
+reusable building blocks for a future batch ingestion pipeline (e.g.
+cleaning a bulk delivery of new satellite tiles) — exercised by their unit
+tests but not yet wired into a batch job, since none exists yet.
+"""
 import cv2
 import imagehash
 import numpy as np
@@ -87,17 +89,3 @@ def preprocess_catalog(images, params):
 
     report["kept"] = len(kept)
     return kept, report
-
-
-def run(params_path="params.yaml"):
-    from src.data import load_params
-    params = load_params(params_path)
-    os.makedirs("reports", exist_ok=True)
-    # Placeholder entry point wired up once the catalog source is finalized
-    # (called from src/build_catalog.py with the actual loaded images).
-    with open("reports/preprocess_report.json", "w") as f:
-        json.dump({"status": "run preprocess via src.build_catalog"}, f)
-
-
-if __name__ == "__main__":
-    run()

@@ -12,8 +12,11 @@ gee:
   project: shasha-457110
 
 alerts:
-  # relative drop vs. a site's historical average water area that triggers an alert
-  drop_threshold_pct: 20
+  # relative drop vs. a site's historical average water area, by severity tier
+  tiers:
+    - [35, critique]
+    - [20, alerte]
+    - [10, vigilance]
 
 paths:
   metrics_out: reports/metrics.json

@@ -1,0 +1,6 @@
+{
+  "status": "ok",
+  "mean_iou": 0.10877399444580078,
+  "n_samples": 5,
+  "note": "synthetic smoke-test fixtures \u2014 validates pipeline mechanics, not real-world accuracy"
+}

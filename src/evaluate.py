@@ -1,10 +1,19 @@
-"""Evaluates the trained segmentation model against a small local labeled
-sample (data/samples/images + data/samples/masks), if present. The full
-training/validation set lives on Kaggle (see notebooks/); this stage is
-meant for a quick local sanity check and for the DVC/CI metrics report."""
+"""Evaluates the trained segmentation model against a small local sample
+(data/samples/images + data/samples/masks).
+
+Those 5 fixtures are SYNTHETIC (a rectangle on a flat background, generated
+deterministically — see the generation snippet in the project history),
+not real satellite imagery. They exist to validate the pipeline mechanics
+end-to-end (model loads, inference runs, IoU computes correctly, DVC/CI
+report a real metrics.json instead of silently skipping) — the mean IoU
+they produce is NOT a measure of real-world segmentation accuracy. The
+actual accuracy claim comes from the Kaggle training/validation run (see
+notebooks/kaggle_train_segmentation.ipynb and its MLflow run)."""
 import json
 import os
 
+import numpy as np
+import torch
 from PIL import Image
 
 from src.data import build_transforms, load_params
@@ -37,14 +46,18 @@ def evaluate(params_path="params.yaml"):
         image = Image.open(os.path.join(image_dir, name)).convert("RGB")
         mask = Image.open(os.path.join(mask_dir, name)).convert("L").resize((image_size, image_size))
 
-        import torch
         tensor = transform(image).unsqueeze(0)
         with torch.no_grad():
             pred = (torch.sigmoid(model(tensor)) > 0.5).float()
-        true = (torch.tensor(list(mask.getdata())).reshape(1, 1, image_size, image_size) > 127).float()
+        true = (torch.from_numpy(np.array(mask)).reshape(1, 1, image_size, image_size) > 127).float()
         ious.append(iou_score(pred, true))
 
-    metrics = {"status": "ok", "mean_iou": sum(ious) / len(ious), "n_samples": len(ious)}
+    metrics = {
+        "status": "ok",
+        "mean_iou": sum(ious) / len(ious),
+        "n_samples": len(ious),
+        "note": "synthetic smoke-test fixtures — validates pipeline mechanics, not real-world accuracy",
+    }
     with open(params["paths"]["metrics_out"], "w") as f:
         json.dump(metrics, f, indent=2)
     print(metrics)
