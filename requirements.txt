@@ -1,0 +1,17 @@
+torch
+torchvision
+datasets
+pillow
+scikit-learn
+matplotlib
+mlflow
+dvc
+fastapi
+uvicorn[standard]
+python-multipart
+pytest
+httpx
+opencv-python-headless
+imagehash
+segmentation-models-pytorch
+earthengine-api

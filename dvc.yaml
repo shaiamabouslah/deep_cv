@@ -1,0 +1,13 @@
+stages:
+  evaluate:
+    cmd: python -m src.evaluate
+    deps:
+      - src/metrics.py
+      - src/model.py
+      - src/evaluate.py
+      - models/model.pt
+    params:
+      - model
+    metrics:
+      - reports/metrics.json:
+          cache: false

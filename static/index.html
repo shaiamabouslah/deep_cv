@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Surveillance des plans d'eau</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
+    h1 { font-size: 1.4rem; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.3rem; font-weight: 600; }
+    input, button { font-size: 1rem; padding: 0.4rem; margin-bottom: 0.8rem; }
+    button { cursor: pointer; background: #1565c0; color: white; border: none; border-radius: 4px; padding: 0.5rem 1rem; }
+    .result { display: flex; gap: 1rem; align-items: flex-start; }
+    .result img { max-width: 256px; border: 1px solid #ccc; }
+    .alert-banner { background: #fdecea; border: 1px solid #f5a4a0; color: #7a2a24; padding: 0.6rem 1rem; border-radius: 6px; margin-bottom: 0.6rem; }
+    #alertsList:empty::after { content: "Aucune alerte active."; color: #666; }
+    #sitesMap { height: 320px; border-radius: 6px; margin-bottom: 0.5rem; }
+    .selected-site { font-weight: 600; color: #1565c0; }
+    .legend { display: flex; gap: 1rem; font-size: 0.85rem; color: #555; margin-top: 0.3rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h1>Surveillance des plans d'eau par imagerie satellite</h1>
+
+  <div class="card">
+    <h2>Carte des sites surveillés</h2>
+    <div id="sitesMap"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:#2e7d32;"></span> normal</span>
+      <span><span class="dot" style="background:#c62828;"></span> alerte active</span>
+      <span><span class="dot" style="background:#9e9e9e;"></span> pas encore de données</span>
+    </div>
+    <p>Site sélectionné : <span class="selected-site" id="selectedSiteLabel">Sidi Salem</span>
+      <button type="button" id="liveAnalysisBtn" style="margin-left:1rem;">Analyser par satellite (temps réel)</button>
+    </p>
+    <div id="liveResult" style="display:none; background:#f3f7fb; border:1px solid #c8dcea; border-radius:6px; padding:0.8rem;"></div>
+  </div>
+
+  <div class="card">
+    <h2>Analyser une image</h2>
+    <form id="predictForm">
+      <label for="site">Site / barrage (cliquer sur la carte ci-dessus pour changer)</label>
+      <input type="text" id="site" name="site" value="Sidi Salem" required />
+      <label for="file">Image satellite</label>
+      <input type="file" id="file" name="file" accept="image/*" required />
+      <button type="submit">Analyser</button>
+    </form>
+    <div class="result" id="result" style="display:none;">
+      <div>
+        <p><strong>Surface d'eau détectée :</strong> <span id="areaPct"></span>%</p>
+        <p><strong>Usage recommandé :</strong> <span id="usageLabel"></span></p>
+        <p id="usageDetail" style="color:#555; font-size:0.9em;"></p>
+        <p id="fallbackWarning" style="color:#b26a00; display:none;">
+          Modèle non entraîné (placeholder) — dépose un vrai <code>models/model.pt</code> pour des résultats réels.
+        </p>
+      </div>
+      <img id="maskImg" alt="masque d'eau prédit" />
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Alertes actives</h2>
+    <div id="alertsList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Historique du site</h2>
+    <canvas id="historyChart" height="100"></canvas>
+  </div>
+
+  <script>
+    const form = document.getElementById('predictForm');
+    const siteInput = document.getElementById('site');
+    const selectedSiteLabel = document.getElementById('selectedSiteLabel');
+    let chart;
+    let map;
+    let markers = {};
+
+    function markerColor(site) {
+      if (site.alert_active) return '#c62828';
+      if (site.latest_reading) return '#2e7d32';
+      return '#9e9e9e';
+    }
+
+    async function selectSite(name) {
+      siteInput.value = name;
+      selectedSiteLabel.textContent = name;
+      await loadHistory(name);
+      Object.entries(markers).forEach(([n, m]) => {
+        m.setStyle({ weight: n === name ? 3 : 1 });
+      });
+    }
+
+    async function refreshSiteStatus() {
+      const res = await fetch('/sites');
+      const sites = await res.json();
+      sites.forEach(site => {
+        const marker = markers[site.name];
+        if (marker) marker.setStyle({ fillColor: markerColor(site) });
+      });
+    }
+
+    async function loadSites() {
+      const res = await fetch('/sites');
+      const sites = await res.json();
+
+      map = L.map('sitesMap').setView([36.3, 9.3], 7);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+      }).addTo(map);
+
+      sites.forEach(site => {
+        const marker = L.circleMarker([site.lat, site.lon], {
+          radius: 10,
+          color: '#333',
+          weight: 1,
+          fillColor: markerColor(site),
+          fillOpacity: 0.9,
+        }).addTo(map);
+        marker.bindTooltip(site.name);
+        marker.on('click', () => selectSite(site.name));
+        markers[site.name] = marker;
+      });
+    }
+
+    async function loadAlerts() {
+      const res = await fetch('/alerts');
+      const alerts = await res.json();
+      const list = document.getElementById('alertsList');
+      list.innerHTML = alerts.map(a =>
+        `<div class="alert-banner">⚠️ <strong>${a.site}</strong> — baisse de ${a.drop_pct.toFixed(1)}% ` +
+        `(actuel: ${a.water_area_pct.toFixed(1)}%, moyenne: ${a.baseline_pct.toFixed(1)}%) — ${new Date(a.timestamp).toLocaleString()}</div>`
+      ).join('');
+    }
+
+    async function loadHistory(site) {
+      const res = await fetch(`/history/${encodeURIComponent(site)}`);
+      const history = await res.json();
+      const labels = history.map(h => new Date(h.timestamp).toLocaleString());
+      const data = history.map(h => h.water_area_pct);
+
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById('historyChart'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: `Surface d'eau (%) — ${site}`, data, borderColor: '#1565c0', tension: 0.2 }] },
+        options: { scales: { y: { beginAtZero: true } } },
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const res = await fetch('/predict', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      document.getElementById('result').style.display = 'flex';
+      document.getElementById('areaPct').textContent = data.water_area_pct;
+      document.getElementById('usageLabel').textContent = data.water_quality?.usage?.label ?? 'indéterminé';
+      document.getElementById('usageDetail').textContent = data.water_quality?.usage?.detail ?? '';
+      document.getElementById('maskImg').src = `data:image/png;base64,${data.mask_png_base64}`;
+      document.getElementById('fallbackWarning').style.display = data.using_fallback_untrained_model ? 'block' : 'none';
+
+      await loadAlerts();
+      await loadHistory(formData.get('site'));
+      await refreshSiteStatus();
+    });
+
+    document.getElementById('liveAnalysisBtn').addEventListener('click', async () => {
+      const box = document.getElementById('liveResult');
+      box.style.display = 'block';
+      box.textContent = 'Récupération de l\'image Sentinel-2 la plus récente...';
+      try {
+        const res = await fetch(`/live/${encodeURIComponent(siteInput.value)}`);
+        const data = await res.json();
+        if (!res.ok) {
+          box.innerHTML = `<strong style="color:#b71c1c;">Erreur :</strong> ${data.detail}`;
+          return;
+        }
+        box.innerHTML = `
+          <p><strong>Image du :</strong> ${data.acquisition_date} (nuages : ${data.cloud_pct}%)</p>
+          <p><strong>NDVI (végétation/irrigation) :</strong> ${data.indices.ndvi} — ${data.vegetation_note}</p>
+          <p><strong>NDCI (chlorophylle/algues) :</strong> ${data.indices.ndci}</p>
+          <p><strong>NDTI (turbidité) :</strong> ${data.indices.ndti}</p>
+          <p><strong>Usage recommandé :</strong> ${data.usage.label} — ${data.usage.detail}</p>
+        `;
+        await loadHistory(siteInput.value);
+        await refreshSiteStatus();
+      } catch (e) {
+        box.innerHTML = `<strong style="color:#b71c1c;">Erreur réseau :</strong> ${e}`;
+      }
+    });
+
+    siteInput.addEventListener('change', () => {
+      selectedSiteLabel.textContent = siteInput.value;
+      loadHistory(siteInput.value);
+    });
+
+    loadSites();
+    loadAlerts();
+    loadHistory(siteInput.value);
+  </script>
+</body>
+</html>

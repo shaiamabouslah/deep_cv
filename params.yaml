@@ -1,0 +1,17 @@
+model:
+  encoder: resnet34
+  image_size: 256
+  model_path: models/model.pt
+
+preprocess:
+  image_size: 256
+  min_sharpness: 30
+  remove_background: false
+
+alerts:
+  # relative drop vs. a site's historical average water area that triggers an alert
+  drop_threshold_pct: 20
+
+paths:
+  metrics_out: reports/metrics.json
+  history_db: data/history.db
