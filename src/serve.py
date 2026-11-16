@@ -118,7 +118,9 @@ def live_analysis(site: str):
         raise HTTPException(status_code=404, detail=f"Site inconnu : {site}")
 
     try:
-        result = analyze_site_live(dam["lat"], dam["lon"])
+        result = analyze_site_live(
+            dam["lat"], dam["lon"], project=_state["params"]["gee"]["project"]
+        )
     except GEENotAuthenticated as exc:
         raise HTTPException(status_code=503, detail=str(exc))
     except ValueError as exc:

@@ -19,6 +19,12 @@ Indices:
   NDTI  = (Red - Green) / (Red + Green)      simple turbidity proxy
 """
 import datetime
+import socket
+
+# Prevents a stuck/slow network call to Earth Engine from hanging the API
+# request forever (e.g. right after registering a brand-new GCP project,
+# propagation can be slow for the first few requests).
+socket.setdefaulttimeout(30)
 
 _EE_INITIALIZED = False
 

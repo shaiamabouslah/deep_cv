@@ -8,6 +8,9 @@ preprocess:
   min_sharpness: 30
   remove_background: false
 
+gee:
+  project: shasha-457110
+
 alerts:
   # relative drop vs. a site's historical average water area that triggers an alert
   drop_threshold_pct: 20
