@@ -1,20 +1,57 @@
-import os
+from src.agent import generate_briefing, generate_fused_recommendation
 
-from src.agent import generate_briefing
+
+def _clear_groq_key(monkeypatch):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
 
 
 def test_falls_back_without_api_key(monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    sites = [{"name": "Sidi Salem", "latest_reading": {"water_area_pct": 60.0}, "alert_active": False}]
+    _clear_groq_key(monkeypatch)
+    sites = [{"name": "Sidi Salem", "latest_reading": {"water_area_pct": 60.0}, "alert_level": None}]
     result = generate_briefing(sites, [])
     assert result["ai_generated"] is False
-    assert "Sidi Salem" not in result["text"] or "1 site" in result["text"]
     assert "1 site" in result["text"]
 
 
 def test_rule_based_mentions_alerts(monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    alerts = [{"site": "Nebhana", "drop_pct": 25.0, "water_area_pct": 40.0, "baseline_pct": 53.0}]
+    _clear_groq_key(monkeypatch)
+    alerts = [{"site": "Nebhana", "drop_pct": 25.0, "water_area_pct": 40.0, "baseline_pct": 53.0, "level": "alerte"}]
     result = generate_briefing([], alerts)
     assert "Nebhana" in result["text"]
     assert result["ai_generated"] is False
+
+
+def test_fused_recommendation_falls_back_without_api_key(monkeypatch):
+    _clear_groq_key(monkeypatch)
+    signals = {
+        "site": "Sidi Salem",
+        "water_area_pct": 45.0,
+        "source": "upload",
+        "rgb_quality": {"usage": {"label": "irrigation possible", "detail": "eau trouble"}},
+        "gee_indices": None,
+        "rainfall": None,
+        "water_balance": None,
+        "alert": None,
+    }
+    result = generate_fused_recommendation(signals)
+    assert result["ai_generated"] is False
+    assert "45.0%" in result["text"]
+    assert "irrigation possible" in result["text"]
+
+
+def test_fused_recommendation_includes_gee_and_alert_in_fallback(monkeypatch):
+    _clear_groq_key(monkeypatch)
+    signals = {
+        "site": "Nebhana",
+        "water_area_pct": 30.0,
+        "source": "satellite",
+        "rgb_quality": None,
+        "gee_indices": {"ndvi": 0.2, "ndci": 0.1, "ndti": 0.08},
+        "rainfall": {"note": "Pluviométrie faible : 0.0 mm."},
+        "water_balance": "Offre et demande baissent ensemble.",
+        "alert": {"level": "critique", "drop_pct": 40.0},
+    }
+    result = generate_fused_recommendation(signals)
+    assert "NDVI=0.2" in result["text"]
+    assert "critique" in result["text"]
+    assert "Offre et demande" in result["text"]
