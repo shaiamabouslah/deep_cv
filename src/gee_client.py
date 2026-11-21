@@ -226,55 +226,132 @@ def assess_water_balance(water_pct_change, ndvi_change):
     return None
 
 
-def backfill_monthly_history(lat, lon, months_back=6, project=None, polygon_coords=None):
-    """Pulls one NDWI-based water-area estimate per month over the last
-    `months_back` months, directly from the Sentinel-2 archive — so a
-    site's history chart starts with real multi-month context instead of
-    only the points accumulated from the moment someone starts clicking.
-    Skips months with no usable image rather than failing the whole call.
-    Several sequential GEE round trips — run this as a background task,
-    not inline in a request handler."""
+def fetch_max_extent_area_m2(region, project=None):
+    """Historical maximum observed water extent for this region, from JRC
+    Global Surface Water (Pekel et al., 2016, 1984-2021 Landsat record) —
+    a validated reference surface, used here as the "100% full" denominator
+    instead of an arbitrary theoretical NDWI range."""
+    _ensure_initialized(project)
+    import ee
+
+    gsw = ee.Image("JRC/GSW1_4/GlobalSurfaceWater").select("max_extent")
+    pixel_area = ee.Image.pixelArea()
+    max_area = gsw.multiply(pixel_area).reduceRegion(
+        reducer=ee.Reducer.sum(), geometry=region, scale=30, maxPixels=1e9, bestEffort=True
+    ).get("max_extent")
+    return max_area.getInfo() or 0.0
+
+
+def fetch_calibrated_water_area(lat, lon, start=None, end=None, days_back=30, project=None,
+                                 polygon_coords=None, buffer_m=6000, max_area_m2=None):
+    """Real surface water area (classified NDWI>0 pixel count x pixel
+    area), expressed as a percentage of this site's historical maximum
+    observed extent (JRC Global Surface Water) — replaces the earlier
+    `(mean_NDWI + 1) * 50` formula, which was an uncalibrated rescale with
+    no physical meaning (see reports/validation_vs_official.md). This is
+    still an approximation: it samples a circular buffer, not the dam's
+    true polygon, so the absolute percentage can still diverge from the
+    official volume-based fill rate — but the trend direction tracks real
+    data much more reliably (validated 2026-11-21).
+
+    `max_area_m2` lets a caller (e.g. backfill_monthly_history) compute the
+    site's max extent once and reuse it across many months, since it
+    doesn't change over time."""
     _ensure_initialized(project)
     import ee
 
     if polygon_coords:
         region = ee.Geometry.Polygon([polygon_coords])
     else:
-        region = ee.Geometry.Point([lon, lat]).buffer(500)
+        region = ee.Geometry.Point([lon, lat]).buffer(buffer_m)
+
+    if start is None or end is None:
+        end_date = datetime.date.today()
+        start_date = end_date - datetime.timedelta(days=days_back)
+        start, end = str(start_date), str(end_date)
+
+    collection = (
+        ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+        .filterBounds(region)
+        .filterDate(start, end)
+        .sort("CLOUDY_PIXEL_PERCENTAGE")
+    )
+    image = collection.first()
+    if image.getInfo() is None:
+        raise ValueError(f"Aucune image Sentinel-2 trouvée entre {start} et {end} pour ce site.")
+
+    ndwi_img = image.normalizedDifference(["B3", "B8"]).rename("NDWI")
+    water_mask = ndwi_img.gt(0)
+    pixel_area = ee.Image.pixelArea()
+
+    current_area = water_mask.multiply(pixel_area).reduceRegion(
+        reducer=ee.Reducer.sum(), geometry=region, scale=10, maxPixels=1e9, bestEffort=True
+    ).get("NDWI")
+
+    if max_area_m2 is None:
+        max_area_m2 = fetch_max_extent_area_m2(region, project=project)
+
+    date_ms = image.get("system:time_start").getInfo()
+    acquisition_date = datetime.datetime.utcfromtimestamp(date_ms / 1000).date().isoformat()
+    current_m2 = current_area.getInfo() or 0.0
+
+    pct = min(100.0, current_m2 / max_area_m2 * 100) if max_area_m2 else None
+
+    return {
+        "water_area_pct": round(pct, 1) if pct is not None else None,
+        "current_area_ha": round(current_m2 / 10000, 2),
+        "max_observed_area_ha": round(max_area_m2 / 10000, 2),
+        "acquisition_date": acquisition_date,
+        "max_area_m2": max_area_m2,
+    }
+
+
+def backfill_monthly_history(lat, lon, months_back=12, project=None, polygon_coords=None, buffer_m=6000):
+    """Pulls one NDWI-based water-area estimate per month over the last
+    `months_back` months, directly from the Sentinel-2 archive — so a
+    site's history chart starts with real multi-month context instead of
+    only the points accumulated from the moment someone starts clicking.
+    Default is 12 months (not 6): a dam's level follows a seasonal cycle
+    (refills in wet season, drawdown in dry season), so less than a full
+    year risks showing only half that cycle and looking like a one-way
+    trend when it isn't. Skips months with no usable image rather than
+    failing the whole call. Several sequential GEE round trips — run this
+    as a background task, not inline in a request handler."""
+    _ensure_initialized(project)
+
+    if polygon_coords:
+        import ee
+        region = ee.Geometry.Polygon([polygon_coords])
+    else:
+        import ee
+        region = ee.Geometry.Point([lon, lat]).buffer(buffer_m)
+
+    # Computed once and reused for every month: the site's historical max
+    # extent doesn't change, so there's no reason to re-fetch it 12-24 times.
+    max_area_m2 = fetch_max_extent_area_m2(region, project=project)
 
     today = datetime.date.today()
     results = []
     for i in range(months_back, 0, -1):
         month_end = today - datetime.timedelta(days=30 * (i - 1))
         month_start = today - datetime.timedelta(days=30 * i)
-
-        collection = (
-            ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-            .filterBounds(region)
-            .filterDate(str(month_start), str(month_end))
-            .sort("CLOUDY_PIXEL_PERCENTAGE")
-        )
-        image = collection.first()
-        if image.getInfo() is None:
+        try:
+            point = fetch_calibrated_water_area(
+                lat, lon, start=str(month_start), end=str(month_end),
+                project=project, polygon_coords=polygon_coords, max_area_m2=max_area_m2,
+                buffer_m=buffer_m,
+            )
+        except ValueError:
+            continue  # no usable image that month
+        if point["water_area_pct"] is None:
             continue
-
-        means = image.select(["B3", "B8"]).reduceRegion(
-            reducer=ee.Reducer.mean(), geometry=region, scale=10
-        ).getInfo()
-        b3, b8 = means.get("B3"), means.get("B8")
-        if b3 is None or b8 is None:
-            continue
-
-        ndwi = (b3 - b8) / (b3 + b8 + 1e-6)
-        water_area_pct = round(max(0.0, min(100.0, (ndwi + 1) * 50)), 1)
-        date_ms = image.get("system:time_start").getInfo()
-        date = datetime.datetime.utcfromtimestamp(date_ms / 1000).date().isoformat()
-        results.append({"date": date, "water_area_pct": water_area_pct})
+        results.append({"date": point["acquisition_date"], "water_area_pct": point["water_area_pct"]})
 
     return results
 
 
-def analyze_site_live(lat, lon, buffer_m=500, days_back=30, project=None, polygon_coords=None):
+def analyze_site_live(lat, lon, buffer_m=500, days_back=30, project=None, polygon_coords=None,
+                       area_buffer_m=6000):
     result = fetch_sentinel2_bands(
         lat, lon, buffer_m=buffer_m, days_back=days_back, project=project,
         polygon_coords=polygon_coords,
@@ -292,6 +369,16 @@ def analyze_site_live(lat, lon, buffer_m=500, days_back=30, project=None, polygo
     )
     rainfall = interpret_rainfall(precipitation_mm, days_back=days_back)
 
+    # Calibrated water extent (real area / historical max extent) — see
+    # fetch_calibrated_water_area's docstring and the validation report for
+    # why this replaced a raw rescale of mean NDWI. Uses a wider buffer
+    # than the spectral-quality indices above, since capturing real extent
+    # needs more than a 500m circle around one point.
+    water_area = fetch_calibrated_water_area(
+        lat, lon, days_back=days_back, project=project,
+        polygon_coords=polygon_coords, buffer_m=area_buffer_m,
+    )
+
     return {
         "acquisition_date": result["acquisition_date"],
         "cloud_pct": result["cloud_pct"],
@@ -299,4 +386,5 @@ def analyze_site_live(lat, lon, buffer_m=500, days_back=30, project=None, polygo
         "vegetation_note": vegetation_note,
         "usage": usage,
         "rainfall": rainfall,
+        "water_area": water_area,
     }

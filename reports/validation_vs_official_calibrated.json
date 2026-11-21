@@ -1,0 +1,32 @@
+[
+  {
+    "water_area_pct": 90.5,
+    "current_area_ha": 248.3,
+    "max_observed_area_ha": 274.46,
+    "acquisition_date": "2026-04-07",
+    "max_area_m2": 2744608.3104159487,
+    "site": "Sidi Salem",
+    "period": "2026-04",
+    "official_fill_pct": 50.0
+  },
+  {
+    "water_area_pct": 78.2,
+    "current_area_ha": 214.74,
+    "max_observed_area_ha": 274.46,
+    "acquisition_date": "2025-09-01",
+    "max_area_m2": 2744608.3104159487,
+    "site": "Sidi Salem",
+    "period": "2025-09",
+    "official_fill_pct": 22.7
+  },
+  {
+    "water_area_pct": 22.5,
+    "current_area_ha": 11.12,
+    "max_observed_area_ha": 49.45,
+    "acquisition_date": "2025-09-01",
+    "max_area_m2": 494540.13262939453,
+    "site": "Nebhana",
+    "period": "2025-09",
+    "official_fill_pct": 3.4
+  }
+]

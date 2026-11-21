@@ -1,0 +1,23 @@
+[
+  {
+    "site": "Sidi Salem",
+    "period": "2026-04",
+    "our_ndwi_pct": 22.7,
+    "image_date": "2026-04-07",
+    "official_fill_pct": 50.0
+  },
+  {
+    "site": "Sidi Salem",
+    "period": "2025-09",
+    "our_ndwi_pct": 30.7,
+    "image_date": "2025-09-01",
+    "official_fill_pct": 22.7
+  },
+  {
+    "site": "Nebhana",
+    "period": "2025-09",
+    "our_ndwi_pct": 34.3,
+    "image_date": "2025-09-01",
+    "official_fill_pct": 3.4
+  }
+]
