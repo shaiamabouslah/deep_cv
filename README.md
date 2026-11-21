@@ -30,10 +30,13 @@ Site (carte/clic/dessin) │
                                    [Historique SQLite] + [Règle d'alerte]
                                                   │
                                                   ▼
-                        [API FastAPI] /predict /live /analyze_location /sites /history /alerts /briefing
+                              [Prévision] tendance + pluie 7j (Open-Meteo)
                                                   │
                                                   ▼
-                 [Dashboard web] carte + dessin de sites + alertes + briefing IA + historique
+                 [API FastAPI] /predict /live /analyze_location /sites /history /forecast /alerts /briefing
+                                                  │
+                                                  ▼
+                 [Dashboard web] carte + dessin de sites + alertes + briefing IA + prévision + historique
 ```
 
 ## Dataset & entraînement
@@ -58,7 +61,7 @@ authentification Google Earth Engine une fois (`python -c "import ee; ee.Authent
 et un projet Cloud enregistré (`gee.project` dans `params.yaml`).
 Sans `models/model.pt`, l'upload d'image fonctionne quand même avec un
 modèle non entraîné (placeholder), signalé explicitement dans l'interface.
-Sans `ANTHROPIC_API_KEY`, le briefing IA bascule sur un résumé par règles.
+Sans `GROQ_API_KEY`, le briefing IA bascule sur un résumé par règles.
 
 ## Fonctionnalités
 
@@ -67,7 +70,8 @@ Sans `ANTHROPIC_API_KEY`, le briefing IA bascule sur un résumé par règles.
 - **Pluviométrie réelle** (CHIRPS) et explication croisée : une baisse malgré la pluie est signalée comme anormale
 - **Carte interactive** : sites prédéfinis + création de nouveaux sites par clic ou dessin de zone (polygone)
 - **Alertes automatiques** sur chute anormale du niveau d'eau, bannière visible en haut du dashboard
-- **Agent IA** (Claude) qui synthétise l'état de tous les sites en langage naturel, avec repli par règles si aucune clé API
+- **Agent IA** (Groq) qui synthétise l'état de tous les sites et fusionne tous les signaux d'une analyse (segmentation, couleur, indices GEE, pluie, bilan hydrique) en une recommandation unique, avec repli par règles si aucune clé API
+- **Prévision à 7 jours** : extrapolation linéaire de la tendance historique du site, croisée avec une prévision de pluie réelle (Open-Meteo, sans clé API) — affichée après chaque analyse live, avec le niveau de risque projeté et un avertissement qualitatif quand la pluie pourrait changer la tendance (jamais intégrée numériquement, faute de courbe pluie→surface calibrée par site)
 - **Rate limiting** sur les endpoints déclenchant un appel Earth Engine (protège le quota gratuit)
 
 ## L'industrialisation MLOps
@@ -80,21 +84,40 @@ Sans `ANTHROPIC_API_KEY`, le briefing IA bascule sur un résumé par règles.
 | Sites | registre seed + sites créés dynamiquement | `src/sites.py`, `src/site_store.py` |
 | Historique + alertes | SQLite, règle de détection de chute | `src/alerts.py` |
 | Agent IA | synthèse en langage naturel | `src/agent.py` |
+| Prévision | tendance + pluie 7j (Open-Meteo) | `src/forecast.py` |
 | Rate limiting | protection quota GEE | `src/rate_limit.py` |
 | API | backend FastAPI, logging structuré | `src/serve.py` |
-| Dashboard | frontend web (carte, dessin, alertes, briefing) | `static/index.html` |
-| Tests | 43 tests pytest (modèle, GEE, alertes, agent, API, rate limit) | `tests/` |
+| Dashboard | frontend web (carte, dessin, alertes, briefing, prévision) | `static/index.html` |
+| Tests | 69 tests pytest (modèle, GEE, alertes, agent, prévision, API, rate limit) | `tests/` |
 | Docker / CI | conteneurisation + tests auto à chaque push | `Dockerfile`, `.github/workflows/ci.yml` |
 
 ## Limites connues (honnêteté avant l'oral)
 
-- Les seuils (NDCI > 0.15, NDTI > 0.05, pluviométrie, -20% d'alerte) sont des
-  points de départ plausibles issus de la littérature, **pas calibrés** sur
-  des mesures réelles de barrages tunisiens — à présenter comme preuve de
-  concept, pas comme validé.
-- Le module de preprocessing CV classique (`src/preprocess.py` : netteté,
-  déduplication, GrabCut) est testé unitairement mais **pas encore branché**
-  dans le pipeline d'entraînement ou de service réel.
+- **Validé et corrigé contre des données réelles le 2026-11-21** (voir
+  [reports/validation_vs_official.md](reports/validation_vs_official.md)),
+  en deux temps :
+  1. Le `water_area_pct` initial (rescaling linéaire du NDWI moyen) donnait
+     une tendance **inversée** par rapport à l'officiel ONAGRI/DGRE sur
+     Sidi Salem — remplacé par une surface d'eau réelle (pixels classifiés)
+     normalisée par l'étendue maximale historique **JRC Global Surface
+     Water**.
+  2. Les 6 coordonnées de barrage (`src/sites.py`) se sont révélées mal
+     centrées (0 à 8.1 km d'écart de l'eau réelle). Corrigées pour 4 des 6
+     sites via une recherche de plus grande composante connexe d'eau
+     (JRC) dans une fenêtre de 15 km — confirmé par des surfaces en
+     hectares désormais cohérentes avec la taille réelle connue des
+     barrages. Sidi El Barrak et Mellègue gardent leurs coordonnées
+     approximatives, la même recherche y donnant un résultat implausible
+     (fusion avec la mer / réservoir hors fenêtre).
+  La tendance est maintenant correcte et la géométrie d'échantillonnage
+  n'est plus le facteur limitant ; l'écart absolu restant est attribué à
+  la nature même de la grandeur (indice de **surface** vs taux officiel de
+  **volume/capacité** — un barrage a un profil en cuvette, les deux ne
+  sont pas linéairement liées sans la courbe hauteur-surface-volume propre
+  à chaque site, non publique). Diagnostic complet dans le rapport de
+  validation.
+- Les seuils NDCI/NDTI/pluviométrie restent des points de départ issus de la
+  littérature, non calibrés non plus sur des mesures tunisiennes réelles.
 - `requirements.txt` est figé à des versions exactes ; pas encore de lockfile
   complet des dépendances transitives.
 - Rate limiting en mémoire (par process) — ne protège pas un déploiement
@@ -102,9 +125,16 @@ Sans `ANTHROPIC_API_KEY`, le briefing IA bascule sur un résumé par règles.
 
 ## Prochaines étapes
 
-- Calibrer les seuils contre des relevés officiels réels de barrages (ONAGRI/DGRE).
-- Historique long terme (12-24 mois) directement depuis l'archive Sentinel-2, pas seulement les lectures accumulées depuis le lancement.
-- Bilan hydrique : croiser le niveau du barrage (offre) avec l'évolution des zones irriguées via NDVI (demande).
-- Alertes à paliers (vigilance / alerte / critique) au lieu d'un seuil binaire.
-- Prévision simple de tendance (extrapolation) pour anticiper un seuil critique.
+- **Finir la correction géométrique** pour Sidi El Barrak (masque terre/mer
+  pour éviter la fusion avec la Méditerranée) et Mellègue (élargir la
+  fenêtre de recherche au-delà de 15 km) — les 4 autres sites sont déjà
+  corrigés (voir le rapport de validation).
+- **Calibrer surface→volume** par site, si une courbe hauteur-surface-volume
+  officielle devient accessible (DGRE), pour que `water_area_pct` se
+  rapproche du taux de remplissage officiel plutôt que de rester un indice
+  de surface.
+- Rapport PDF exportable par site ; vue nationale agrégée (tous les sites
+  en un coup d'œil).
 - Notifications réelles (email/SMS) en plus de l'alerte dans le dashboard.
+- Sécurisation production (authentification sur les endpoints, au-delà du
+  rate limiting déjà en place).
