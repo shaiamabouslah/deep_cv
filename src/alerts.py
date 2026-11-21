@@ -75,7 +75,8 @@ def record_reading(db_path, site, water_area_pct, ndvi=None, source="live", time
 def get_history(db_path, site):
     conn = _connect(db_path)
     rows = conn.execute(
-        "SELECT timestamp, water_area_pct, ndvi, source FROM readings WHERE site = ? ORDER BY timestamp",
+        "SELECT timestamp, water_area_pct, ndvi, source FROM readings WHERE site = ? "
+        "ORDER BY timestamp, id",
         (site,),
     ).fetchall()
     conn.close()
@@ -126,7 +127,7 @@ def get_latest_reading(db_path, site):
     conn = _connect(db_path)
     row = conn.execute(
         "SELECT timestamp, water_area_pct, ndvi FROM readings WHERE site = ? "
-        "ORDER BY timestamp DESC LIMIT 1",
+        "ORDER BY timestamp DESC, id DESC LIMIT 1",
         (site,),
     ).fetchone()
     conn.close()
@@ -141,7 +142,7 @@ def get_previous_ndvi(db_path, site):
     conn = _connect(db_path)
     rows = conn.execute(
         "SELECT ndvi FROM readings WHERE site = ? AND ndvi IS NOT NULL "
-        "ORDER BY timestamp DESC LIMIT 1",
+        "ORDER BY timestamp DESC, id DESC LIMIT 1",
         (site,),
     ).fetchone()
     conn.close()
@@ -151,7 +152,7 @@ def get_previous_ndvi(db_path, site):
 def has_active_alert(db_path, site):
     conn = _connect(db_path)
     row = conn.execute(
-        "SELECT 1 FROM alerts WHERE site = ? ORDER BY timestamp DESC LIMIT 1",
+        "SELECT 1 FROM alerts WHERE site = ? ORDER BY timestamp DESC, id DESC LIMIT 1",
         (site,),
     ).fetchone()
     conn.close()
@@ -163,7 +164,7 @@ def get_highest_alert_level(db_path, site):
     no 'resolve' step yet, so this is simply the most recent alert's level)."""
     conn = _connect(db_path)
     row = conn.execute(
-        "SELECT level FROM alerts WHERE site = ? ORDER BY timestamp DESC LIMIT 1",
+        "SELECT level FROM alerts WHERE site = ? ORDER BY timestamp DESC, id DESC LIMIT 1",
         (site,),
     ).fetchone()
     conn.close()
@@ -174,7 +175,7 @@ def get_active_alerts(db_path, limit=50):
     conn = _connect(db_path)
     rows = conn.execute(
         "SELECT site, timestamp, water_area_pct, baseline_pct, drop_pct, level "
-        "FROM alerts ORDER BY timestamp DESC LIMIT ?",
+        "FROM alerts ORDER BY timestamp DESC, id DESC LIMIT ?",
         (limit,),
     ).fetchall()
     conn.close()
