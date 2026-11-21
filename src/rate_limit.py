@@ -10,10 +10,13 @@ from collections import defaultdict
 
 from fastapi import HTTPException, Request
 
-_calls_by_key = defaultdict(list)
-
 
 def rate_limit(max_calls: int = 10, window_seconds: int = 60):
+    # Scoped to this call, not module-level: two independent rate_limit()
+    # instances (e.g. one per endpoint) must not share the same counters,
+    # or calls to one would eat into the other's quota.
+    _calls_by_key = defaultdict(list)
+
     def dependency(request: Request):
         key = request.client.host if request.client else "unknown"
         now = time.time()
