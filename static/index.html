@@ -10,13 +10,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" />
 <style>
   body { font-family: 'Inter', system-ui, sans-serif; }
   #map { height: 480px; border-radius: 0.75rem; z-index: 0; }
-  .fade-in { animation: fadeIn .25s ease-in; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .fade-in { animation: fadeIn .35s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
   .pulse-dot { animation: pulse 1.6s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+  .lift { transition: transform .2s ease, box-shadow .2s ease; }
+  .lift:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -8px rgba(16,38,58,.18); }
+
+  header.hero {
+    background: linear-gradient(120deg, #0d3b4f, #1c7293, #0891b2, #0d3b4f);
+    background-size: 300% 300%;
+    animation: gradientShift 14s ease infinite;
+  }
+  @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+  .stat-num { font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', monospace; }
+
+  .map-marker {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2.5px solid white; box-shadow: 0 1px 5px rgba(0,0,0,.35);
+    transition: transform .15s ease;
+  }
+  .map-marker:hover { transform: scale(1.25); }
+  .map-marker.pulse-critique { animation: markerPulseCritique 1.5s infinite; }
+  .map-marker.pulse-alerte { animation: markerPulseAlerte 1.8s infinite; }
+  @keyframes markerPulseCritique {
+    0% { box-shadow: 0 0 0 0 rgba(220,38,38,.65), 0 1px 5px rgba(0,0,0,.35); }
+    70% { box-shadow: 0 0 0 16px rgba(220,38,38,0), 0 1px 5px rgba(0,0,0,.35); }
+    100% { box-shadow: 0 0 0 0 rgba(220,38,38,0), 0 1px 5px rgba(0,0,0,.35); }
+  }
+  @keyframes markerPulseAlerte {
+    0% { box-shadow: 0 0 0 0 rgba(249,115,22,.55), 0 1px 5px rgba(0,0,0,.35); }
+    70% { box-shadow: 0 0 0 12px rgba(249,115,22,0), 0 1px 5px rgba(0,0,0,.35); }
+    100% { box-shadow: 0 0 0 0 rgba(249,115,22,0), 0 1px 5px rgba(0,0,0,.35); }
+  }
+
+  .skeleton { position: relative; overflow: hidden; background: #e2e8f0; border-radius: 6px; }
+  .skeleton::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+    animation: shimmer 1.3s infinite;
+  }
+  @keyframes shimmer { 100% { transform: translateX(100%); } 0% { transform: translateX(-100%); } }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-16">
@@ -29,17 +71,32 @@
     </div>
   </div>
 
-  <header class="bg-gradient-to-r from-sky-700 to-cyan-600 text-white px-6 py-5 shadow">
+  <header class="hero text-white px-6 py-6 shadow-lg">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-2xl font-bold">Surveillance des plans d'eau — Tunisie</h1>
-      <p class="text-sky-100 text-sm mt-1">Détection par deep learning, indices satellite réels (NDVI/NDCI/NDTI), alertes automatiques</p>
+      <p class="text-cyan-50/90 text-sm mt-1">Détection par deep learning, indices satellite réels (NDVI/NDCI/NDTI), alertes automatiques</p>
+
+      <div class="flex flex-wrap gap-4 mt-5">
+        <div class="bg-white/10 backdrop-blur rounded-xl px-5 py-3 min-w-[140px]">
+          <div class="text-xs text-cyan-50/80 uppercase tracking-wide">Sites surveillés</div>
+          <div id="statSites" class="stat-num text-3xl font-bold">0</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur rounded-xl px-5 py-3 min-w-[140px]">
+          <div class="text-xs text-cyan-50/80 uppercase tracking-wide">Alertes actives</div>
+          <div id="statAlerts" class="stat-num text-3xl font-bold">0</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur rounded-xl px-5 py-3 min-w-[140px]">
+          <div class="text-xs text-cyan-50/80 uppercase tracking-wide">Surface moyenne</div>
+          <div id="statAvg" class="stat-num text-3xl font-bold">0%</div>
+        </div>
+      </div>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     <!-- Map column -->
-    <section class="lg:col-span-2 bg-white rounded-xl shadow p-4">
+    <section class="lg:col-span-2 bg-white rounded-xl shadow p-4 lift">
       <div class="flex items-center justify-between mb-3">
         <h2 class="font-semibold text-lg">Carte des sites</h2>
         <p class="text-xs text-slate-500">Clique un site existant, ou dessine un point/une zone pour en créer un nouveau</p>
@@ -56,7 +113,12 @@
       <div class="mt-4 flex items-center gap-3 flex-wrap">
         <span class="text-sm">Site sélectionné :</span>
         <span id="selectedSiteLabel" class="font-semibold text-sky-700">Sidi Salem</span>
-        <button id="backfillBtn" class="text-sm text-sky-600 hover:underline">Charger l'historique (6 mois)</button>
+        <select id="backfillMonths" class="text-sm border rounded-lg px-2 py-1 text-slate-600">
+          <option value="6">6 mois</option>
+          <option value="12" selected>12 mois (cycle saisonnier)</option>
+          <option value="24">24 mois</option>
+        </select>
+        <button id="backfillBtn" class="text-sm text-sky-600 hover:underline">Charger l'historique</button>
         <button id="liveAnalysisBtn" class="ml-auto bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
           Analyser par satellite (indices scientifiques réels)
         </button>
@@ -68,7 +130,7 @@
     <aside class="space-y-6">
 
       <!-- AI briefing -->
-      <div class="bg-white rounded-xl shadow p-4">
+      <div class="bg-white rounded-xl shadow p-4 lift">
         <div class="flex items-center justify-between">
           <h2 class="font-semibold">Briefing de l'agent</h2>
           <button id="refreshBriefingBtn" class="text-xs text-sky-600 hover:underline">actualiser</button>
@@ -78,13 +140,13 @@
       </div>
 
       <!-- Analysis result -->
-      <div id="resultBox" class="bg-white rounded-xl shadow p-4 hidden fade-in">
+      <div id="resultBox" class="bg-white rounded-xl shadow p-4 hidden fade-in lift">
         <h2 class="font-semibold mb-2">Résultat de l'analyse</h2>
         <div id="resultContent" class="text-sm space-y-1"></div>
       </div>
 
       <!-- Upload form -->
-      <div class="bg-white rounded-xl shadow p-4">
+      <div class="bg-white rounded-xl shadow p-4 lift">
         <h2 class="font-semibold mb-2">Tester le modèle de deep learning</h2>
         <p class="text-xs text-slate-500 mb-2">
           Dépose une image satellite RGB d'un plan d'eau (type tuile Sentinel-2 visuelle, comme
@@ -96,6 +158,10 @@
           <input type="hidden" id="site" name="site" value="Sidi Salem" />
           <input type="file" id="file" name="file" accept="image/*" required
                  class="text-sm w-full border rounded-lg px-2 py-1.5" />
+          <label class="flex items-center gap-2 text-xs text-slate-600">
+            <input type="checkbox" id="fuseSatellite" name="fuse_satellite" value="true" />
+            Enrichir avec les indices satellite réels du site (plus lent, ~1 min)
+          </label>
           <button type="submit" id="predictSubmitBtn" class="w-full bg-slate-800 hover:bg-slate-900 disabled:opacity-50 text-white text-sm font-medium py-2 rounded-lg transition">
             Analyser avec le modèle entraîné
           </button>
@@ -105,7 +171,7 @@
   </main>
 
   <main class="max-w-7xl mx-auto px-4 mt-6">
-    <div class="bg-white rounded-xl shadow p-4">
+    <div class="bg-white rounded-xl shadow p-4 lift">
       <h2 class="font-semibold mb-2">Historique du site</h2>
       <canvas id="historyChart" height="80"></canvas>
       <p id="historyEmptyState" class="hidden text-sm text-slate-400 text-center py-8">Aucune donnée pour ce site pour l'instant — lance une analyse ci-dessus.</p>
@@ -138,8 +204,87 @@
       return '#94a3b8';
     }
 
+    function markerIcon(site) {
+      const color = markerColor(site);
+      const pulseClass = site.alert_level === 'critique' ? 'pulse-critique'
+        : site.alert_level === 'alerte' ? 'pulse-alerte' : '';
+      return L.divIcon({
+        className: '',
+        html: `<div class="map-marker ${pulseClass}" style="background:${color}"></div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+      });
+    }
+
+    function animateCount(el, target, { decimals = 0, suffix = '' } = {}) {
+      const start = parseFloat(el.textContent) || 0;
+      const duration = 700;
+      const t0 = performance.now();
+      function step(now) {
+        const p = Math.min((now - t0) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const value = start + (target - start) * eased;
+        el.textContent = value.toFixed(decimals) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    async function updateStats() {
+      const [sites, alerts] = await Promise.all([
+        fetch('/sites').then(r => r.json()),
+        fetch('/alerts').then(r => r.json()),
+      ]);
+      const withData = sites.filter(s => s.latest_reading);
+      const avg = withData.length
+        ? withData.reduce((sum, s) => sum + s.latest_reading.water_area_pct, 0) / withData.length
+        : 0;
+      animateCount(document.getElementById('statSites'), sites.length);
+      animateCount(document.getElementById('statAlerts'), alerts.length);
+      animateCount(document.getElementById('statAvg'), avg, { decimals: 0, suffix: '%' });
+    }
+
+    function appendResult(html) {
+      document.getElementById('resultContent').insertAdjacentHTML('beforeend', html);
+    }
+
+    async function loadForecast(siteName) {
+      try {
+        const res = await fetch(`/forecast/${encodeURIComponent(siteName)}`);
+        const data = await res.json();
+        if (!res.ok) return;
+
+        if (data.insufficient_history) {
+          appendResult(`
+            <div class="mt-2 p-2 rounded-lg bg-slate-50 text-slate-500 text-xs">
+              Prévision : ${data.note}
+            </div>
+          `);
+          return;
+        }
+
+        const trendColor = { hausse: 'text-emerald-700', baisse: 'text-red-600', stable: 'text-slate-600' };
+        appendResult(`
+          <div class="mt-2 p-2 rounded-lg bg-cyan-50 text-cyan-900 text-xs">
+            <b>Prévision à ${data.days_ahead} jours :</b>
+            <span class="${trendColor[data.trend_label]}">${data.current_pct}% → ${data.projected_pct}% (${data.trend_label})</span>
+            ${data.projected_alert_level ? `<span class="ml-1 px-1.5 py-0.5 rounded ${LEVEL_BANNER_BG[data.projected_alert_level] || 'bg-red-600'} text-white">risque ${data.projected_alert_level}</span>` : ''}
+            <br/><span class="text-cyan-700">Pluie prévue : ${data.rain_forecast.total_mm} mm sur ${data.rain_forecast.days}j (${data.rain_forecast.level})</span>
+            ${data.caveat ? `<p class="mt-1 text-cyan-800">${data.caveat}</p>` : ''}
+          </div>
+        `);
+      } catch (e) {
+        // Forecast is a secondary signal — a network hiccup here shouldn't
+        // block or clutter the main analysis result.
+      }
+    }
+
     function showResult(html) {
-      document.getElementById('resultBox').classList.remove('hidden');
+      const box = document.getElementById('resultBox');
+      box.classList.remove('hidden');
+      box.classList.remove('fade-in');
+      void box.offsetWidth; // restart the animation on every update
+      box.classList.add('fade-in');
       document.getElementById('resultContent').innerHTML = html;
     }
 
@@ -175,8 +320,9 @@
       const sites = await (await fetch('/sites')).json();
       sites.forEach(site => {
         const m = markers[site.name];
-        if (m) m.setStyle({ fillColor: markerColor(site) });
+        if (m) m.setIcon(markerIcon(site));
       });
+      updateStats();
     }
 
     async function loadHistory(site) {
@@ -196,16 +342,22 @@
       if (chart) chart.destroy();
       chart = new Chart(canvas, {
         type: 'line',
-        data: { labels, datasets: [{ label: `Surface d'eau (%) — ${site}`, data, borderColor: '#0891b2', backgroundColor: 'rgba(8,145,178,.1)', fill: true, tension: 0.3 }] },
-        options: { scales: { y: { beginAtZero: true } } },
+        data: { labels, datasets: [{
+          label: `Surface d'eau (%) — ${site}`, data,
+          borderColor: '#0891b2', backgroundColor: 'rgba(8,145,178,.12)',
+          fill: true, tension: 0.35,
+          pointRadius: 3, pointHoverRadius: 6,
+          pointBackgroundColor: '#0891b2', pointBorderColor: '#fff', pointBorderWidth: 1.5,
+        }] },
+        options: {
+          animation: { duration: 600, easing: 'easeOutCubic' },
+          scales: { y: { beginAtZero: true } },
+        },
       });
     }
 
     function addMarker(site) {
-      const marker = L.circleMarker([site.lat, site.lon], {
-        radius: 9, color: '#1e293b', weight: 1.5,
-        fillColor: markerColor(site), fillOpacity: 0.9,
-      }).addTo(map);
+      const marker = L.marker([site.lat, site.lon], { icon: markerIcon(site) }).addTo(map);
       marker.bindTooltip(site.name);
       marker.on('click', () => selectSite(site.name));
       markers[site.name] = marker;
@@ -229,6 +381,7 @@
 
         showResult(`
           <p><span class="text-slate-500">Image du</span> <b>${data.acquisition_date}</b> (nuages ${data.cloud_pct}%)</p>
+          <p><span class="text-slate-500">Surface d'eau :</span> <b>${data.water_area.water_area_pct}%</b> <span class="text-slate-400">(${data.water_area.current_area_ha} ha / ${data.water_area.max_observed_area_ha} ha max. observé)</span></p>
           <p><span class="text-slate-500">NDVI (végétation) :</span> <b>${data.indices.ndvi}</b> — ${data.vegetation_note}</p>
           <p><span class="text-slate-500">NDCI (algues) :</span> <b>${data.indices.ndci}</b></p>
           <p><span class="text-slate-500">NDTI (turbidité) :</span> <b>${data.indices.ndti}</b></p>
@@ -239,11 +392,15 @@
           <div class="mt-2 p-2 rounded-lg ${data.usage.label === 'traitement requis' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}">
             <b>${data.usage.label}</b> — ${data.usage.detail}
           </div>
+          <div class="mt-2 p-2 rounded-lg bg-violet-50 text-violet-900 text-xs whitespace-pre-line">
+            <b>Diagnostic de l'agent${data.recommendation.ai_generated ? '' : ' (règles, pas IA)'} :</b><br/>${data.recommendation.text}
+          </div>
         `);
         await loadHistory(siteName);
         await refreshSiteStatus();
         await loadAlertBanner();
         await loadBriefing();
+        await loadForecast(siteName);
       } catch (e) {
         showResult(`<p class="text-red-600">Erreur réseau : ${e}</p>`);
       }
@@ -272,9 +429,13 @@
       const originalText = btn.textContent;
       btn.textContent = 'Chargement en arrière-plan…';
       try {
-        await fetch(`/sites/${encodeURIComponent(siteInput.value)}/backfill?months_back=6`, { method: 'POST' });
-        // Points land progressively over a few minutes — poll the chart a few times.
-        for (let i = 0; i < 6; i++) {
+        const monthsBack = parseInt(document.getElementById('backfillMonths').value, 10);
+        await fetch(`/sites/${encodeURIComponent(siteInput.value)}/backfill?months_back=${monthsBack}`, { method: 'POST' });
+        // Points land progressively in the background — poll the chart for
+        // roughly as long as the number of months implies (each month is
+        // one sequential GEE round trip, ~10-20s).
+        const pollCount = Math.max(6, Math.ceil(monthsBack * 1.5));
+        for (let i = 0; i < pollCount; i++) {
           await new Promise(r => setTimeout(r, 15000));
           await loadHistory(siteInput.value);
         }
@@ -302,6 +463,9 @@
           <img src="data:image/png;base64,${data.mask_png_base64}" class="mt-2 rounded-lg border w-full max-w-[220px]" />
           ${data.image_quality.blurry ? '<p class="text-amber-600 text-xs mt-1">Image floue (netteté=' + data.image_quality.sharpness + ') — résultat potentiellement peu fiable.</p>' : ''}
           ${data.using_fallback_untrained_model ? '<p class="text-amber-600 text-xs mt-1">Attention : modèle non entraîné (placeholder)</p>' : ''}
+          <div class="mt-2 p-2 rounded-lg bg-violet-50 text-violet-900 text-xs whitespace-pre-line">
+            <b>Diagnostic de l'agent${data.recommendation.ai_generated ? '' : ' (règles, pas IA)'} :</b><br/>${data.recommendation.text}
+          </div>
         `);
         await loadHistory(formData.get('site'));
         await refreshSiteStatus();
@@ -336,7 +500,9 @@
 
     function initMap() {
       map = L.map('map').setView([34.5, 9.3], 7);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap', maxZoom: 19,
+      }).addTo(map);
 
       const drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
@@ -390,6 +556,7 @@
     loadAlertBanner();
     loadBriefing();
     loadHistory(siteInput.value);
+    updateStats();
   </script>
 </body>
 </html>

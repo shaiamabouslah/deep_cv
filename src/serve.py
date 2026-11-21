@@ -8,6 +8,7 @@ Exposes:
   POST /sites             register a new site (drawn/clicked on the map)
   GET  /sites             all sites (seed dams + custom) with latest status
   GET  /history/{site}    time series of past readings for that site
+  GET  /forecast/{site}   trend extrapolation + 7-day rain forecast (Open-Meteo)
   GET  /alerts            currently triggered alerts across all sites
   GET  /briefing          AI agent synthesis of every site's status
   GET  /health
@@ -22,12 +23,15 @@ from typing import Optional
 
 import numpy as np
 import torch
-from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, UploadFile
+from dotenv import load_dotenv
+from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel
 
-from src.agent import generate_briefing
+load_dotenv()  # picks up a local .env (GROQ_API_KEY, etc.) if present — gitignored, never committed
+
+from src.agent import generate_briefing, generate_fused_recommendation
 from src.alerts import (
     check_and_record_alert,
     get_active_alerts,
@@ -39,6 +43,7 @@ from src.alerts import (
     record_reading,
 )
 from src.data import build_normalize_transform, load_params
+from src.forecast import fetch_rain_forecast, project_risk
 from src.gee_client import (
     GEENotAuthenticated,
     analyze_site_live,
@@ -91,6 +96,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Water Monitoring API", lifespan=lifespan)
 
 gee_rate_limit = rate_limit(max_calls=10, window_seconds=60)
+forecast_rate_limit = rate_limit(max_calls=20, window_seconds=60)
 
 
 @app.get("/health")
@@ -106,7 +112,12 @@ MIN_SHARPNESS = 15.0
 
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...), site: str = Form(...)):
+async def predict(
+    request: Request,
+    file: UploadFile = File(...),
+    site: str = Form(...),
+    fuse_satellite: bool = Form(False),
+):
     image_bytes = await file.read()
     raw_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
@@ -144,9 +155,38 @@ async def predict(file: UploadFile = File(...), site: str = Form(...)):
     mask_image.save(buf, format="PNG")
     mask_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
 
+    # Multi-input fusion: combine the segmentation result (this photo) with
+    # real GEE spectral indices for the same site (if it's a registered
+    # site with known coordinates) and let the agent produce ONE
+    # recommendation instead of separate hard-coded templates. Opt-in
+    # because the GEE round trip adds real latency.
+    signals = {
+        "site": site, "water_area_pct": area_pct, "source": "upload",
+        "rgb_quality": quality, "gee_indices": None, "rainfall": None,
+        "water_balance": None, "alert": alert,
+    }
+    if fuse_satellite:
+        gee_rate_limit(request)
+        all_sites = TUNISIA_DAMS + get_custom_sites(db_path)
+        dam = next((d for d in all_sites if d["name"] == site), None)
+        if dam is None:
+            logger.info("fuse_satellite requested but site=%s has no known coordinates", site)
+        else:
+            try:
+                gee_result = analyze_site_live(
+                    dam["lat"], dam["lon"], project=_state["params"]["gee"]["project"],
+                    area_buffer_m=dam.get("buffer_m", 6000),
+                )
+                signals["gee_indices"] = gee_result["indices"]
+                signals["rainfall"] = gee_result["rainfall"]
+            except (GEENotAuthenticated, ValueError) as exc:
+                logger.warning("GEE enrichment skipped for site=%s: %s", site, exc)
+
+    recommendation = generate_fused_recommendation(signals)
+
     logger.info(
-        "predict site=%s water_area_pct=%.1f alert=%s blur_score=%.1f",
-        site, area_pct, bool(alert), blur_score,
+        "predict site=%s water_area_pct=%.1f alert=%s blur_score=%.1f fuse_satellite=%s ai_generated=%s",
+        site, area_pct, bool(alert), blur_score, fuse_satellite, recommendation["ai_generated"],
     )
 
     return {
@@ -155,6 +195,7 @@ async def predict(file: UploadFile = File(...), site: str = Form(...)):
         "mask_png_base64": mask_b64,
         "alert": alert,
         "water_quality": quality,
+        "recommendation": recommendation,
         "image_quality": {
             "sharpness": round(blur_score, 1),
             "blurry": bool(blur_score < MIN_SHARPNESS),
@@ -163,7 +204,7 @@ async def predict(file: UploadFile = File(...), site: str = Form(...)):
     }
 
 
-def _run_live_analysis(site_name, lat, lon, polygon_coords=None):
+def _run_live_analysis(site_name, lat, lon, polygon_coords=None, area_buffer_m=6000):
     db_path = _state["params"]["paths"]["history_db"]
     previous_history = get_history(db_path, site_name)
     previous_ndvi = get_previous_ndvi(db_path, site_name)
@@ -173,6 +214,7 @@ def _run_live_analysis(site_name, lat, lon, polygon_coords=None):
             lat, lon,
             project=_state["params"]["gee"]["project"],
             polygon_coords=polygon_coords,
+            area_buffer_m=area_buffer_m,
         )
     except GEENotAuthenticated as exc:
         logger.error("GEE not authenticated: %s", exc)
@@ -181,7 +223,7 @@ def _run_live_analysis(site_name, lat, lon, polygon_coords=None):
         logger.warning("No GEE imagery for site=%s: %s", site_name, exc)
         raise HTTPException(status_code=404, detail=str(exc))
 
-    water_area_proxy = max(0.0, min(100.0, (result["indices"]["ndwi"] + 1) * 50))
+    water_area_proxy = result["water_area"]["water_area_pct"] or 0.0
     current_ndvi = result["indices"]["ndvi"]
 
     level_change = None
@@ -199,15 +241,23 @@ def _run_live_analysis(site_name, lat, lon, polygon_coords=None):
     )
     record_reading(db_path, site_name, water_area_proxy, ndvi=current_ndvi, source="live")
 
+    recommendation = generate_fused_recommendation({
+        "site": site_name, "water_area_pct": water_area_proxy, "source": "satellite",
+        "rgb_quality": None, "gee_indices": result["indices"],
+        "rainfall": result["rainfall"], "water_balance": water_balance, "alert": alert,
+    })
+
     logger.info(
-        "live_analysis site=%s water_area_proxy=%.1f alert_level=%s rainfall_mm=%s",
+        "live_analysis site=%s water_area_proxy=%.1f alert_level=%s rainfall_mm=%s ai_generated=%s",
         site_name, water_area_proxy, alert["level"] if alert else None, result["rainfall"]["mm"],
+        recommendation["ai_generated"],
     )
 
     return {
         "site": site_name, "alert": alert,
         "level_change_explanation": level_change,
         "water_balance": water_balance,
+        "recommendation": recommendation,
         **result,
     }
 
@@ -223,7 +273,7 @@ def live_analysis(site: str):
     if dam is None:
         raise HTTPException(status_code=404, detail=f"Site inconnu : {site}")
 
-    return _run_live_analysis(site, dam["lat"], dam["lon"])
+    return _run_live_analysis(site, dam["lat"], dam["lon"], area_buffer_m=dam.get("buffer_m", 6000))
 
 
 class AnalyzeLocationRequest(BaseModel):
@@ -283,10 +333,11 @@ def sites():
     return result
 
 
-def _run_backfill(site_name, lat, lon, months_back):
+def _run_backfill(site_name, lat, lon, months_back, buffer_m=6000):
     try:
         points = backfill_monthly_history(
-            lat, lon, months_back=months_back, project=_state["params"]["gee"]["project"]
+            lat, lon, months_back=months_back, project=_state["params"]["gee"]["project"],
+            buffer_m=buffer_m,
         )
         db_path = _state["params"]["paths"]["history_db"]
         for point in points:
@@ -300,16 +351,22 @@ def _run_backfill(site_name, lat, lon, months_back):
 
 
 @app.post("/sites/{site}/backfill", dependencies=[Depends(gee_rate_limit)])
-def backfill_site(site: str, background_tasks: BackgroundTasks, months_back: int = 6):
+def backfill_site(site: str, background_tasks: BackgroundTasks, months_back: int = 12):
     """Pulls real multi-month history from the Sentinel-2 archive for this
     site in the background (several sequential GEE calls — can take a few
-    minutes). Poll /history/{site} to see points appear as they land."""
+    minutes). Poll /history/{site} to see points appear as they land.
+    Default is 12 months, a full seasonal cycle; capped at 36 to keep a
+    single request from running away with the GEE quota."""
+    months_back = max(1, min(months_back, 36))
+
     all_sites = TUNISIA_DAMS + get_custom_sites(_state["params"]["paths"]["history_db"])
     dam = next((d for d in all_sites if d["name"] == site), None)
     if dam is None:
         raise HTTPException(status_code=404, detail=f"Site inconnu : {site}")
 
-    background_tasks.add_task(_run_backfill, site, dam["lat"], dam["lon"], months_back)
+    background_tasks.add_task(
+        _run_backfill, site, dam["lat"], dam["lon"], months_back, dam.get("buffer_m", 6000)
+    )
     return {"status": "started", "site": site, "months_back": months_back}
 
 
@@ -325,6 +382,32 @@ def briefing():
 @app.get("/history/{site}")
 def history(site: str):
     return get_history(_state["params"]["paths"]["history_db"], site)
+
+
+@app.get("/forecast/{site}", dependencies=[Depends(forecast_rate_limit)])
+def forecast(site: str):
+    """Projects where this site's water level is likely headed, by
+    extrapolating its own recorded trend and cross-referencing a 7-day
+    rain forecast (Open-Meteo) as a qualitative caveat — see
+    src/forecast.py's docstring for why the rain forecast isn't folded
+    numerically into the projection."""
+    db_path = _state["params"]["paths"]["history_db"]
+    all_sites = TUNISIA_DAMS + get_custom_sites(db_path)
+    dam = next((d for d in all_sites if d["name"] == site), None)
+    if dam is None:
+        raise HTTPException(status_code=404, detail=f"Site inconnu : {site}")
+
+    latest = get_latest_reading(db_path, site)
+    if latest is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Pas encore de relevé pour {site} — lance une analyse live d'abord.",
+        )
+
+    history_points = get_history(db_path, site)
+    rain = fetch_rain_forecast(dam["lat"], dam["lon"])
+    risk = project_risk(latest["water_area_pct"], history_points, rain)
+    return {"site": site, **risk}
 
 
 @app.get("/alerts")

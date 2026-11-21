@@ -100,9 +100,38 @@ def test_create_custom_site_then_appears_in_sites(client):
 
 
 def test_briefing_endpoint_returns_text_without_api_key(client, monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
     response = client.get("/briefing")
     assert response.status_code == 200
     body = response.json()
     assert "text" in body
     assert body["ai_generated"] is False
+
+
+def test_forecast_unknown_site_returns_404(client):
+    response = client.get("/forecast/Nowhere")
+    assert response.status_code == 404
+
+
+def test_forecast_without_prior_reading_returns_404(client):
+    response = client.get("/forecast/Sidi Salem")
+    assert response.status_code == 404
+
+
+def test_forecast_returns_projection(client, monkeypatch):
+    monkeypatch.setattr(
+        "src.serve.fetch_rain_forecast",
+        lambda *a, **k: {"days": 7, "dates": [], "daily_mm": [], "total_mm": 0.0, "level": "faible"},
+    )
+    client.post(
+        "/predict",
+        data={"site": "Sidi Salem"},
+        files={"file": ("test.png", _sample_image_bytes(), "image/png")},
+    )
+
+    response = client.get("/forecast/Sidi Salem")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["site"] == "Sidi Salem"
+    assert body["insufficient_history"] is True
