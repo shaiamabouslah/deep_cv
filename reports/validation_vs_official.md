@@ -165,17 +165,53 @@ barrage, non linéaires l'une par rapport à l'autre, qui ne coïncideront
 jamais exactement sans la courbe hauteur-surface-volume propre à chaque
 site (non publique).
 
+## Correction géométrique (2026-11-24, round 3) : Sidi El Barrak et Mellègue
+
+Les deux sites laissés non corrigés au round 2 avaient chacun une cause
+distincte, identifiée puis traitée séparément :
+
+**Sidi El Barrak (283 km² au round 2)** : Sidi El Barrak est un barrage
+côtier, à quelques kilomètres de la Méditerranée. La recherche de plus
+grande composante connexe, sans distinction terre/mer, fusionnait le
+réservoir avec la mer ouverte — JRC `max_extent` classe l'eau de mer
+exactement comme l'eau douce. **Correction** : la région de recherche est
+découpée (`intersection`) avec un masque terre uniquement, construit à
+partir des polygones de pays `USDOS/LSIB_SIMPLE/2017` (Tunisie), avant de
+chercher la plus grande composante. Résultat : **3018 ha** — un ordre de
+grandeur plausible pour un grand barrage, contre 28 359 ha avant.
+
+**Mellègue (11 ha au round 2)** : Mellègue est un barrage sur l'oued
+Mellègue, dont le bassin chevauche la frontière tuniso-algérienne — et son
+écart initial mesuré (8.1 km) était déjà le plus grand des 6 sites,
+suggérant que le vrai réservoir se trouvait hors de la fenêtre de
+recherche de 15 km. **Correction** : fenêtre élargie à 35 km, masque
+terre étendu à la Tunisie **et** l'Algérie (pour ne pas couper le
+réservoir au niveau de la frontière). Résultat : **897 ha** à 22.8 km du
+point d'origine — un ordre de grandeur cohérent avec un grand barrage,
+contre 11 ha avant. (Testé aussi à 25 km : seulement 42.7 ha, confirmant
+que le vrai réservoir était bien hors de cette fenêtre intermédiaire et
+que 35 km était nécessaire.)
+
+**Limite assumée** : contrairement à Sidi Salem et Nebhana, il n'existe
+pas de point de données officiel ONAGRI/DGRE collecté pour ces deux sites
+dans ce projet — la validation ici est une **vérification de plausibilité**
+(l'ordre de grandeur en hectares est cohérent avec la réputation de ces
+barrages comme grands réservoirs), pas une validation contre un chiffre
+officiel comme pour les deux autres sites.
+
 ## Verdict
 
-**Résolu : la géométrie d'échantillonnage.** Les 4 sites corrigés sont
-maintenant centrés sur le vrai réservoir avec une étendue de référence
-réaliste (confirmé par les surfaces en hectares, cohérentes avec les
-tailles connues des barrages) — ce n'est plus une approximation grossière.
-**Non résolu, et désormais correctement attribué : l'écart absolu** avec
-l'officiel, qui est un problème de nature de grandeur (surface vs volume),
-pas de géométrie. **Deux sites restent non corrigés et documentés comme
-tels** (Sidi El Barrak, Mellègue) plutôt que d'intégrer un résultat
-automatique non vérifié. C'est un résultat honnête en deux temps : un vrai
-problème résolu (la géométrie), un autre correctement identifié et expliqué
-plutôt que masqué (surface ≠ volume) — pas une solution magique qui ferait
-coïncider les deux courbes.
+**Résolu : la géométrie d'échantillonnage, pour les 6 sites.** Les 4 sites
+du round 2 sont centrés sur le vrai réservoir avec une étendue de référence
+réaliste ; les 2 sites restants (Sidi El Barrak, Mellègue) sont maintenant
+corrigés aussi, via un masque terre/mer et une fenêtre de recherche élargie
+— ce n'est plus une approximation grossière nulle part dans
+`src/sites.py`. **Non résolu, et correctement attribué : l'écart absolu**
+entre notre indice et l'officiel (Sidi Salem, Nebhana), qui est un problème
+de nature de grandeur (surface vs volume), pas de géométrie. **Non validé
+officiellement (seulement plausible) : Sidi El Barrak et Mellègue**, faute
+de point de données ONAGRI/DGRE collecté pour ces deux sites. C'est un
+résultat honnête en trois temps : un vrai problème résolu (la géométrie,
+sur les 6 sites), un autre correctement identifié et expliqué plutôt que
+masqué (surface ≠ volume), et une limite de validation assumée plutôt que
+cachée (plausibilité ≠ validation officielle) — pas une solution magique.

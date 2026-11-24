@@ -93,9 +93,9 @@ Sans `GROQ_API_KEY`, le briefing IA bascule sur un résumé par règles.
 
 ## Limites connues (honnêteté avant l'oral)
 
-- **Validé et corrigé contre des données réelles le 2026-11-21** (voir
-  [reports/validation_vs_official.md](reports/validation_vs_official.md)),
-  en deux temps :
+- **Validé et corrigé contre des données réelles les 2026-11-21 et
+  2026-11-24** (voir [reports/validation_vs_official.md](reports/validation_vs_official.md)),
+  en trois temps :
   1. Le `water_area_pct` initial (rescaling linéaire du NDWI moyen) donnait
      une tendance **inversée** par rapport à l'officiel ONAGRI/DGRE sur
      Sidi Salem — remplacé par une surface d'eau réelle (pixels classifiés)
@@ -104,14 +104,20 @@ Sans `GROQ_API_KEY`, le briefing IA bascule sur un résumé par règles.
   2. Les 6 coordonnées de barrage (`src/sites.py`) se sont révélées mal
      centrées (0 à 8.1 km d'écart de l'eau réelle). Corrigées pour 4 des 6
      sites via une recherche de plus grande composante connexe d'eau
-     (JRC) dans une fenêtre de 15 km — confirmé par des surfaces en
-     hectares désormais cohérentes avec la taille réelle connue des
-     barrages. Sidi El Barrak et Mellègue gardent leurs coordonnées
-     approximatives, la même recherche y donnant un résultat implausible
-     (fusion avec la mer / réservoir hors fenêtre).
+     (JRC) dans une fenêtre de 15 km.
+  3. Les 2 sites restants (Sidi El Barrak, Mellègue) avaient chacun une
+     cause distincte : Sidi El Barrak fusionnait avec la Méditerranée
+     (fixé par un masque terre/mer, pays `USDOS/LSIB_SIMPLE/2017`) ;
+     Mellègue avait son vrai réservoir hors de la fenêtre de 15 km (fixé
+     en l'élargissant à 35 km). Les 6 sites ont désormais des surfaces en
+     hectares cohérentes avec la taille réelle connue des barrages, mais
+     Sidi El Barrak et Mellègue sont une vérification de **plausibilité**,
+     pas une validation officielle (pas de point ONAGRI/DGRE collecté pour
+     ces deux sites).
   La tendance est maintenant correcte et la géométrie d'échantillonnage
-  n'est plus le facteur limitant ; l'écart absolu restant est attribué à
-  la nature même de la grandeur (indice de **surface** vs taux officiel de
+  n'est plus le facteur limitant ; l'écart absolu restant (sur Sidi
+  Salem/Nebhana, les 2 sites validés officiellement) est attribué à la
+  nature même de la grandeur (indice de **surface** vs taux officiel de
   **volume/capacité** — un barrage a un profil en cuvette, les deux ne
   sont pas linéairement liées sans la courbe hauteur-surface-volume propre
   à chaque site, non publique). Diagnostic complet dans le rapport de
@@ -125,10 +131,9 @@ Sans `GROQ_API_KEY`, le briefing IA bascule sur un résumé par règles.
 
 ## Prochaines étapes
 
-- **Finir la correction géométrique** pour Sidi El Barrak (masque terre/mer
-  pour éviter la fusion avec la Méditerranée) et Mellègue (élargir la
-  fenêtre de recherche au-delà de 15 km) — les 4 autres sites sont déjà
-  corrigés (voir le rapport de validation).
+- **Collecter un point ONAGRI/DGRE officiel** pour Sidi El Barrak et
+  Mellègue, pour passer de "plausible" à "validé" comme Sidi Salem/Nebhana
+  (voir le rapport de validation).
 - **Calibrer surface→volume** par site, si une courbe hauteur-surface-volume
   officielle devient accessible (DGRE), pour que `water_area_pct` se
   rapproche du taux de remplissage officiel plutôt que de rester un indice
