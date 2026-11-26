@@ -1,11 +1,12 @@
 """Classical computer vision preprocessing (no deep model involved here).
 
-`standardize` and `sharpness_score` are used directly in the live
-`/predict` path (src/serve.py) before the image reaches the segmentation
-model. `preprocess_catalog`, `remove_background` and `is_readable` are
-reusable building blocks for a future batch ingestion pipeline (e.g.
-cleaning a bulk delivery of new satellite tiles) — exercised by their unit
-tests but not yet wired into a batch job, since none exists yet.
+`sharpness_score` is used in the live `/predict` path (src/serve.py) as a
+blur check. `standardize` (letterbox) is deliberately NOT used before the
+segmentation model: the model was trained on plain-stretched inputs and
+reads the padding bars as water. `preprocess_catalog`, `standardize`,
+`remove_background` and `is_readable` are building blocks for a future
+batch ingestion pipeline — exercised by their unit tests, not yet wired
+into a batch job.
 """
 import cv2
 import imagehash
@@ -20,6 +21,16 @@ def is_readable(path):
         return True
     except Exception:
         return False
+
+
+NODATA_MAX_VALUE = 3
+
+
+def nodata_mask(rgb: np.ndarray) -> np.ndarray:
+    """True where a satellite tile has no data (pure black: outside the
+    scene footprint). The segmentation model labels these areas as water,
+    so they must be excluded before measuring water area."""
+    return rgb.max(axis=2) <= NODATA_MAX_VALUE
 
 
 def sharpness_score(image: Image.Image) -> float:

@@ -129,6 +129,9 @@ def _rule_based_fusion(signals):
     if signals.get("alert"):
         lines.append(f"Alerte de niveau {signals['alert']['level']} active sur ce site.")
 
+    if signals.get("fill_estimate"):
+        lines.append(_fill_sentence(signals["fill_estimate"]))
+
     return "\n".join(line for line in lines if line)
 
 
@@ -149,7 +152,17 @@ def _format_fusion_context(signals):
         parts.append(f"Bilan hydrique offre/demande : {signals['water_balance']}")
     if signals.get("alert"):
         parts.append(f"Alerte active, niveau {signals['alert']['level']} (baisse de {signals['alert']['drop_pct']:.1f}%)")
+    fill = signals.get("fill_estimate")
+    if fill:
+        parts.append(_fill_sentence(fill))
     return "\n".join(parts)
+
+
+def _fill_sentence(fill):
+    return (
+        f"Taux de remplissage estimé : {fill['fill_pct']:.0f}% de la capacité (calibré sur "
+        f"{fill['n_points']} bulletins officiels ONAGRI, erreur typique ± {fill['typical_error_pts']} points)."
+    )
 
 
 def generate_fused_recommendation(signals):
@@ -157,7 +170,8 @@ def generate_fused_recommendation(signals):
     water_area_pct, source ("upload"/"satellite"), rgb_quality (from
     water_quality.analyze, if from an uploaded photo), gee_indices (dict
     with ndvi/ndci/ndti, if the site's coordinates let us fetch them),
-    rainfall, water_balance, alert. Any of these may be None/missing."""
+    rainfall, water_balance, alert, fill_estimate (calibrated fill rate, only
+    for dams with a validated calibration). Any of these may be None/missing."""
     if not _groq_api_key():
         return {
             "text": _rule_based_fusion(signals),
@@ -172,9 +186,12 @@ def generate_fused_recommendation(signals):
             "en Tunisie. Voici toutes les données disponibles pour un plan d'eau (barrage) :\n\n"
             + context + "\n\n"
             "À partir de TOUTES ces données combinées, donne en français (6-10 lignes max) : "
-            "1) un verdict clair sur l'utilisabilité de cette eau (irrigation / potable sous "
-            "conditions / impropre à tout usage sans traitement), 2) le raisonnement en une "
-            "phrase, 3) une recommandation concrète. Sois direct, pas de formules creuses, "
+            "1) l'état de la ressource (taux de remplissage s'il est donné, tendance, alerte), "
+            "2) ce que les indices spectraux suggèrent de la qualité APPARENTE de l'eau pour "
+            "l'irrigation, en précisant que c'est indicatif, 3) une recommandation concrète. "
+            "RÈGLES : ne dis jamais qu'une eau est potable ou propre à la consommation, ces "
+            "données satellite ne permettent pas de le savoir ; recommande des analyses de "
+            "laboratoire pour toute décision de qualité. Sois direct, pas de formules creuses, "
             "et signale explicitement si les données sont insuffisantes pour trancher.",
             max_tokens=600,
         )

@@ -1,0 +1,3698 @@
+[
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-01-03",
+  "official_fill_pct": 31.2,
+  "stock_mm3": 12.958,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-03.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-01-10",
+  "official_fill_pct": 31.3,
+  "stock_mm3": 13.033,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-10.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-01-17",
+  "official_fill_pct": 31.3,
+  "stock_mm3": 13.033,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-17.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-01-24",
+  "official_fill_pct": 31.2,
+  "stock_mm3": 12.996,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-24.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-01-31",
+  "official_fill_pct": 31.2,
+  "stock_mm3": 12.958,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-31.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-02-07",
+  "official_fill_pct": 31.0,
+  "stock_mm3": 12.884,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-07.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-02-14",
+  "official_fill_pct": 31.0,
+  "stock_mm3": 12.884,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-14.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-02-21",
+  "official_fill_pct": 31.1,
+  "stock_mm3": 12.921,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-21.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-02-28",
+  "official_fill_pct": 31.1,
+  "stock_mm3": 12.921,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-28.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-03-06",
+  "official_fill_pct": 31.1,
+  "stock_mm3": 12.921,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-06.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-03-13",
+  "official_fill_pct": 31.0,
+  "stock_mm3": 12.884,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-13.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-03-20",
+  "official_fill_pct": 30.7,
+  "stock_mm3": 12.771,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-20.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-04-03",
+  "official_fill_pct": 29.7,
+  "stock_mm3": 12.343,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-03.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-04-10",
+  "official_fill_pct": 29.1,
+  "stock_mm3": 12.099,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-10.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-04-17",
+  "official_fill_pct": 28.6,
+  "stock_mm3": 11.891,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-17.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-04-24",
+  "official_fill_pct": 28.0,
+  "stock_mm3": 11.647,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-24.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-05-01",
+  "official_fill_pct": 27.9,
+  "stock_mm3": 11.612,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-01.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-05-08",
+  "official_fill_pct": 27.6,
+  "stock_mm3": 11.473,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-08.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-05-15",
+  "official_fill_pct": 27.4,
+  "stock_mm3": 11.403,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-15.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-05-22",
+  "official_fill_pct": 26.9,
+  "stock_mm3": 11.194,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-22.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-05-29",
+  "official_fill_pct": 26.3,
+  "stock_mm3": 10.95,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-29.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-06-05",
+  "official_fill_pct": 25.3,
+  "stock_mm3": 10.526,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-05.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-06-12",
+  "official_fill_pct": 24.3,
+  "stock_mm3": 10.106,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-12.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-06-19",
+  "official_fill_pct": 23.4,
+  "stock_mm3": 9.751,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-19.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-06-26",
+  "official_fill_pct": 22.5,
+  "stock_mm3": 9.364,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-26.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-07-03",
+  "official_fill_pct": 21.6,
+  "stock_mm3": 8.968,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-03.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-07-10",
+  "official_fill_pct": 20.6,
+  "stock_mm3": 8.55,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-10.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-07-17",
+  "official_fill_pct": 19.5,
+  "stock_mm3": 8.131,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-17.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-07-24",
+  "official_fill_pct": 18.8,
+  "stock_mm3": 7.832,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-24.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-07-31",
+  "official_fill_pct": 18.0,
+  "stock_mm3": 7.477,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-31.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-08-14",
+  "official_fill_pct": 16.4,
+  "stock_mm3": 6.806,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-14.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-08-21",
+  "official_fill_pct": 15.7,
+  "stock_mm3": 6.511,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-21.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-08-28",
+  "official_fill_pct": 14.8,
+  "stock_mm3": 6.169,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-28.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-09-18",
+  "official_fill_pct": 13.6,
+  "stock_mm3": 5.671,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-18.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-09-25",
+  "official_fill_pct": 15.5,
+  "stock_mm3": 6.431,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-25.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-10-02",
+  "official_fill_pct": 15.1,
+  "stock_mm3": 6.264,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-02.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-10-09",
+  "official_fill_pct": 14.7,
+  "stock_mm3": 6.098,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-09.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-10-16",
+  "official_fill_pct": 14.1,
+  "stock_mm3": 5.861,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-16.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-10-23",
+  "official_fill_pct": 14.0,
+  "stock_mm3": 5.837,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-23.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-10-30",
+  "official_fill_pct": 14.2,
+  "stock_mm3": 5.908,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-30.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-11-06",
+  "official_fill_pct": 13.9,
+  "stock_mm3": 5.789,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-06.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-11-13",
+  "official_fill_pct": 17.8,
+  "stock_mm3": 7.397,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-13.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-11-20",
+  "official_fill_pct": 17.7,
+  "stock_mm3": 7.37,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-20.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-11-27",
+  "official_fill_pct": 17.6,
+  "stock_mm3": 7.316,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-27.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-12-04",
+  "official_fill_pct": 17.5,
+  "stock_mm3": 7.289,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-04.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-12-11",
+  "official_fill_pct": 17.7,
+  "stock_mm3": 7.343,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-11.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-12-18",
+  "official_fill_pct": 17.8,
+  "stock_mm3": 7.424,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-18.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2024-12-25",
+  "official_fill_pct": 17.8,
+  "stock_mm3": 7.424,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-25.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-01-01",
+  "official_fill_pct": 18.1,
+  "stock_mm3": 7.531,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-01.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-01-08",
+  "official_fill_pct": 18.4,
+  "stock_mm3": 7.638,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-08.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-01-15",
+  "official_fill_pct": 18.6,
+  "stock_mm3": 7.746,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-15.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-01-22",
+  "official_fill_pct": 20.3,
+  "stock_mm3": 8.43,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-22.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-01-29",
+  "official_fill_pct": 20.4,
+  "stock_mm3": 8.49,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-29.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-02-05",
+  "official_fill_pct": 21.9,
+  "stock_mm3": 9.118,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-05.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-02-12",
+  "official_fill_pct": 24.5,
+  "stock_mm3": 10.203,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-12.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-02-19",
+  "official_fill_pct": 24.5,
+  "stock_mm3": 10.203,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-19.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-02-26",
+  "official_fill_pct": 24.5,
+  "stock_mm3": 10.203,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-26.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-03-05",
+  "official_fill_pct": 25.0,
+  "stock_mm3": 10.397,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-05.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-03-12",
+  "official_fill_pct": 25.5,
+  "stock_mm3": 10.623,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-12.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-03-19",
+  "official_fill_pct": 25.4,
+  "stock_mm3": 10.558,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-19.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-03-26",
+  "official_fill_pct": 25.0,
+  "stock_mm3": 10.397,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-26.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-04-02",
+  "official_fill_pct": 25.0,
+  "stock_mm3": 10.397,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-02.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-04-09",
+  "official_fill_pct": 24.8,
+  "stock_mm3": 10.3,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-09.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-04-17",
+  "official_fill_pct": 24.7,
+  "stock_mm3": 10.268,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-17.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-04-23",
+  "official_fill_pct": 24.7,
+  "stock_mm3": 10.268,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-23.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-04-30",
+  "official_fill_pct": 25.8,
+  "stock_mm3": 10.719,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-30.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-05-07",
+  "official_fill_pct": 26.2,
+  "stock_mm3": 10.881,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-07.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-05-14",
+  "official_fill_pct": 26.0,
+  "stock_mm3": 10.816,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-14.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-05-21",
+  "official_fill_pct": 25.8,
+  "stock_mm3": 10.752,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-21.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-05-28",
+  "official_fill_pct": 25.6,
+  "stock_mm3": 10.655,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-28.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-06-04",
+  "official_fill_pct": 24.9,
+  "stock_mm3": 10.364,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-04.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-06-11",
+  "official_fill_pct": 23.8,
+  "stock_mm3": 9.913,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-11.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-06-18",
+  "official_fill_pct": 23.1,
+  "stock_mm3": 9.59,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-18.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-06-25",
+  "official_fill_pct": 22.4,
+  "stock_mm3": 9.3,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-25.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-07-03",
+  "official_fill_pct": 21.3,
+  "stock_mm3": 8.879,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-03.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-07-10",
+  "official_fill_pct": 20.6,
+  "stock_mm3": 8.55,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-10.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-07-16",
+  "official_fill_pct": 19.7,
+  "stock_mm3": 8.191,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-16.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-07-23",
+  "official_fill_pct": 18.7,
+  "stock_mm3": 7.772,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-23.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-07-30",
+  "official_fill_pct": 17.8,
+  "stock_mm3": 7.397,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-30.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-08-06",
+  "official_fill_pct": 17.0,
+  "stock_mm3": 7.075,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-06.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-08-13",
+  "official_fill_pct": 16.4,
+  "stock_mm3": 6.806,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-13.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-08-20",
+  "official_fill_pct": 15.9,
+  "stock_mm3": 6.619,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-20.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-08-27",
+  "official_fill_pct": 15.5,
+  "stock_mm3": 6.431,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-27.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-09-10",
+  "official_fill_pct": 14.1,
+  "stock_mm3": 5.861,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-10.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-09-17",
+  "official_fill_pct": 13.6,
+  "stock_mm3": 5.671,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-17.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-09-25",
+  "official_fill_pct": 13.1,
+  "stock_mm3": 5.457,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-25.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-10-01",
+  "official_fill_pct": 12.8,
+  "stock_mm3": 5.314,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-01.pdf"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "date": "2025-10-08",
+  "official_fill_pct": 12.4,
+  "stock_mm3": 5.163,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-08.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-01-03",
+  "official_fill_pct": 26.5,
+  "stock_mm3": 1.911,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-03.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-01-10",
+  "official_fill_pct": 26.5,
+  "stock_mm3": 1.911,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-10.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-01-17",
+  "official_fill_pct": 26.5,
+  "stock_mm3": 1.917,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-17.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-01-24",
+  "official_fill_pct": 26.5,
+  "stock_mm3": 1.917,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-24.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-01-31",
+  "official_fill_pct": 25.7,
+  "stock_mm3": 1.854,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-31.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-02-07",
+  "official_fill_pct": 24.9,
+  "stock_mm3": 1.799,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-07.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-02-14",
+  "official_fill_pct": 25.2,
+  "stock_mm3": 1.819,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-14.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-02-21",
+  "official_fill_pct": 25.2,
+  "stock_mm3": 1.819,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-21.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-02-28",
+  "official_fill_pct": 25.2,
+  "stock_mm3": 1.819,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-28.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-03-06",
+  "official_fill_pct": 25.4,
+  "stock_mm3": 1.834,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-06.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-03-13",
+  "official_fill_pct": 25.8,
+  "stock_mm3": 1.86,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-13.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-03-20",
+  "official_fill_pct": 25.8,
+  "stock_mm3": 1.86,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-20.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-04-03",
+  "official_fill_pct": 23.4,
+  "stock_mm3": 1.688,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-03.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-04-10",
+  "official_fill_pct": 23.2,
+  "stock_mm3": 1.673,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-10.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-04-17",
+  "official_fill_pct": 22.6,
+  "stock_mm3": 1.634,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-17.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-04-24",
+  "official_fill_pct": 20.3,
+  "stock_mm3": 1.468,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-24.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-05-01",
+  "official_fill_pct": 20.5,
+  "stock_mm3": 1.477,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-01.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-05-08",
+  "official_fill_pct": 20.5,
+  "stock_mm3": 1.477,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-08.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-05-15",
+  "official_fill_pct": 19.6,
+  "stock_mm3": 1.418,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-15.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-05-22",
+  "official_fill_pct": 19.6,
+  "stock_mm3": 1.418,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-22.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-05-29",
+  "official_fill_pct": 18.9,
+  "stock_mm3": 1.368,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-29.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-06-05",
+  "official_fill_pct": 18.9,
+  "stock_mm3": 1.363,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-05.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-06-12",
+  "official_fill_pct": 18.1,
+  "stock_mm3": 1.308,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-12.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-06-19",
+  "official_fill_pct": 17.9,
+  "stock_mm3": 1.292,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-19.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-06-26",
+  "official_fill_pct": 17.7,
+  "stock_mm3": 1.279,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-26.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-07-03",
+  "official_fill_pct": 17.4,
+  "stock_mm3": 1.258,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-03.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-07-10",
+  "official_fill_pct": 17.1,
+  "stock_mm3": 1.233,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-10.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-07-17",
+  "official_fill_pct": 16.7,
+  "stock_mm3": 1.203,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-17.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-07-24",
+  "official_fill_pct": 16.3,
+  "stock_mm3": 1.178,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-24.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-07-31",
+  "official_fill_pct": 16.0,
+  "stock_mm3": 1.153,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-31.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-08-14",
+  "official_fill_pct": 15.2,
+  "stock_mm3": 1.098,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-14.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-08-21",
+  "official_fill_pct": 15.0,
+  "stock_mm3": 1.086,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-21.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-08-28",
+  "official_fill_pct": 15.0,
+  "stock_mm3": 1.082,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-28.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-09-18",
+  "official_fill_pct": 14.9,
+  "stock_mm3": 1.074,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-18.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-09-25",
+  "official_fill_pct": 15.3,
+  "stock_mm3": 1.102,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-25.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-10-02",
+  "official_fill_pct": 15.3,
+  "stock_mm3": 1.106,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-02.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-10-09",
+  "official_fill_pct": 15.2,
+  "stock_mm3": 1.098,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-09.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-10-16",
+  "official_fill_pct": 15.1,
+  "stock_mm3": 1.09,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-16.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-10-23",
+  "official_fill_pct": 15.6,
+  "stock_mm3": 1.129,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-23.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-10-30",
+  "official_fill_pct": 15.7,
+  "stock_mm3": 1.133,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-30.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-11-06",
+  "official_fill_pct": 15.6,
+  "stock_mm3": 1.129,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-06.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-11-13",
+  "official_fill_pct": 16.3,
+  "stock_mm3": 1.174,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-13.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-11-20",
+  "official_fill_pct": 16.3,
+  "stock_mm3": 1.174,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-20.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-11-27",
+  "official_fill_pct": 16.3,
+  "stock_mm3": 1.174,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-27.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-12-04",
+  "official_fill_pct": 16.3,
+  "stock_mm3": 1.174,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-04.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-12-11",
+  "official_fill_pct": 16.5,
+  "stock_mm3": 1.19,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-11.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-12-18",
+  "official_fill_pct": 16.5,
+  "stock_mm3": 1.195,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-18.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2024-12-25",
+  "official_fill_pct": 17.0,
+  "stock_mm3": 1.224,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-25.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-01-01",
+  "official_fill_pct": 17.2,
+  "stock_mm3": 1.245,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-01.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-01-08",
+  "official_fill_pct": 17.4,
+  "stock_mm3": 1.254,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-08.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-01-15",
+  "official_fill_pct": 17.5,
+  "stock_mm3": 1.262,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-15.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-01-22",
+  "official_fill_pct": 18.1,
+  "stock_mm3": 1.304,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-22.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-01-29",
+  "official_fill_pct": 18.2,
+  "stock_mm3": 1.313,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-29.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-02-05",
+  "official_fill_pct": 20.6,
+  "stock_mm3": 1.486,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-05.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-02-12",
+  "official_fill_pct": 22.0,
+  "stock_mm3": 1.591,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-12.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-02-19",
+  "official_fill_pct": 22.5,
+  "stock_mm3": 1.625,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-19.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-02-26",
+  "official_fill_pct": 22.7,
+  "stock_mm3": 1.639,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-26.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-03-05",
+  "official_fill_pct": 23.0,
+  "stock_mm3": 1.659,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-05.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-03-12",
+  "official_fill_pct": 23.1,
+  "stock_mm3": 1.668,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-12.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-03-19",
+  "official_fill_pct": 23.2,
+  "stock_mm3": 1.678,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-19.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-03-26",
+  "official_fill_pct": 23.3,
+  "stock_mm3": 1.683,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-26.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-04-02",
+  "official_fill_pct": 24.3,
+  "stock_mm3": 1.756,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-02.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-04-09",
+  "official_fill_pct": 24.5,
+  "stock_mm3": 1.77,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-09.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-04-17",
+  "official_fill_pct": 26.0,
+  "stock_mm3": 1.88,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-17.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-04-23",
+  "official_fill_pct": 26.8,
+  "stock_mm3": 1.937,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-23.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-04-30",
+  "official_fill_pct": 29.5,
+  "stock_mm3": 2.131,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-30.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-05-07",
+  "official_fill_pct": 29.9,
+  "stock_mm3": 2.159,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-07.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-05-14",
+  "official_fill_pct": 30.1,
+  "stock_mm3": 2.175,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-14.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-05-21",
+  "official_fill_pct": 30.5,
+  "stock_mm3": 2.203,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-21.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-05-28",
+  "official_fill_pct": 30.7,
+  "stock_mm3": 2.214,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-28.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-06-04",
+  "official_fill_pct": 30.7,
+  "stock_mm3": 2.219,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-04.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-06-11",
+  "official_fill_pct": 30.8,
+  "stock_mm3": 2.225,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-11.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-06-18",
+  "official_fill_pct": 30.7,
+  "stock_mm3": 2.214,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-18.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-06-25",
+  "official_fill_pct": 30.4,
+  "stock_mm3": 2.197,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-25.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-07-03",
+  "official_fill_pct": 29.8,
+  "stock_mm3": 2.153,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-03.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-07-10",
+  "official_fill_pct": 29.7,
+  "stock_mm3": 2.148,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-10.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-07-16",
+  "official_fill_pct": 29.7,
+  "stock_mm3": 2.142,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-16.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-07-23",
+  "official_fill_pct": 28.8,
+  "stock_mm3": 2.077,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-23.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-07-30",
+  "official_fill_pct": 28.3,
+  "stock_mm3": 2.041,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-30.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-08-06",
+  "official_fill_pct": 27.6,
+  "stock_mm3": 1.994,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-06.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-08-13",
+  "official_fill_pct": 26.0,
+  "stock_mm3": 1.875,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-13.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-08-20",
+  "official_fill_pct": 25.5,
+  "stock_mm3": 1.844,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-20.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-08-27",
+  "official_fill_pct": 25.2,
+  "stock_mm3": 1.819,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-27.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-09-10",
+  "official_fill_pct": 10.4,
+  "stock_mm3": 0.587,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-10.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-09-17",
+  "official_fill_pct": 10.2,
+  "stock_mm3": 0.575,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-17.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-09-25",
+  "official_fill_pct": 10.0,
+  "stock_mm3": 0.563,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-25.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-10-01",
+  "official_fill_pct": 10.0,
+  "stock_mm3": 0.567,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-01.pdf"
+ },
+ {
+  "dam": "Lakhmes",
+  "date": "2025-10-08",
+  "official_fill_pct": 9.8,
+  "stock_mm3": 0.555,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-08.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-01-03",
+  "official_fill_pct": 12.5,
+  "stock_mm3": 6.367,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-03.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-01-10",
+  "official_fill_pct": 12.2,
+  "stock_mm3": 6.217,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-10.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-01-17",
+  "official_fill_pct": 11.8,
+  "stock_mm3": 6.051,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-17.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-01-24",
+  "official_fill_pct": 11.3,
+  "stock_mm3": 5.793,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-24.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-01-31",
+  "official_fill_pct": 10.8,
+  "stock_mm3": 5.541,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-31.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-02-07",
+  "official_fill_pct": 10.3,
+  "stock_mm3": 5.289,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-07.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-02-14",
+  "official_fill_pct": 9.9,
+  "stock_mm3": 5.046,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-14.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-02-21",
+  "official_fill_pct": 14.6,
+  "stock_mm3": 7.446,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-21.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-02-28",
+  "official_fill_pct": 15.0,
+  "stock_mm3": 7.656,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-28.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-03-06",
+  "official_fill_pct": 16.5,
+  "stock_mm3": 8.456,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-06.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-03-13",
+  "official_fill_pct": 17.0,
+  "stock_mm3": 8.713,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-13.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-03-20",
+  "official_fill_pct": 17.3,
+  "stock_mm3": 8.86,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-20.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-04-03",
+  "official_fill_pct": 17.5,
+  "stock_mm3": 8.944,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-03.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-04-10",
+  "official_fill_pct": 17.0,
+  "stock_mm3": 8.671,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-10.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-04-17",
+  "official_fill_pct": 17.1,
+  "stock_mm3": 8.734,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-17.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-04-24",
+  "official_fill_pct": 17.2,
+  "stock_mm3": 8.776,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-24.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-05-01",
+  "official_fill_pct": 17.1,
+  "stock_mm3": 8.734,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-01.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-05-08",
+  "official_fill_pct": 20.0,
+  "stock_mm3": 10.213,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-08.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-05-15",
+  "official_fill_pct": 22.9,
+  "stock_mm3": 11.733,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-15.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-05-22",
+  "official_fill_pct": 29.1,
+  "stock_mm3": 14.885,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-22.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-05-29",
+  "official_fill_pct": 28.6,
+  "stock_mm3": 14.617,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-29.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-06-05",
+  "official_fill_pct": 27.9,
+  "stock_mm3": 14.287,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-05.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-06-12",
+  "official_fill_pct": 27.2,
+  "stock_mm3": 13.902,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-12.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-06-19",
+  "official_fill_pct": 26.5,
+  "stock_mm3": 13.545,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-19.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-06-26",
+  "official_fill_pct": 25.8,
+  "stock_mm3": 13.193,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-26.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-07-03",
+  "official_fill_pct": 25.2,
+  "stock_mm3": 12.889,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-03.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-07-10",
+  "official_fill_pct": 24.6,
+  "stock_mm3": 12.584,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-10.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-07-17",
+  "official_fill_pct": 24.0,
+  "stock_mm3": 12.279,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-17.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-07-24",
+  "official_fill_pct": 23.4,
+  "stock_mm3": 11.951,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-24.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-07-31",
+  "official_fill_pct": 22.9,
+  "stock_mm3": 11.684,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-31.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-08-14",
+  "official_fill_pct": 21.8,
+  "stock_mm3": 11.151,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-14.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-08-21",
+  "official_fill_pct": 24.9,
+  "stock_mm3": 12.736,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-21.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-08-28",
+  "official_fill_pct": 24.4,
+  "stock_mm3": 12.457,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-28.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-09-18",
+  "official_fill_pct": 51.7,
+  "stock_mm3": 26.438,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-18.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-09-25",
+  "official_fill_pct": 59.2,
+  "stock_mm3": 30.253,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-25.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-10-02",
+  "official_fill_pct": 39.3,
+  "stock_mm3": 20.091,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-02.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-10-09",
+  "official_fill_pct": 41.8,
+  "stock_mm3": 21.367,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-09.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-10-16",
+  "official_fill_pct": 41.1,
+  "stock_mm3": 21.029,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-16.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-10-23",
+  "official_fill_pct": 42.2,
+  "stock_mm3": 21.565,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-23.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-10-30",
+  "official_fill_pct": 43.0,
+  "stock_mm3": 21.966,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-30.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-11-06",
+  "official_fill_pct": 42.4,
+  "stock_mm3": 21.685,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-06.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-11-13",
+  "official_fill_pct": 43.7,
+  "stock_mm3": 22.328,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-13.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-11-20",
+  "official_fill_pct": 43.2,
+  "stock_mm3": 22.087,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-20.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-11-27",
+  "official_fill_pct": 30.4,
+  "stock_mm3": 15.546,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-27.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-12-04",
+  "official_fill_pct": 21.2,
+  "stock_mm3": 10.835,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-04.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-12-11",
+  "official_fill_pct": 22.2,
+  "stock_mm3": 11.369,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-11.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-12-18",
+  "official_fill_pct": 22.4,
+  "stock_mm3": 11.442,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-18.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2024-12-25",
+  "official_fill_pct": 22.4,
+  "stock_mm3": 11.442,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-25.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-01-01",
+  "official_fill_pct": 23.1,
+  "stock_mm3": 11.83,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-01.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-01-08",
+  "official_fill_pct": 22.9,
+  "stock_mm3": 11.708,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-08.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-01-15",
+  "official_fill_pct": 22.7,
+  "stock_mm3": 11.611,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-15.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-01-22",
+  "official_fill_pct": 33.6,
+  "stock_mm3": 17.194,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-22.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-01-29",
+  "official_fill_pct": 33.6,
+  "stock_mm3": 17.161,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-29.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-02-05",
+  "official_fill_pct": 34.6,
+  "stock_mm3": 17.685,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-05.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-02-12",
+  "official_fill_pct": 36.1,
+  "stock_mm3": 18.446,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-12.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-02-19",
+  "official_fill_pct": 36.4,
+  "stock_mm3": 18.586,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-19.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-02-26",
+  "official_fill_pct": 35.9,
+  "stock_mm3": 18.376,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-26.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-03-05",
+  "official_fill_pct": 35.6,
+  "stock_mm3": 18.202,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-05.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-03-12",
+  "official_fill_pct": 37.2,
+  "stock_mm3": 19.005,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-12.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-03-19",
+  "official_fill_pct": 37.0,
+  "stock_mm3": 18.9,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-19.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-03-26",
+  "official_fill_pct": 38.6,
+  "stock_mm3": 19.716,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-26.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-04-02",
+  "official_fill_pct": 46.9,
+  "stock_mm3": 23.969,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-02.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-04-09",
+  "official_fill_pct": 46.8,
+  "stock_mm3": 23.926,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-09.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-04-17",
+  "official_fill_pct": 51.9,
+  "stock_mm3": 26.531,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-17.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-04-23",
+  "official_fill_pct": 56.2,
+  "stock_mm3": 28.736,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-23.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-04-30",
+  "official_fill_pct": 56.5,
+  "stock_mm3": 28.888,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-30.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-05-07",
+  "official_fill_pct": 48.9,
+  "stock_mm3": 24.999,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-07.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-05-14",
+  "official_fill_pct": 43.8,
+  "stock_mm3": 22.408,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-14.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-05-21",
+  "official_fill_pct": 30.4,
+  "stock_mm3": 15.546,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-21.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-05-28",
+  "official_fill_pct": 35.3,
+  "stock_mm3": 18.027,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-28.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-06-04",
+  "official_fill_pct": 42.6,
+  "stock_mm3": 21.766,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-04.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-06-11",
+  "official_fill_pct": 50.4,
+  "stock_mm3": 25.788,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-11.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-06-18",
+  "official_fill_pct": 49.7,
+  "stock_mm3": 25.428,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-18.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-06-25",
+  "official_fill_pct": 48.8,
+  "stock_mm3": 24.956,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-25.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-07-03",
+  "official_fill_pct": 48.3,
+  "stock_mm3": 24.699,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-03.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-07-10",
+  "official_fill_pct": 60.2,
+  "stock_mm3": 30.796,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-10.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-07-16",
+  "official_fill_pct": 59.6,
+  "stock_mm3": 30.46,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-16.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-07-23",
+  "official_fill_pct": 57.6,
+  "stock_mm3": 29.444,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-23.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-07-30",
+  "official_fill_pct": 55.6,
+  "stock_mm3": 28.433,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-30.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-08-06",
+  "official_fill_pct": 54.2,
+  "stock_mm3": 27.691,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-06.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-08-13",
+  "official_fill_pct": 52.7,
+  "stock_mm3": 26.949,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-13.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-08-20",
+  "official_fill_pct": 51.3,
+  "stock_mm3": 26.252,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-20.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-08-27",
+  "official_fill_pct": 49.9,
+  "stock_mm3": 25.514,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-27.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-09-10",
+  "official_fill_pct": 47.8,
+  "stock_mm3": 24.441,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-10.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-09-17",
+  "official_fill_pct": 48.5,
+  "stock_mm3": 24.784,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-17.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-09-25",
+  "official_fill_pct": 51.9,
+  "stock_mm3": 26.531,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-25.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-10-01",
+  "official_fill_pct": 57.5,
+  "stock_mm3": 29.393,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-01.pdf"
+ },
+ {
+  "dam": "Mellègue",
+  "date": "2025-10-08",
+  "official_fill_pct": 39.7,
+  "stock_mm3": 20.316,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-08.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-01-03",
+  "official_fill_pct": 5.0,
+  "stock_mm3": 3.234,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-03.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-01-10",
+  "official_fill_pct": 5.0,
+  "stock_mm3": 3.201,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-10.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-01-17",
+  "official_fill_pct": 4.9,
+  "stock_mm3": 3.158,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-17.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-01-24",
+  "official_fill_pct": 4.8,
+  "stock_mm3": 3.115,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-24.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-01-31",
+  "official_fill_pct": 4.8,
+  "stock_mm3": 3.083,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-31.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-02-07",
+  "official_fill_pct": 4.7,
+  "stock_mm3": 3.061,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-07.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-02-14",
+  "official_fill_pct": 4.5,
+  "stock_mm3": 2.932,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-14.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-02-21",
+  "official_fill_pct": 4.4,
+  "stock_mm3": 2.813,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-21.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-02-28",
+  "official_fill_pct": 4.3,
+  "stock_mm3": 2.802,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-28.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-03-06",
+  "official_fill_pct": 4.3,
+  "stock_mm3": 2.791,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-06.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-03-13",
+  "official_fill_pct": 4.3,
+  "stock_mm3": 2.77,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-13.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-03-20",
+  "official_fill_pct": 4.2,
+  "stock_mm3": 2.712,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-20.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-04-03",
+  "official_fill_pct": 4.1,
+  "stock_mm3": 2.64,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-03.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-04-10",
+  "official_fill_pct": 4.0,
+  "stock_mm3": 2.586,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-10.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-04-17",
+  "official_fill_pct": 3.9,
+  "stock_mm3": 2.55,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-17.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-04-24",
+  "official_fill_pct": 3.9,
+  "stock_mm3": 2.541,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-24.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-05-01",
+  "official_fill_pct": 3.9,
+  "stock_mm3": 2.514,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-01.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-05-08",
+  "official_fill_pct": 3.8,
+  "stock_mm3": 2.487,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-08.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-05-15",
+  "official_fill_pct": 4.0,
+  "stock_mm3": 2.568,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-15.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-05-22",
+  "official_fill_pct": 3.9,
+  "stock_mm3": 2.514,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-22.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-05-29",
+  "official_fill_pct": 3.8,
+  "stock_mm3": 2.478,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-29.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-06-05",
+  "official_fill_pct": 3.8,
+  "stock_mm3": 2.432,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-05.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-06-12",
+  "official_fill_pct": 3.7,
+  "stock_mm3": 2.414,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-12.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-06-19",
+  "official_fill_pct": 3.6,
+  "stock_mm3": 2.333,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-19.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-06-26",
+  "official_fill_pct": 3.6,
+  "stock_mm3": 2.306,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-26.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-07-03",
+  "official_fill_pct": 3.5,
+  "stock_mm3": 2.267,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-03.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-07-10",
+  "official_fill_pct": 3.4,
+  "stock_mm3": 2.222,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-10.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-07-17",
+  "official_fill_pct": 3.4,
+  "stock_mm3": 2.192,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-17.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-07-24",
+  "official_fill_pct": 3.3,
+  "stock_mm3": 2.146,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-24.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-07-31",
+  "official_fill_pct": 3.3,
+  "stock_mm3": 2.101,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-31.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-08-14",
+  "official_fill_pct": 3.1,
+  "stock_mm3": 2.011,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-14.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-08-21",
+  "official_fill_pct": 3.0,
+  "stock_mm3": 1.958,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-21.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-08-28",
+  "official_fill_pct": 3.0,
+  "stock_mm3": 1.928,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-28.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-09-18",
+  "official_fill_pct": 2.9,
+  "stock_mm3": 1.866,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-18.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-09-25",
+  "official_fill_pct": 2.9,
+  "stock_mm3": 1.866,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-25.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-10-02",
+  "official_fill_pct": 2.9,
+  "stock_mm3": 1.873,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-02.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-10-09",
+  "official_fill_pct": 2.9,
+  "stock_mm3": 1.845,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-09.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-10-16",
+  "official_fill_pct": 2.8,
+  "stock_mm3": 1.838,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-16.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-10-23",
+  "official_fill_pct": 6.7,
+  "stock_mm3": 4.346,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-23.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-10-30",
+  "official_fill_pct": 7.1,
+  "stock_mm3": 4.559,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-30.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-11-06",
+  "official_fill_pct": 7.0,
+  "stock_mm3": 4.531,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-06.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-11-13",
+  "official_fill_pct": 7.8,
+  "stock_mm3": 5.044,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-13.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-11-20",
+  "official_fill_pct": 7.8,
+  "stock_mm3": 5.013,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-20.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-11-27",
+  "official_fill_pct": 7.7,
+  "stock_mm3": 4.983,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-27.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-12-04",
+  "official_fill_pct": 7.7,
+  "stock_mm3": 4.952,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-04.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-12-11",
+  "official_fill_pct": 7.6,
+  "stock_mm3": 4.922,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-11.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-12-18",
+  "official_fill_pct": 7.5,
+  "stock_mm3": 4.876,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-18.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2024-12-25",
+  "official_fill_pct": 7.5,
+  "stock_mm3": 4.845,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-25.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-01-01",
+  "official_fill_pct": 7.5,
+  "stock_mm3": 4.814,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-01.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-01-08",
+  "official_fill_pct": 7.4,
+  "stock_mm3": 4.784,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-08.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-01-15",
+  "official_fill_pct": 7.4,
+  "stock_mm3": 4.753,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-15.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-01-22",
+  "official_fill_pct": 7.3,
+  "stock_mm3": 4.738,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-22.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-01-29",
+  "official_fill_pct": 7.3,
+  "stock_mm3": 4.707,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-29.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-02-05",
+  "official_fill_pct": 8.5,
+  "stock_mm3": 5.493,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-05.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-02-12",
+  "official_fill_pct": 9.0,
+  "stock_mm3": 5.833,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-12.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-02-19",
+  "official_fill_pct": 9.2,
+  "stock_mm3": 5.913,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-19.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-02-26",
+  "official_fill_pct": 9.2,
+  "stock_mm3": 5.946,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-26.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-03-05",
+  "official_fill_pct": 9.5,
+  "stock_mm3": 6.124,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-05.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-03-12",
+  "official_fill_pct": 9.5,
+  "stock_mm3": 6.156,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-12.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-03-19",
+  "official_fill_pct": 9.5,
+  "stock_mm3": 6.14,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-19.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-03-26",
+  "official_fill_pct": 9.5,
+  "stock_mm3": 6.124,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-26.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-04-02",
+  "official_fill_pct": 9.4,
+  "stock_mm3": 6.091,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-02.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-04-09",
+  "official_fill_pct": 9.4,
+  "stock_mm3": 6.059,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-09.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-04-17",
+  "official_fill_pct": 9.3,
+  "stock_mm3": 6.01,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-17.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-04-23",
+  "official_fill_pct": 9.4,
+  "stock_mm3": 6.091,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-23.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-04-30",
+  "official_fill_pct": 9.4,
+  "stock_mm3": 6.059,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-30.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-05-07",
+  "official_fill_pct": 9.3,
+  "stock_mm3": 5.994,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-07.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-05-14",
+  "official_fill_pct": 9.2,
+  "stock_mm3": 5.913,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-14.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-05-21",
+  "official_fill_pct": 9.5,
+  "stock_mm3": 6.124,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-21.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-05-28",
+  "official_fill_pct": 9.4,
+  "stock_mm3": 6.043,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-28.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-06-04",
+  "official_fill_pct": 9.0,
+  "stock_mm3": 5.784,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-04.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-06-11",
+  "official_fill_pct": 8.6,
+  "stock_mm3": 5.525,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-11.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-06-18",
+  "official_fill_pct": 8.3,
+  "stock_mm3": 5.335,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-18.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-06-25",
+  "official_fill_pct": 7.9,
+  "stock_mm3": 5.121,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-25.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-07-03",
+  "official_fill_pct": 7.4,
+  "stock_mm3": 4.768,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-03.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-07-10",
+  "official_fill_pct": 6.9,
+  "stock_mm3": 4.488,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-10.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-07-16",
+  "official_fill_pct": 6.6,
+  "stock_mm3": 4.26,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-16.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-07-23",
+  "official_fill_pct": 6.0,
+  "stock_mm3": 3.906,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-23.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-07-30",
+  "official_fill_pct": 5.5,
+  "stock_mm3": 3.565,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-30.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-08-06",
+  "official_fill_pct": 5.1,
+  "stock_mm3": 3.3,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-06.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-08-13",
+  "official_fill_pct": 4.6,
+  "stock_mm3": 2.996,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-13.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-08-20",
+  "official_fill_pct": 4.1,
+  "stock_mm3": 2.676,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-20.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-08-27",
+  "official_fill_pct": 3.9,
+  "stock_mm3": 2.523,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-27.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-09-10",
+  "official_fill_pct": 3.5,
+  "stock_mm3": 2.259,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-10.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-09-17",
+  "official_fill_pct": 3.5,
+  "stock_mm3": 2.229,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-17.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-09-25",
+  "official_fill_pct": 3.4,
+  "stock_mm3": 2.199,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-25.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-10-01",
+  "official_fill_pct": 3.6,
+  "stock_mm3": 2.324,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-01.pdf"
+ },
+ {
+  "dam": "Nebhana",
+  "date": "2025-10-08",
+  "official_fill_pct": 3.6,
+  "stock_mm3": 2.306,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-08.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-01-03",
+  "official_fill_pct": 26.7,
+  "stock_mm3": 76.626,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-03.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-01-10",
+  "official_fill_pct": 37.2,
+  "stock_mm3": 106.683,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-10.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-01-17",
+  "official_fill_pct": 43.7,
+  "stock_mm3": 125.166,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-17.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-01-24",
+  "official_fill_pct": 44.8,
+  "stock_mm3": 128.219,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-24.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-01-31",
+  "official_fill_pct": 45.4,
+  "stock_mm3": 129.936,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-31.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-02-07",
+  "official_fill_pct": 45.5,
+  "stock_mm3": 130.324,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-07.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-02-14",
+  "official_fill_pct": 45.9,
+  "stock_mm3": 131.504,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-14.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-02-21",
+  "official_fill_pct": 45.8,
+  "stock_mm3": 131.307,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-21.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-02-28",
+  "official_fill_pct": 46.7,
+  "stock_mm3": 133.667,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-28.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-03-06",
+  "official_fill_pct": 49.3,
+  "stock_mm3": 141.374,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-06.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-03-13",
+  "official_fill_pct": 49.6,
+  "stock_mm3": 142.183,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-13.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-03-20",
+  "official_fill_pct": 49.3,
+  "stock_mm3": 141.374,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-20.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-04-03",
+  "official_fill_pct": 47.5,
+  "stock_mm3": 136.027,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-03.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-04-10",
+  "official_fill_pct": 46.6,
+  "stock_mm3": 133.47,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-10.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-04-17",
+  "official_fill_pct": 46.0,
+  "stock_mm3": 131.7,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-17.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-04-24",
+  "official_fill_pct": 45.5,
+  "stock_mm3": 130.324,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-24.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-05-01",
+  "official_fill_pct": 45.2,
+  "stock_mm3": 129.364,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-01.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-05-08",
+  "official_fill_pct": 44.6,
+  "stock_mm3": 127.837,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-08.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-05-15",
+  "official_fill_pct": 44.4,
+  "stock_mm3": 127.074,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-15.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-05-22",
+  "official_fill_pct": 43.7,
+  "stock_mm3": 125.166,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-22.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-05-29",
+  "official_fill_pct": 43.0,
+  "stock_mm3": 123.258,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-29.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-06-05",
+  "official_fill_pct": 42.6,
+  "stock_mm3": 121.922,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-05.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-06-12",
+  "official_fill_pct": 42.2,
+  "stock_mm3": 120.968,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-12.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-06-19",
+  "official_fill_pct": 42.0,
+  "stock_mm3": 120.402,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-19.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-06-26",
+  "official_fill_pct": 41.7,
+  "stock_mm3": 119.483,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-26.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-07-03",
+  "official_fill_pct": 41.2,
+  "stock_mm3": 118.012,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-03.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-07-10",
+  "official_fill_pct": 40.9,
+  "stock_mm3": 117.092,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-10.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-07-17",
+  "official_fill_pct": 40.4,
+  "stock_mm3": 115.805,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-17.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-07-24",
+  "official_fill_pct": 39.8,
+  "stock_mm3": 113.966,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-24.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-07-31",
+  "official_fill_pct": 39.0,
+  "stock_mm3": 111.759,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-31.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-08-14",
+  "official_fill_pct": 37.4,
+  "stock_mm3": 107.206,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-14.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-08-21",
+  "official_fill_pct": 36.9,
+  "stock_mm3": 105.637,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-21.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-08-28",
+  "official_fill_pct": 36.0,
+  "stock_mm3": 103.195,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-28.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-09-18",
+  "official_fill_pct": 33.0,
+  "stock_mm3": 94.52,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-18.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-09-25",
+  "official_fill_pct": 32.2,
+  "stock_mm3": 92.275,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-25.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-10-02",
+  "official_fill_pct": 31.3,
+  "stock_mm3": 89.556,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-02.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-10-09",
+  "official_fill_pct": 30.3,
+  "stock_mm3": 86.837,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-09.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-10-16",
+  "official_fill_pct": 29.4,
+  "stock_mm3": 84.208,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-16.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-10-23",
+  "official_fill_pct": 28.9,
+  "stock_mm3": 82.826,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-23.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-10-30",
+  "official_fill_pct": 27.8,
+  "stock_mm3": 79.756,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-30.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-11-06",
+  "official_fill_pct": 26.9,
+  "stock_mm3": 77.213,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-06.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-11-13",
+  "official_fill_pct": 27.1,
+  "stock_mm3": 77.654,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-13.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-11-20",
+  "official_fill_pct": 26.0,
+  "stock_mm3": 74.571,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-20.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-11-27",
+  "official_fill_pct": 25.5,
+  "stock_mm3": 73.103,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-27.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-12-04",
+  "official_fill_pct": 25.4,
+  "stock_mm3": 72.809,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-04.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-12-11",
+  "official_fill_pct": 28.7,
+  "stock_mm3": 82.212,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-11.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-12-18",
+  "official_fill_pct": 29.3,
+  "stock_mm3": 84.054,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-18.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2024-12-25",
+  "official_fill_pct": 35.8,
+  "stock_mm3": 102.672,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-25.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-01-01",
+  "official_fill_pct": 38.5,
+  "stock_mm3": 110.345,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-01.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-01-08",
+  "official_fill_pct": 38.0,
+  "stock_mm3": 108.95,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-08.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-01-15",
+  "official_fill_pct": 50.5,
+  "stock_mm3": 144.608,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-15.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-01-22",
+  "official_fill_pct": 64.9,
+  "stock_mm3": 185.969,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-22.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-01-29",
+  "official_fill_pct": 66.1,
+  "stock_mm3": 189.361,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-29.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-02-05",
+  "official_fill_pct": 70.4,
+  "stock_mm3": 201.802,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-05.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-02-12",
+  "official_fill_pct": 73.9,
+  "stock_mm3": 211.611,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-12.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-02-19",
+  "official_fill_pct": 74.9,
+  "stock_mm3": 214.525,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-19.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-02-26",
+  "official_fill_pct": 74.7,
+  "stock_mm3": 214.039,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-26.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-03-05",
+  "official_fill_pct": 74.8,
+  "stock_mm3": 214.282,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-05.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-03-12",
+  "official_fill_pct": 74.5,
+  "stock_mm3": 213.554,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-12.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-03-19",
+  "official_fill_pct": 73.5,
+  "stock_mm3": 210.64,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-19.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-03-26",
+  "official_fill_pct": 72.0,
+  "stock_mm3": 206.27,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-26.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-04-02",
+  "official_fill_pct": 73.0,
+  "stock_mm3": 209.184,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-02.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-04-09",
+  "official_fill_pct": 72.6,
+  "stock_mm3": 207.97,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-09.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-04-17",
+  "official_fill_pct": 71.3,
+  "stock_mm3": 204.359,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-17.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-04-23",
+  "official_fill_pct": 72.0,
+  "stock_mm3": 206.27,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-23.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-04-30",
+  "official_fill_pct": 71.6,
+  "stock_mm3": 205.057,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-30.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-05-07",
+  "official_fill_pct": 70.4,
+  "stock_mm3": 201.569,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-07.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-05-14",
+  "official_fill_pct": 69.9,
+  "stock_mm3": 200.174,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-14.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-05-21",
+  "official_fill_pct": 68.8,
+  "stock_mm3": 197.152,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-21.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-05-28",
+  "official_fill_pct": 67.1,
+  "stock_mm3": 192.301,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-28.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-06-04",
+  "official_fill_pct": 65.3,
+  "stock_mm3": 187.1,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-04.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-06-11",
+  "official_fill_pct": 63.3,
+  "stock_mm3": 181.244,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-11.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-06-18",
+  "official_fill_pct": 61.3,
+  "stock_mm3": 175.521,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-18.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-06-25",
+  "official_fill_pct": 59.2,
+  "stock_mm3": 169.622,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-25.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-07-03",
+  "official_fill_pct": 56.9,
+  "stock_mm3": 163.001,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-03.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-07-10",
+  "official_fill_pct": 55.2,
+  "stock_mm3": 158.156,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-10.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-07-16",
+  "official_fill_pct": 53.7,
+  "stock_mm3": 153.799,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-16.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-07-23",
+  "official_fill_pct": 52.4,
+  "stock_mm3": 150.271,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-23.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-07-30",
+  "official_fill_pct": 51.0,
+  "stock_mm3": 146.022,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-30.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-08-06",
+  "official_fill_pct": 49.4,
+  "stock_mm3": 141.576,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-06.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-08-13",
+  "official_fill_pct": 47.8,
+  "stock_mm3": 137.01,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-13.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-08-20",
+  "official_fill_pct": 46.4,
+  "stock_mm3": 132.88,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-20.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-08-27",
+  "official_fill_pct": 45.4,
+  "stock_mm3": 129.936,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-27.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-09-10",
+  "official_fill_pct": 42.8,
+  "stock_mm3": 122.494,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-10.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-09-17",
+  "official_fill_pct": 41.3,
+  "stock_mm3": 118.379,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-17.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-09-25",
+  "official_fill_pct": 39.5,
+  "stock_mm3": 113.046,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-25.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-10-01",
+  "official_fill_pct": 38.2,
+  "stock_mm3": 109.473,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-01.pdf"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "date": "2025-10-08",
+  "official_fill_pct": 36.7,
+  "stock_mm3": 105.113,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-08.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-01-03",
+  "official_fill_pct": 30.8,
+  "stock_mm3": 178.6,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-03.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-01-10",
+  "official_fill_pct": 31.5,
+  "stock_mm3": 182.956,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-10.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-01-17",
+  "official_fill_pct": 33.3,
+  "stock_mm3": 193.544,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-17.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-01-24",
+  "official_fill_pct": 34.1,
+  "stock_mm3": 198.098,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-24.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-01-31",
+  "official_fill_pct": 34.1,
+  "stock_mm3": 198.098,
+  "source": "ONAGRI bulletin BARRAGES-2024-01-31.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-02-07",
+  "official_fill_pct": 34.3,
+  "stock_mm3": 198.857,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-07.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-02-14",
+  "official_fill_pct": 34.7,
+  "stock_mm3": 201.134,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-14.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-02-21",
+  "official_fill_pct": 35.8,
+  "stock_mm3": 208.021,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-21.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-02-28",
+  "official_fill_pct": 38.3,
+  "stock_mm3": 222.198,
+  "source": "ONAGRI bulletin BARRAGES-2024-02-28.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-03-06",
+  "official_fill_pct": 39.9,
+  "stock_mm3": 231.338,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-06.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-03-13",
+  "official_fill_pct": 42.0,
+  "stock_mm3": 243.736,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-13.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-03-20",
+  "official_fill_pct": 42.5,
+  "stock_mm3": 246.499,
+  "source": "ONAGRI bulletin BARRAGES-2024-03-20.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-04-03",
+  "official_fill_pct": 42.9,
+  "stock_mm3": 248.768,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-03.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-04-10",
+  "official_fill_pct": 41.7,
+  "stock_mm3": 241.801,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-10.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-04-17",
+  "official_fill_pct": 41.0,
+  "stock_mm3": 237.656,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-17.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-04-24",
+  "official_fill_pct": 40.1,
+  "stock_mm3": 232.682,
+  "source": "ONAGRI bulletin BARRAGES-2024-04-24.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-05-01",
+  "official_fill_pct": 39.1,
+  "stock_mm3": 227.037,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-01.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-05-08",
+  "official_fill_pct": 38.4,
+  "stock_mm3": 222.736,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-08.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-05-15",
+  "official_fill_pct": 37.3,
+  "stock_mm3": 216.371,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-15.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-05-22",
+  "official_fill_pct": 36.4,
+  "stock_mm3": 211.153,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-22.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-05-29",
+  "official_fill_pct": 35.3,
+  "stock_mm3": 204.677,
+  "source": "ONAGRI bulletin BARRAGES-2024-05-29.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-06-05",
+  "official_fill_pct": 34.0,
+  "stock_mm3": 197.592,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-05.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-06-12",
+  "official_fill_pct": 32.8,
+  "stock_mm3": 190.097,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-12.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-06-19",
+  "official_fill_pct": 31.4,
+  "stock_mm3": 181.971,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-19.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-06-26",
+  "official_fill_pct": 30.2,
+  "stock_mm3": 175.249,
+  "source": "ONAGRI bulletin BARRAGES-2024-06-26.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-07-03",
+  "official_fill_pct": 29.0,
+  "stock_mm3": 168.106,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-03.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-07-10",
+  "official_fill_pct": 27.6,
+  "stock_mm3": 159.987,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-10.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-07-17",
+  "official_fill_pct": 26.2,
+  "stock_mm3": 152.255,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-17.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-07-24",
+  "official_fill_pct": 24.9,
+  "stock_mm3": 144.422,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-24.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-07-31",
+  "official_fill_pct": 23.5,
+  "stock_mm3": 136.321,
+  "source": "ONAGRI bulletin BARRAGES-2024-07-31.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-08-14",
+  "official_fill_pct": 20.9,
+  "stock_mm3": 121.324,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-14.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-08-21",
+  "official_fill_pct": 19.7,
+  "stock_mm3": 114.139,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-21.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-08-28",
+  "official_fill_pct": 18.6,
+  "stock_mm3": 107.811,
+  "source": "ONAGRI bulletin BARRAGES-2024-08-28.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-09-18",
+  "official_fill_pct": 17.3,
+  "stock_mm3": 100.301,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-18.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-09-25",
+  "official_fill_pct": 16.7,
+  "stock_mm3": 97.088,
+  "source": "ONAGRI bulletin BARRAGES-2024-09-25.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-10-02",
+  "official_fill_pct": 16.3,
+  "stock_mm3": 94.838,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-02.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-10-09",
+  "official_fill_pct": 16.7,
+  "stock_mm3": 97.088,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-09.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-10-16",
+  "official_fill_pct": 16.2,
+  "stock_mm3": 93.757,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-16.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-10-23",
+  "official_fill_pct": 15.9,
+  "stock_mm3": 92.315,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-23.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-10-30",
+  "official_fill_pct": 16.6,
+  "stock_mm3": 96.143,
+  "source": "ONAGRI bulletin BARRAGES-2024-10-30.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-11-06",
+  "official_fill_pct": 16.1,
+  "stock_mm3": 93.216,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-06.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-11-13",
+  "official_fill_pct": 16.3,
+  "stock_mm3": 94.658,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-13.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-11-20",
+  "official_fill_pct": 16.0,
+  "stock_mm3": 93.036,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-20.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-11-27",
+  "official_fill_pct": 15.5,
+  "stock_mm3": 89.792,
+  "source": "ONAGRI bulletin BARRAGES-2024-11-27.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-12-04",
+  "official_fill_pct": 16.0,
+  "stock_mm3": 93.036,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-04.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-12-11",
+  "official_fill_pct": 15.8,
+  "stock_mm3": 91.594,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-11.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-12-18",
+  "official_fill_pct": 15.5,
+  "stock_mm3": 89.792,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-18.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2024-12-25",
+  "official_fill_pct": 15.2,
+  "stock_mm3": 88.17,
+  "source": "ONAGRI bulletin BARRAGES-2024-12-25.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-01-01",
+  "official_fill_pct": 16.5,
+  "stock_mm3": 95.954,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-01.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-01-08",
+  "official_fill_pct": 17.4,
+  "stock_mm3": 101.057,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-08.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-01-15",
+  "official_fill_pct": 17.4,
+  "stock_mm3": 101.246,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-15.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-01-22",
+  "official_fill_pct": 19.0,
+  "stock_mm3": 109.986,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-22.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-01-29",
+  "official_fill_pct": 19.7,
+  "stock_mm3": 114.139,
+  "source": "ONAGRI bulletin BARRAGES-2025-01-29.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-02-05",
+  "official_fill_pct": 19.8,
+  "stock_mm3": 115.151,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-05.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-02-12",
+  "official_fill_pct": 20.4,
+  "stock_mm3": 118.649,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-12.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-02-19",
+  "official_fill_pct": 20.7,
+  "stock_mm3": 119.883,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-19.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-02-26",
+  "official_fill_pct": 20.5,
+  "stock_mm3": 118.855,
+  "source": "ONAGRI bulletin BARRAGES-2025-02-26.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-03-05",
+  "official_fill_pct": 20.3,
+  "stock_mm3": 117.62,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-05.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-03-12",
+  "official_fill_pct": 20.3,
+  "stock_mm3": 117.62,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-12.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-03-19",
+  "official_fill_pct": 20.2,
+  "stock_mm3": 117.414,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-19.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-03-26",
+  "official_fill_pct": 20.0,
+  "stock_mm3": 115.974,
+  "source": "ONAGRI bulletin BARRAGES-2025-03-26.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-04-02",
+  "official_fill_pct": 20.0,
+  "stock_mm3": 116.18,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-02.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-04-09",
+  "official_fill_pct": 21.1,
+  "stock_mm3": 122.558,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-09.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-04-17",
+  "official_fill_pct": 21.7,
+  "stock_mm3": 125.671,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-17.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-04-23",
+  "official_fill_pct": 22.7,
+  "stock_mm3": 131.833,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-23.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-04-30",
+  "official_fill_pct": 27.4,
+  "stock_mm3": 158.827,
+  "source": "ONAGRI bulletin BARRAGES-2025-04-30.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-05-07",
+  "official_fill_pct": 31.1,
+  "stock_mm3": 180.754,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-07.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-05-14",
+  "official_fill_pct": 34.1,
+  "stock_mm3": 197.845,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-14.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-05-21",
+  "official_fill_pct": 37.1,
+  "stock_mm3": 215.588,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-21.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-05-28",
+  "official_fill_pct": 40.6,
+  "stock_mm3": 235.445,
+  "source": "ONAGRI bulletin BARRAGES-2025-05-28.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-06-04",
+  "official_fill_pct": 39.8,
+  "stock_mm3": 230.8,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-04.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-06-11",
+  "official_fill_pct": 39.1,
+  "stock_mm3": 226.768,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-11.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-06-18",
+  "official_fill_pct": 37.9,
+  "stock_mm3": 220.048,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-18.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-06-25",
+  "official_fill_pct": 36.8,
+  "stock_mm3": 213.501,
+  "source": "ONAGRI bulletin BARRAGES-2025-06-25.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-07-03",
+  "official_fill_pct": 35.3,
+  "stock_mm3": 204.93,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-03.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-07-10",
+  "official_fill_pct": 34.0,
+  "stock_mm3": 197.592,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-10.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-07-16",
+  "official_fill_pct": 32.9,
+  "stock_mm3": 191.082,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-16.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-07-23",
+  "official_fill_pct": 31.4,
+  "stock_mm3": 182.464,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-23.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-07-30",
+  "official_fill_pct": 30.2,
+  "stock_mm3": 175.01,
+  "source": "ONAGRI bulletin BARRAGES-2025-07-30.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-08-06",
+  "official_fill_pct": 28.9,
+  "stock_mm3": 167.874,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-06.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-08-13",
+  "official_fill_pct": 27.8,
+  "stock_mm3": 161.378,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-13.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-08-20",
+  "official_fill_pct": 26.8,
+  "stock_mm3": 155.412,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-20.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-08-27",
+  "official_fill_pct": 25.8,
+  "stock_mm3": 149.775,
+  "source": "ONAGRI bulletin BARRAGES-2025-08-27.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-09-10",
+  "official_fill_pct": 24.0,
+  "stock_mm3": 139.386,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-10.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-09-17",
+  "official_fill_pct": 23.2,
+  "stock_mm3": 134.595,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-17.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-09-25",
+  "official_fill_pct": 22.6,
+  "stock_mm3": 131.408,
+  "source": "ONAGRI bulletin BARRAGES-2025-09-25.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-10-01",
+  "official_fill_pct": 22.7,
+  "stock_mm3": 131.62,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-01.pdf"
+ },
+ {
+  "dam": "Sidi Salem",
+  "date": "2025-10-08",
+  "official_fill_pct": 23.0,
+  "stock_mm3": 133.745,
+  "source": "ONAGRI bulletin BARRAGES-2025-10-08.pdf"
+ }
+]

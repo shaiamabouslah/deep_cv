@@ -86,7 +86,7 @@
           <div id="statAlerts" class="stat-num text-3xl font-bold">0</div>
         </div>
         <div class="bg-white/10 backdrop-blur rounded-xl px-5 py-3 min-w-[140px]">
-          <div class="text-xs text-cyan-50/80 uppercase tracking-wide">Surface moyenne</div>
+          <div class="text-xs text-cyan-50/80 uppercase tracking-wide">Indice de surface moyen</div>
           <div id="statAvg" class="stat-num text-3xl font-bold">0%</div>
         </div>
       </div>
@@ -99,9 +99,13 @@
     <section class="lg:col-span-2 bg-white rounded-xl shadow p-4 lift">
       <div class="flex items-center justify-between mb-3">
         <h2 class="font-semibold text-lg">Carte des sites</h2>
-        <p class="text-xs text-slate-500">Clique un site existant, ou dessine un point/une zone pour en créer un nouveau</p>
+        <div class="flex items-center gap-3">
+          <button id="worldViewBtn" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-sky-600 text-sky-700 hover:bg-sky-50 transition">Vue monde</button>
+          <p class="text-xs text-slate-500 hidden md:block">Clique un site, ou place un point sur n'importe quel lac du monde</p>
+        </div>
       </div>
       <div id="map"></div>
+      <div id="worldSummary" class="hidden mt-3 p-3 rounded-lg bg-slate-50 text-xs text-slate-700"></div>
       <div class="flex flex-wrap gap-4 mt-3 text-xs text-slate-600">
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> normal</span>
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> vigilance</span>
@@ -248,34 +252,69 @@
       document.getElementById('resultContent').insertAdjacentHTML('beforeend', html);
     }
 
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function frenchDate(iso) {
+      return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+    }
+
+    function renderDeepForecast(dl) {
+      const rows = dl.horizons.map(h => `
+        <div class="flex justify-between gap-3">
+          <span>semaine du ${frenchDate(h.target_week)}</span>
+          <span><b>${h.predicted_pct}%</b> <span class="text-cyan-700">(± ${h.typical_error_pts.toFixed(1)} pts typique)</span></span>
+        </div>`).join('');
+      const errors = dl.horizons.map(h => h.typical_error_pts.toFixed(1)).join(' / ');
+      const baseline = dl.horizons.map(h => h.no_change_error_pts.toFixed(1)).join(' / ');
+      return `
+        <div class="mt-2 p-2 rounded-lg bg-cyan-50 text-cyan-900 text-xs">
+          <b>Prévision par apprentissage profond (GRU)</b>
+          <span class="text-cyan-700">— niveau actuel ${dl.current_pct}% (semaine du ${frenchDate(dl.origin_week)})</span>
+          ${dl.projected_alert_level ? `<span class="ml-1 px-1.5 py-0.5 rounded ${LEVEL_BANNER_BG[dl.projected_alert_level] || 'bg-red-600'} text-white">risque ${dl.projected_alert_level}</span>` : ''}
+          <div class="mt-1">${rows}</div>
+          <p class="mt-1 text-cyan-800">Erreur moyenne mesurée sur des semaines jamais vues (${errors} pts à +1/+2/+4 semaines), contre ${baseline} pts en supposant « aucun changement ». Modèle expérimental : il améliore les semaines ordinaires mais ne prévoit pas les grosses variations.</p>
+        </div>`;
+    }
+
+    function renderLinearForecast(data) {
+      if (data.insufficient_history) {
+        return `<div class="mt-2 p-2 rounded-lg bg-slate-50 text-slate-500 text-xs">Prévision : ${data.note}</div>`;
+      }
+      const trendColor = { hausse: 'text-emerald-700', baisse: 'text-red-600', stable: 'text-slate-600' };
+      return `
+        <div class="mt-2 p-2 rounded-lg bg-cyan-50 text-cyan-900 text-xs">
+          <b>Prévision à ${data.days_ahead} jours (tendance linéaire) :</b>
+          <span class="${trendColor[data.trend_label]}">${data.current_pct}% → ${data.projected_pct}% (${data.trend_label})</span>
+          ${data.projected_alert_level ? `<span class="ml-1 px-1.5 py-0.5 rounded ${LEVEL_BANNER_BG[data.projected_alert_level] || 'bg-red-600'} text-white">risque ${data.projected_alert_level}</span>` : ''}
+          <br/><span class="text-cyan-700">Pluie prévue : ${data.rain_forecast.total_mm} mm sur ${data.rain_forecast.days}j (${data.rain_forecast.level})</span>
+          ${data.caveat ? `<p class="mt-1 text-cyan-800">${data.caveat}</p>` : ''}
+        </div>`;
+    }
+
     async function loadForecast(siteName) {
+      appendResult('<div id="forecastSlot" class="mt-2 p-2 rounded-lg bg-slate-50 text-slate-500 text-xs">Calcul de la prévision (jusqu\'à 30 s la première fois)…</div>');
+      const slot = document.getElementById('forecastSlot');
       try {
         const res = await fetch(`/forecast/${encodeURIComponent(siteName)}`);
         const data = await res.json();
-        if (!res.ok) return;
+        if (!slot.isConnected) return;
+        if (!res.ok) { slot.remove(); return; }
 
-        if (data.insufficient_history) {
-          appendResult(`
-            <div class="mt-2 p-2 rounded-lg bg-slate-50 text-slate-500 text-xs">
-              Prévision : ${data.note}
-            </div>
-          `);
-          return;
+        const dl = data.deep_learning;
+        if (dl && dl.available) {
+          slot.outerHTML = renderDeepForecast(dl);
+        } else {
+          const note = dl && dl.reason ? `<div class="mt-2 p-2 rounded-lg bg-slate-50 text-slate-500 text-xs">${dl.reason}</div>` : '';
+          slot.outerHTML = note + renderLinearForecast(data);
         }
-
-        const trendColor = { hausse: 'text-emerald-700', baisse: 'text-red-600', stable: 'text-slate-600' };
-        appendResult(`
-          <div class="mt-2 p-2 rounded-lg bg-cyan-50 text-cyan-900 text-xs">
-            <b>Prévision à ${data.days_ahead} jours :</b>
-            <span class="${trendColor[data.trend_label]}">${data.current_pct}% → ${data.projected_pct}% (${data.trend_label})</span>
-            ${data.projected_alert_level ? `<span class="ml-1 px-1.5 py-0.5 rounded ${LEVEL_BANNER_BG[data.projected_alert_level] || 'bg-red-600'} text-white">risque ${data.projected_alert_level}</span>` : ''}
-            <br/><span class="text-cyan-700">Pluie prévue : ${data.rain_forecast.total_mm} mm sur ${data.rain_forecast.days}j (${data.rain_forecast.level})</span>
-            ${data.caveat ? `<p class="mt-1 text-cyan-800">${data.caveat}</p>` : ''}
-          </div>
-        `);
       } catch (e) {
         // Forecast is a secondary signal — a network hiccup here shouldn't
         // block or clutter the main analysis result.
+        if (slot.isConnected) slot.remove();
       }
     }
 
@@ -358,7 +397,7 @@
 
     function addMarker(site) {
       const marker = L.marker([site.lat, site.lon], { icon: markerIcon(site) }).addTo(map);
-      marker.bindTooltip(site.name);
+      marker.bindTooltip(escapeHtml(site.name));
       marker.on('click', () => selectSite(site.name));
       markers[site.name] = marker;
     }
@@ -368,7 +407,18 @@
       sites.forEach(addMarker);
     }
 
-    async function runLiveAnalysis(siteName, lat, lon, polygon) {
+    function renderLakeFacts(lake) {
+      const volume = lake.volume_mm3 != null ? ` · volume ${Math.round(Number(lake.volume_mm3))} millions de m³` : '';
+      const depth = lake.mean_depth_m != null ? ` · profondeur moyenne ${Number(lake.mean_depth_m).toFixed(1)} m` : '';
+      const kind = lake.type === 'reservoir' ? 'Réservoir' : 'Lac naturel';
+      return `
+        <div class="mt-2 p-2 rounded-lg bg-slate-50 text-slate-600 text-xs">
+          <b>Plan d'eau détecté (HydroLAKES)</b> : ${kind}${lake.name ? ' « ' + escapeHtml(lake.name) + ' »' : ''}, ${escapeHtml(lake.country || '')}
+          · ${lake.area_km2} km²${depth}${volume}. Le contour réel de ce plan d'eau a servi de zone d'analyse.
+        </div>`;
+    }
+
+    async function runLiveAnalysis(siteName, lat, lon, polygon, lakeFacts) {
       showResult('<p class="text-slate-500">Récupération de l\'image Sentinel-2 la plus récente…</p>');
       try {
         const res = await fetch('/analyze_location', {
@@ -381,7 +431,12 @@
 
         showResult(`
           <p><span class="text-slate-500">Image du</span> <b>${data.acquisition_date}</b> (nuages ${data.cloud_pct}%)</p>
-          <p><span class="text-slate-500">Surface d'eau :</span> <b>${data.water_area.water_area_pct}%</b> <span class="text-slate-400">(${data.water_area.current_area_ha} ha / ${data.water_area.max_observed_area_ha} ha max. observé)</span></p>
+          ${data.fill_estimate ? `
+            <div class="p-2 rounded-lg bg-sky-50 text-sky-900">
+              <span class="text-slate-500">Taux de remplissage estimé :</span> <b class="text-lg">${data.fill_estimate.fill_pct}%</b>
+              <div class="text-xs text-sky-700">± ${data.fill_estimate.typical_error_pts} points en moyenne, mesuré sur des périodes non vues : calibré sur ${data.fill_estimate.n_points} bulletins officiels ONAGRI (${data.fill_estimate.period[0].slice(0, 7)} à ${data.fill_estimate.period[1].slice(0, 7)}), propre à ce barrage.</div>
+            </div>` : `<p class="text-xs text-slate-400">Pas de calibration officielle pour ce site : seul l'indice de surface est disponible, il ne donne pas le taux de remplissage.</p>`}
+          <p><span class="text-slate-500">Indice de surface :</span> <b>${data.water_area.water_area_pct}%</b> <span class="text-slate-400">(${data.water_area.current_area_ha} ha / ${data.water_area.max_observed_area_ha} ha max. observé)</span></p>
           <p><span class="text-slate-500">NDVI (végétation) :</span> <b>${data.indices.ndvi}</b> — ${data.vegetation_note}</p>
           <p><span class="text-slate-500">NDCI (algues) :</span> <b>${data.indices.ndci}</b></p>
           <p><span class="text-slate-500">NDTI (turbidité) :</span> <b>${data.indices.ndti}</b></p>
@@ -396,11 +451,12 @@
             <b>Diagnostic de l'agent${data.recommendation.ai_generated ? '' : ' (règles, pas IA)'} :</b><br/>${data.recommendation.text}
           </div>
         `);
+        if (lakeFacts) appendResult(renderLakeFacts(lakeFacts));
         await loadHistory(siteName);
         await refreshSiteStatus();
         await loadAlertBanner();
         await loadBriefing();
-        await loadForecast(siteName);
+        loadForecast(siteName);
       } catch (e) {
         showResult(`<p class="text-red-600">Erreur réseau : ${e}</p>`);
       }
@@ -498,6 +554,69 @@
       });
     }
 
+    let worldLayer = null;
+
+    function iouColor(iou, issue) {
+      if (issue) return '#94a3b8';
+      return iou >= 0.7 ? '#10b981' : iou >= 0.4 ? '#f59e0b' : '#dc2626';
+    }
+
+    function renderWorldSummary(data) {
+      const s = data.summary || {};
+      const type = s.by_type || {};
+      const fmt = (x) => x && x.iou != null ? `${x.iou.toFixed(2)} <span class="text-slate-400">[${x.iou_ci95[0].toFixed(2)}–${x.iou_ci95[1].toFixed(2)}]</span>` : '–';
+      return `
+        <div class="font-semibold mb-1">Le modèle de segmentation testé dans le monde entier (${data.tiles.length} lacs et réservoirs tirés au hasard, 14 zones climatiques ; ${data.tiles.filter(t => !t.quality_issue).length} avec une étiquette fiable servent aux scores)</div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
+          <div class="p-2 rounded bg-white"><div class="text-slate-500">Barrages tunisiens (usage visé)</div><div class="text-base font-semibold">${s.tunisia_iou != null ? s.tunisia_iou.toFixed(2) : '–'}</div></div>
+          <div class="p-2 rounded bg-white"><div class="text-slate-500">Réservoirs du monde (${type.reservoir ? type.reservoir.n : 0})</div><div class="text-base font-semibold">${fmt(type.reservoir)}</div></div>
+          <div class="p-2 rounded bg-white"><div class="text-slate-500">Lacs naturels du monde (${type.lake ? type.lake.n : 0})</div><div class="text-base font-semibold">${fmt(type.lake)}</div></div>
+        </div>
+        <div class="text-slate-500">IoU (1 = parfait) avec intervalle à 95 %. Le modèle transfère aux réservoirs, pas aux lacs naturels (eau turbide, sombre ou végétalisée). Référence : masque NDWI de la même image, une vérité terrain approchée.</div>
+        <div class="flex flex-wrap gap-3 mt-2">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#10b981"></span> IoU ≥ 0.7</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#f59e0b"></span> 0.4 – 0.7</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#dc2626"></span> &lt; 0.4</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#94a3b8"></span> étiquette peu fiable</span>
+        </div>`;
+    }
+
+    async function toggleWorldView() {
+      const btn = document.getElementById('worldViewBtn');
+      const box = document.getElementById('worldSummary');
+      if (worldLayer) {
+        map.removeLayer(worldLayer);
+        worldLayer = null;
+        box.classList.add('hidden');
+        map.setView([34.5, 9.3], 7);
+        btn.textContent = 'Vue monde';
+        return;
+      }
+      btn.disabled = true;
+      try {
+        const res = await fetch('/world/benchmark');
+        const data = await res.json();
+        if (!res.ok) { showResult(`<p class="text-red-600">${escapeHtml(data.detail)}</p>`); return; }
+        worldLayer = L.layerGroup(data.tiles.map(t => {
+          const iou = t.iou[data.served_model];
+          const kind = t.type === 'reservoir' ? 'réservoir' : 'lac naturel';
+          const note = t.quality_issue ? ` — étiquette peu fiable (${escapeHtml(t.quality_issue)})` : '';
+          return L.circleMarker([t.lat, t.lon], {
+            radius: t.type === 'reservoir' ? 7 : 5, color: '#fff', weight: 1, fillOpacity: 0.9,
+            fillColor: iouColor(iou, t.quality_issue),
+          }).bindTooltip(`${escapeHtml(t.country)} · ${escapeHtml(t.biome)} · ${kind} ${t.area_km2} km² · IoU ${iou.toFixed(2)}${note}`);
+        })).addTo(map);
+        map.setView([20, 10], 2);
+        box.innerHTML = renderWorldSummary(data);
+        box.classList.remove('hidden');
+        btn.textContent = 'Revenir à la Tunisie';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById('worldViewBtn').addEventListener('click', toggleWorldView);
+
     function initMap() {
       map = L.map('map').setView([34.5, 9.3], 7);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -521,9 +640,22 @@
         const layer = e.layer;
         drawnItems.addLayer(layer);
 
-        let lat, lon, polygon = null;
+        let lat, lon, polygon = null, lake = null;
         if (e.layerType === 'marker') {
           ({ lat, lng: lon } = layer.getLatLng());
+          // A point on any lake of the world: use that water body's real outline.
+          showResult('<p class="text-slate-500">Recherche du plan d\'eau à cet endroit (HydroLAKES)…</p>');
+          try {
+            const res = await fetch(`/lake_at?lat=${lat}&lon=${lon}`);
+            if (res.ok) {
+              lake = await res.json();
+              polygon = lake.polygon;
+              if (!polygon) showResult(`<p class="text-amber-600">« ${escapeHtml(lake.name || 'Ce plan d\'eau')} » fait ${lake.area_km2} km² : trop grand pour une analyse satellite complète. Analyse sur un disque de 6 km autour du point.</p>`);
+            } else {
+              const err = await res.json();
+              showResult(`<p class="text-amber-600">${escapeHtml(err.detail)} Analyse sur un disque de 6 km autour du point.</p>`);
+            }
+          } catch (err) { /* offline lookup: fall back to the default disc */ }
         } else if (e.layerType === 'polygon') {
           const latlngs = layer.getLatLngs()[0];
           polygon = latlngs.map(p => [p.lng, p.lat]);
@@ -531,7 +663,8 @@
           lat = centroid.lat; lon = centroid.lng;
         }
 
-        const name = await askSiteName(`Site (${lat.toFixed(3)}, ${lon.toFixed(3)})`);
+        const suggestion = lake && lake.name ? lake.name : `Site (${lat.toFixed(3)}, ${lon.toFixed(3)})`;
+        const name = await askSiteName(suggestion);
         if (!name) { drawnItems.removeLayer(layer); return; }
 
         const createRes = await fetch('/sites', {
@@ -541,13 +674,13 @@
         });
         const created = await createRes.json();
         if (created.name_taken) {
-          showResult(`<p class="text-amber-600">Le nom "${name}" existe déjà pour un autre site (lat=${created.lat}, lon=${created.lon}) — choisis un autre nom.</p>`);
+          showResult(`<p class="text-amber-600">Le nom "${escapeHtml(name)}" existe déjà pour un autre site (lat=${created.lat}, lon=${created.lon}) — choisis un autre nom.</p>`);
           drawnItems.removeLayer(layer);
           return;
         }
         addMarker({ name, lat, lon, alert_active: false, latest_reading: null });
         selectSite(name);
-        runLiveAnalysis(name, lat, lon, polygon);
+        runLiveAnalysis(name, lat, lon, polygon, lake);
       });
     }
 

@@ -17,9 +17,9 @@ def build_transforms(image_size):
 
 
 def build_normalize_transform():
-    """ToTensor + normalize only, for an image already standardized to the
-    model's input size (e.g. via src.preprocess.standardize) — avoids
-    resizing twice and keeps the mask pixel-aligned with the input image."""
+    """ToTensor + normalize only, for an image already resized to the
+    model's input size the same way training does — avoids resizing twice
+    and keeps the mask pixel-aligned with the input image."""
     return transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),

@@ -19,4 +19,5 @@ def load_model(checkpoint_path, device="cpu"):
     model = build_segmentation_model(checkpoint["encoder_name"], encoder_weights=None)
     model.load_state_dict(checkpoint["state_dict"])
     model.to(device).eval()
-    return model, checkpoint["image_size"]
+    # Older checkpoints predate threshold tuning on the validation set.
+    return model, checkpoint["image_size"], checkpoint.get("threshold", 0.5)

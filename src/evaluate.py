@@ -1,68 +1,112 @@
-"""Evaluates the trained segmentation model against a small local sample
-(data/samples/images + data/samples/masks).
+"""Evaluates the segmentation model on the real evaluation set in data/eval/
+(Sentinel-2 tiles of the monitored dams at three seasons, NDWI-labelled —
+see src/build_eval_set.py), with exactly the serving preprocessing: plain
+resize, the checkpoint's threshold, no-data pixels excluded.
 
-Those 5 fixtures are SYNTHETIC (a rectangle on a flat background, generated
-deterministically — see the generation snippet in the project history),
-not real satellite imagery. They exist to validate the pipeline mechanics
-end-to-end (model loads, inference runs, IoU computes correctly, DVC/CI
-report a real metrics.json instead of silently skipping) — the mean IoU
-they produce is NOT a measure of real-world segmentation accuracy. The
-actual accuracy claim comes from the Kaggle training/validation run (see
-notebooks/kaggle_train_segmentation.ipynb and its MLflow run)."""
+Scored only on pixels that are neither cloud nor no-data:
+  - iou: dataset-level IoU (total intersection / total union), not a mean
+    of per-image IoUs, which over-weights tiles with almost no water
+  - precision / recall of the water class
+  - water_pct_mae: mean absolute error, in percentage points, of each
+    tile's water share — the number the app actually shows to users
+Per-image details go to reports/eval_per_image.json.
+"""
 import json
 import os
 
 import numpy as np
 import torch
 from PIL import Image
+from torchvision import transforms
 
-from src.data import build_transforms, load_params
-from src.metrics import iou_score
+from src.data import build_normalize_transform, load_params
 from src.model import load_model
+from src.preprocess import nodata_mask
+
+EVAL_DIR = "data/eval"
+PER_IMAGE_OUT = "reports/eval_per_image.json"
 
 
-def evaluate(params_path="params.yaml"):
-    params = load_params(params_path)
-    model_path = params["model"]["model_path"]
-    samples_dir = "data/samples"
+def _write(path, payload):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
 
-    os.makedirs(os.path.dirname(params["paths"]["metrics_out"]), exist_ok=True)
 
-    if not os.path.exists(model_path) or not os.path.isdir(os.path.join(samples_dir, "images")):
-        metrics = {"status": "skipped", "reason": "missing model.pt or data/samples/"}
-        with open(params["paths"]["metrics_out"], "w") as f:
-            json.dump(metrics, f, indent=2)
-        print(metrics)
-        return metrics
+def _predict(model, image, image_size, threshold):
+    resized = transforms.Resize((image_size, image_size))(image)
+    with torch.no_grad():
+        prob = torch.sigmoid(model(build_normalize_transform()(resized).unsqueeze(0)))[0, 0].numpy()
+    return prob > threshold, ~nodata_mask(np.array(resized))
 
-    model, image_size = load_model(model_path)
-    transform = build_transforms(image_size)
 
-    image_dir = os.path.join(samples_dir, "images")
-    mask_dir = os.path.join(samples_dir, "masks")
+def score_checkpoint(model_path, eval_dir=EVAL_DIR):
+    """Scores one checkpoint on the eval set. Returns (metrics, per_image)."""
+    model, image_size, threshold = load_model(model_path)
+    with open(os.path.join(eval_dir, "manifest.json"), encoding="utf-8") as f:
+        manifest = json.load(f)
 
-    ious = []
-    for name in sorted(os.listdir(image_dir)):
-        image = Image.open(os.path.join(image_dir, name)).convert("RGB")
-        mask = Image.open(os.path.join(mask_dir, name)).convert("L").resize((image_size, image_size))
+    tp = fp = fn = 0
+    per_image = []
+    for entry in manifest:
+        image = Image.open(os.path.join(eval_dir, "images", entry["file"])).convert("RGB")
+        label = np.array(
+            Image.open(os.path.join(eval_dir, "masks", entry["file"])).convert("L")
+            .resize((image_size, image_size), Image.NEAREST)
+        )
+        pred, valid = _predict(model, image, image_size, threshold)
+        valid &= (label < 64) | (label > 192)
+        truth = (label > 192) & valid
+        pred &= valid
 
-        tensor = transform(image).unsqueeze(0)
-        with torch.no_grad():
-            pred = (torch.sigmoid(model(tensor)) > 0.5).float()
-        true = (torch.from_numpy(np.array(mask)).reshape(1, 1, image_size, image_size) > 127).float()
-        ious.append(iou_score(pred, true))
+        tile_tp = int((pred & truth).sum())
+        tile_fp = int((pred & ~truth).sum())
+        tile_fn = int((~pred & truth).sum())
+        tp, fp, fn = tp + tile_tp, fp + tile_fp, fn + tile_fn
+        n_valid = max(int(valid.sum()), 1)
+        per_image.append({
+            **entry,
+            "true_water_pct": round(truth.sum() / n_valid * 100, 2),
+            "pred_water_pct": round(pred.sum() / n_valid * 100, 2),
+            "tp": tile_tp, "fp": tile_fp, "fn": tile_fn, "valid_fraction": round(float(valid.mean()), 3),
+        })
 
     metrics = {
         "status": "ok",
-        "mean_iou": sum(ious) / len(ious),
-        "n_samples": len(ious),
-        "note": "synthetic smoke-test fixtures — validates pipeline mechanics, not real-world accuracy",
+        "n_images": len(per_image),
+        "threshold": threshold,
+        "iou": round(tp / max(tp + fp + fn, 1), 4),
+        "precision": round(tp / max(tp + fp, 1), 4),
+        "recall": round(tp / max(tp + fn, 1), 4),
+        "water_pct_mae": round(
+            float(np.mean([abs(p["pred_water_pct"] - p["true_water_pct"]) for p in per_image])), 3
+        ),
     }
-    with open(params["paths"]["metrics_out"], "w") as f:
-        json.dump(metrics, f, indent=2)
+    return metrics, per_image
+
+
+def evaluate(params_path="params.yaml", eval_dir=EVAL_DIR, per_image_out=PER_IMAGE_OUT, track=False):
+    params = load_params(params_path)
+    model_path = params["model"]["model_path"]
+    metrics_out = params["paths"]["metrics_out"]
+    os.makedirs(os.path.dirname(metrics_out), exist_ok=True)
+
+    if not os.path.exists(model_path) or not os.path.exists(os.path.join(eval_dir, "manifest.json")):
+        metrics = {"status": "skipped", "reason": "missing model.pt or data/eval/"}
+        _write(metrics_out, metrics)
+        print(metrics)
+        return metrics
+
+    metrics, per_image = score_checkpoint(model_path, eval_dir)
+    _write(metrics_out, metrics)
+    _write(per_image_out, per_image)
     print(metrics)
+    if track:
+        from src import tracking
+
+        tracking.log_experiment("segmentation-water", "evaluate served model", params={"checkpoint": model_path, "eval_dir": eval_dir},
+                                metrics=metrics, artifacts=[metrics_out], tags={"source": "dvc stage evaluate"})
     return metrics
 
 
 if __name__ == "__main__":
-    evaluate()
+    evaluate(track=True)

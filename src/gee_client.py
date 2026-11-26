@@ -49,9 +49,74 @@ def _ensure_initialized(project=None):
     _EE_INITIALIZED = True
 
 
+# Sentinel-2 Scene Classification (SCL) classes that hide the ground:
+# no data, saturated/defective, cloud shadow, cloud medium/high, thin cirrus.
+SCL_HIDDEN_CLASSES = [0, 1, 3, 8, 9, 10]
+MIN_VISIBLE_FRACTION = 0.7
+
+
+def _clear_mask(image):
+    """1 where the pixel is cloud/shadow/no-data free, 0 elsewhere."""
+    hidden = SCL_HIDDEN_CLASSES
+    return image.select("SCL").remap(hidden, [0] * len(hidden), 1).unmask(0).rename("clear")
+
+
+def _clearest_image(region, start, end, focus=None, months=None, scale=20, max_cloud=None):
+    """Picks the scene where `focus` (a 0/1 image, default the whole region)
+    is most visible, judged pixel by pixel from the SCL band — not the
+    least cloudy tile overall, since a tile can be 2% cloudy with every
+    cloud sitting on the dam, or cover only part of it (tile edge).
+    `months` = (first, last) restricts to those calendar months (e.g. the
+    ice-free season of a northern lake). `scale` is the resolution used to
+    rank scenes (coarser is much cheaper on large regions) and `max_cloud`
+    drops scenes whose whole-tile cloud percentage is above it beforehand.
+    Returns (image, visible_fraction, acquisition_date)."""
+    import ee
+
+    weight = (focus if focus is not None else ee.Image.constant(1)).multiply(ee.Image.pixelArea())
+
+    def score(img):
+        sums = ee.Image.cat([weight.multiply(_clear_mask(img)).rename("c"), weight.rename("w")]).reduceRegion(
+            reducer=ee.Reducer.sum(), geometry=region, scale=scale, maxPixels=1e9, bestEffort=True
+        )
+        return img.set("visible_fraction", ee.Number(sums.get("c")).divide(ee.Number(sums.get("w")).max(1)))
+
+    collection = (
+        ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+        .filterBounds(region)
+        .filterDate(start, end)
+    )
+    if max_cloud is not None:
+        collection = collection.filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", max_cloud))
+    if months is not None:
+        collection = collection.filter(ee.Filter.calendarRange(months[0], months[1], "month"))
+    if collection.size().getInfo() == 0:
+        raise ValueError(f"Aucune image Sentinel-2 trouvée entre {start} et {end} pour ce site.")
+
+    image = collection.map(score).sort("visible_fraction", False).first()
+    info = ee.Dictionary({
+        "visible_fraction": image.get("visible_fraction"),
+        "time": image.get("system:time_start"),
+        "id": image.get("system:index"),
+    }).getInfo()
+    acquisition_date = datetime.datetime.utcfromtimestamp(info["time"] / 1000).date().isoformat()
+    image = image.set("scene_id", info["id"])
+    return image, info["visible_fraction"], acquisition_date
+
+
+def _require_visible(visible_fraction, start, end):
+    if visible_fraction < MIN_VISIBLE_FRACTION:
+        raise ValueError(
+            f"Site masqué (nuages, ombres ou hors champ) sur toutes les images entre {start} et "
+            f"{end} : visible à {visible_fraction * 100:.0f}% au mieux, minimum "
+            f"{MIN_VISIBLE_FRACTION * 100:.0f}% — pas de mesure fiable possible."
+        )
+
+
 def fetch_sentinel2_bands(lat, lon, buffer_m=500, days_back=30, project=None, polygon_coords=None):
     """Returns mean band reflectance over the region of interest, from the
-    least cloudy Sentinel-2 scene in the last `days_back` days.
+    Sentinel-2 scene in the last `days_back` days where that region is most
+    visible, averaging only cloud/shadow-free pixels.
 
     By default the region is a circular buffer around (lat, lon). If
     `polygon_coords` is given (a list of [lon, lat] pairs, as drawn by the
@@ -69,31 +134,18 @@ def fetch_sentinel2_bands(lat, lon, buffer_m=500, days_back=30, project=None, po
     end = datetime.date.today()
     start = end - datetime.timedelta(days=days_back)
 
-    collection = (
-        ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-        .filterBounds(region)
-        .filterDate(str(start), str(end))
-        .sort("CLOUDY_PIXEL_PERCENTAGE")
-    )
+    image, visible_fraction, acquisition_date = _clearest_image(region, str(start), str(end))
+    _require_visible(visible_fraction, start, end)
 
-    image = collection.first()
-    info = image.getInfo()
-    if info is None:
-        raise ValueError(
-            f"Aucune image Sentinel-2 trouvée dans les {days_back} derniers jours pour ce site."
-        )
-
-    bands = image.select(["B2", "B3", "B4", "B5", "B8", "B11"])
+    bands = image.select(["B2", "B3", "B4", "B5", "B8", "B11"]).updateMask(_clear_mask(image))
     means = bands.reduceRegion(reducer=ee.Reducer.mean(), geometry=region, scale=10).getInfo()
-
-    date_ms = image.get("system:time_start").getInfo()
-    acquisition_date = datetime.datetime.utcfromtimestamp(date_ms / 1000).date().isoformat()
-    cloud_pct = image.get("CLOUDY_PIXEL_PERCENTAGE").getInfo()
 
     return {
         "bands": means,
         "acquisition_date": acquisition_date,
-        "cloud_pct": round(cloud_pct, 1) if cloud_pct is not None else None,
+        # Share of the site hidden on the chosen image (clouds/shadows/no-data),
+        # measured over the site itself rather than the whole 100 km tile.
+        "cloud_pct": round((1 - visible_fraction) * 100, 1),
     }
 
 
@@ -160,7 +212,7 @@ def explain_level_change(water_area_pct_change, rainfall):
 
 
 def compute_indices(bands):
-    b2, b3, b4, b5, b8 = bands["B2"], bands["B3"], bands["B4"], bands["B5"], bands["B8"]
+    b3, b4, b5, b8 = bands["B3"], bands["B4"], bands["B5"], bands["B8"]
     eps = 1e-6
 
     ndwi = (b3 - b8) / (b3 + b8 + eps)
@@ -256,7 +308,14 @@ def fetch_calibrated_water_area(lat, lon, start=None, end=None, days_back=30, pr
 
     `max_area_m2` lets a caller (e.g. backfill_monthly_history) compute the
     site's max extent once and reuse it across many months, since it
-    doesn't change over time."""
+    doesn't change over time.
+
+    Clouds: the scene is chosen for how much of the reservoir's known
+    extent is visible, water is only counted on clear pixels, and the
+    percentage is taken over the visible part of the extent only. A
+    half-clouded reservoir would otherwise read as a 50% drop and raise a
+    false alert; when less than MIN_VISIBLE_FRACTION is visible on every
+    scene, no reading is produced at all (ValueError)."""
     _ensure_initialized(project)
     import ee
 
@@ -270,37 +329,28 @@ def fetch_calibrated_water_area(lat, lon, start=None, end=None, days_back=30, pr
         start_date = end_date - datetime.timedelta(days=days_back)
         start, end = str(start_date), str(end_date)
 
-    collection = (
-        ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-        .filterBounds(region)
-        .filterDate(start, end)
-        .sort("CLOUDY_PIXEL_PERCENTAGE")
-    )
-    image = collection.first()
-    if image.getInfo() is None:
-        raise ValueError(f"Aucune image Sentinel-2 trouvée entre {start} et {end} pour ce site.")
-
-    ndwi_img = image.normalizedDifference(["B3", "B8"]).rename("NDWI")
-    water_mask = ndwi_img.gt(0)
-    pixel_area = ee.Image.pixelArea()
-
-    current_area = water_mask.multiply(pixel_area).reduceRegion(
-        reducer=ee.Reducer.sum(), geometry=region, scale=10, maxPixels=1e9, bestEffort=True
-    ).get("NDWI")
-
     if max_area_m2 is None:
         max_area_m2 = fetch_max_extent_area_m2(region, project=project)
 
-    date_ms = image.get("system:time_start").getInfo()
-    acquisition_date = datetime.datetime.utcfromtimestamp(date_ms / 1000).date().isoformat()
-    current_m2 = current_area.getInfo() or 0.0
+    focus = None
+    if max_area_m2:
+        focus = ee.Image("JRC/GSW1_4/GlobalSurfaceWater").select("max_extent").unmask(0)
+    image, visible_fraction, acquisition_date = _clearest_image(region, start, end, focus=focus)
+    _require_visible(visible_fraction, start, end)
 
-    pct = min(100.0, current_m2 / max_area_m2 * 100) if max_area_m2 else None
+    water_mask = image.normalizedDifference(["B3", "B8"]).gt(0).And(_clear_mask(image)).rename("water")
+    current_m2 = water_mask.multiply(ee.Image.pixelArea()).reduceRegion(
+        reducer=ee.Reducer.sum(), geometry=region, scale=10, maxPixels=1e9, bestEffort=True
+    ).get("water").getInfo() or 0.0
+
+    visible_max_m2 = max_area_m2 * visible_fraction
+    pct = min(100.0, current_m2 / visible_max_m2 * 100) if visible_max_m2 else None
 
     return {
         "water_area_pct": round(pct, 1) if pct is not None else None,
         "current_area_ha": round(current_m2 / 10000, 2),
         "max_observed_area_ha": round(max_area_m2 / 10000, 2),
+        "visible_fraction": round(visible_fraction, 3),
         "acquisition_date": acquisition_date,
         "max_area_m2": max_area_m2,
     }

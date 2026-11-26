@@ -1,0 +1,101 @@
+[
+ {
+  "dam": "Sidi Salem",
+  "official_date": "2025-09-01",
+  "official_pct": 22.7,
+  "surface_pct": 61.2,
+  "image_date": "2025-09-04",
+  "visible": 1.0,
+  "source": "press citing ONAGRI/DGRE (earlier round)"
+ },
+ {
+  "dam": "Sidi Salem",
+  "official_date": "2026-04-07",
+  "official_pct": 50.0,
+  "surface_pct": 79.7,
+  "image_date": "2026-04-07",
+  "visible": 1.0,
+  "source": "press citing ONAGRI/DGRE (earlier round)"
+ },
+ {
+  "dam": "Nebhana",
+  "official_date": "2025-09-01",
+  "official_pct": 3.4,
+  "surface_pct": 35.4,
+  "image_date": "2025-08-27",
+  "visible": 1,
+  "source": "press citing ONAGRI/DGRE (earlier round)"
+ },
+ {
+  "dam": "Sidi Salem",
+  "official_date": "2024-07-26",
+  "official_pct": 25.0,
+  "surface_pct": 59.4,
+  "image_date": "2024-07-26",
+  "visible": 1.0,
+  "source": "leconomistemaghrebin.com 2024-07-27"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "official_date": "2024-07-26",
+  "official_pct": 40.0,
+  "surface_pct": 51.3,
+  "image_date": "2024-07-31",
+  "visible": 1.0,
+  "source": "leconomistemaghrebin.com 2024-07-27"
+ },
+ {
+  "dam": "Nebhana",
+  "official_date": "2024-07-26",
+  "official_pct": 3.0,
+  "surface_pct": 41.3,
+  "image_date": "2024-07-21",
+  "visible": 1,
+  "source": "leconomistemaghrebin.com 2024-07-27"
+ },
+ {
+  "dam": "Bir M'cherga",
+  "official_date": "2024-07-26",
+  "official_pct": 19.0,
+  "surface_pct": 40.1,
+  "image_date": "2024-07-28",
+  "visible": 1,
+  "source": "leconomistemaghrebin.com 2024-07-27"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "official_date": "2025-07-18",
+  "official_pct": 53.0,
+  "surface_pct": 63.4,
+  "image_date": "2025-07-23",
+  "visible": 1.0,
+  "source": "webmanagercenter.com 2025-07-21"
+ },
+ {
+  "dam": "Mellègue",
+  "official_date": "2025-07-18",
+  "official_pct": 59.0,
+  "surface_pct": 45.1,
+  "image_date": "2025-07-16",
+  "visible": 1,
+  "source": "webmanagercenter.com 2025-07-21"
+ },
+ {
+  "dam": "Sidi Salem",
+  "official_date": "2025-02-05",
+  "official_pct": 19.8,
+  "surface_pct": 56.3,
+  "image_date": "2025-02-11",
+  "visible": 1.0,
+  "source": "search snippet citing ONAGRI (unfetched)"
+ },
+ {
+  "dam": "Sidi El Barrak",
+  "official_date": "2025-02-05",
+  "official_pct": 70.4,
+  "surface_pct": 75.7,
+  "image_date": "2025-02-11",
+  "visible": 0.982,
+  "source": "search snippet citing ONAGRI (unfetched)"
+ }
+]

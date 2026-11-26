@@ -1,6 +1,9 @@
 {
   "status": "ok",
-  "mean_iou": 0.10877399444580078,
-  "n_samples": 5,
-  "note": "synthetic smoke-test fixtures \u2014 validates pipeline mechanics, not real-world accuracy"
+  "n_images": 18,
+  "threshold": 0.3,
+  "iou": 0.7576,
+  "precision": 0.8562,
+  "recall": 0.868,
+  "water_pct_mae": 0.72
 }

@@ -1,4 +1,3 @@
-import pytest
 
 from src import forecast
 from src.forecast import classify_rain_level, compute_trend, fetch_rain_forecast, project_risk

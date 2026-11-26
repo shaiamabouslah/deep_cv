@@ -1,3 +1,4 @@
+from src import agent
 from src.agent import generate_briefing, generate_fused_recommendation
 
 
@@ -55,3 +56,16 @@ def test_fused_recommendation_includes_gee_and_alert_in_fallback(monkeypatch):
     assert "NDVI=0.2" in result["text"]
     assert "critique" in result["text"]
     assert "Offre et demande" in result["text"]
+
+
+FILL = {"fill_pct": 41.3, "typical_error_pts": 1.6, "n_points": 61, "period": ["2024-01-03", "2025-10-08"]}
+
+
+def test_rule_based_fusion_states_the_calibrated_fill_rate_with_its_error():
+    text = agent._rule_based_fusion({"water_area_pct": 70.0, "source": "satellite", "fill_estimate": FILL})
+    assert "41%" in text and "1.6" in text and "61 bulletins" in text
+
+
+def test_llm_context_carries_the_fill_rate_so_the_answer_is_grounded_in_it():
+    context = agent._format_fusion_context({"site": "Sidi Salem", "water_area_pct": 70.0, "source": "satellite", "fill_estimate": FILL})
+    assert "Taux de remplissage estimé : 41%" in context

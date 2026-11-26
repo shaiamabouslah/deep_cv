@@ -1,6 +1,12 @@
+import numpy as np
 from PIL import Image, ImageDraw
 
-from src.preprocess import preprocess_catalog, sharpness_score, standardize
+from src.preprocess import nodata_mask, preprocess_catalog, sharpness_score, standardize
+
+
+def test_nodata_mask_flags_only_pure_black():
+    rgb = np.array([[[0, 0, 0], [2, 3, 1]], [[20, 40, 35], [8, 8, 8]]], dtype=np.uint8)
+    assert nodata_mask(rgb).tolist() == [[True, True], [False, False]]
 
 
 def make_sharp_image(size=(300, 200), color="red"):

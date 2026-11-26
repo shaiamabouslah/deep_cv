@@ -1,0 +1,1025 @@
+{
+ "served": {
+  "all_tiles": {
+   "n": 104,
+   "iou": 0.555,
+   "precision": 0.693,
+   "recall": 0.736,
+   "water_pct_error": 5.22
+  },
+  "clean": {
+   "overall": {
+    "n": 90,
+    "iou": 0.566,
+    "precision": 0.709,
+    "recall": 0.738,
+    "water_pct_error": 5.07,
+    "iou_ci95": [
+     0.494,
+     0.642
+    ]
+   },
+   "by_biome": {
+    "Boreal forest": {
+     "n": 8,
+     "iou": 0.66,
+     "precision": 0.703,
+     "recall": 0.915,
+     "water_pct_error": 2.95,
+     "iou_ci95": [
+      0.447,
+      0.81
+     ]
+    },
+    "Mangrove": {
+     "n": 8,
+     "iou": 0.556,
+     "precision": 0.644,
+     "recall": 0.802,
+     "water_pct_error": 11.29,
+     "iou_ci95": [
+      0.362,
+      0.754
+     ]
+    },
+    "Desert": {
+     "n": 7,
+     "iou": 0.723,
+     "precision": 0.842,
+     "recall": 0.837,
+     "water_pct_error": 1.09,
+     "iou_ci95": [
+      0.538,
+      0.802
+     ]
+    },
+    "Temperate broadleaf forest": {
+     "n": 7,
+     "iou": 0.584,
+     "precision": 0.777,
+     "recall": 0.701,
+     "water_pct_error": 2.22,
+     "iou_ci95": [
+      0.44,
+      0.774
+     ]
+    },
+    "Tropical dry forest": {
+     "n": 7,
+     "iou": 0.704,
+     "precision": 0.853,
+     "recall": 0.801,
+     "water_pct_error": 2.2,
+     "iou_ci95": [
+      0.533,
+      0.816
+     ]
+    },
+    "Temperate conifer forest": {
+     "n": 7,
+     "iou": 0.523,
+     "precision": 0.892,
+     "recall": 0.559,
+     "water_pct_error": 2.42,
+     "iou_ci95": [
+      0.384,
+      0.706
+     ]
+    },
+    "Mediterranean": {
+     "n": 7,
+     "iou": 0.705,
+     "precision": 0.799,
+     "recall": 0.856,
+     "water_pct_error": 2.96,
+     "iou_ci95": [
+      0.435,
+      0.806
+     ]
+    },
+    "Montane grassland": {
+     "n": 7,
+     "iou": 0.579,
+     "precision": 0.782,
+     "recall": 0.69,
+     "water_pct_error": 1.91,
+     "iou_ci95": [
+      0.356,
+      0.824
+     ]
+    },
+    "Tropical moist forest": {
+     "n": 6,
+     "iou": 0.428,
+     "precision": 0.749,
+     "recall": 0.5,
+     "water_pct_error": 9.75,
+     "iou_ci95": [
+      0.162,
+      0.731
+     ]
+    },
+    "Tropical savanna": {
+     "n": 6,
+     "iou": 0.716,
+     "precision": 0.799,
+     "recall": 0.874,
+     "water_pct_error": 3.99,
+     "iou_ci95": [
+      0.514,
+      0.823
+     ]
+    },
+    "Tundra": {
+     "n": 5,
+     "iou": 0.525,
+     "precision": 0.842,
+     "recall": 0.582,
+     "water_pct_error": 8.61,
+     "iou_ci95": [
+      0.248,
+      0.636
+     ]
+    },
+    "Temperate grassland": {
+     "n": 5,
+     "iou": 0.509,
+     "precision": 0.543,
+     "recall": 0.891,
+     "water_pct_error": 3.39,
+     "iou_ci95": [
+      0.295,
+      0.85
+     ]
+    },
+    "Tropical conifer forest": {
+     "n": 5,
+     "iou": 0.599,
+     "precision": 0.668,
+     "recall": 0.854,
+     "water_pct_error": 3.72,
+     "iou_ci95": [
+      0.434,
+      0.813
+     ]
+    },
+    "Flooded grassland": {
+     "n": 5,
+     "iou": 0.346,
+     "precision": 0.485,
+     "recall": 0.548,
+     "water_pct_error": 18.34,
+     "iou_ci95": [
+      0.202,
+      0.539
+     ]
+    }
+   },
+   "by_continent": {
+    "North America": {
+     "n": 25,
+     "iou": 0.62,
+     "precision": 0.765,
+     "recall": 0.765,
+     "water_pct_error": 3.73,
+     "iou_ci95": [
+      0.493,
+      0.717
+     ]
+    },
+    "Europe": {
+     "n": 18,
+     "iou": 0.686,
+     "precision": 0.802,
+     "recall": 0.826,
+     "water_pct_error": 2.66,
+     "iou_ci95": [
+      0.55,
+      0.79
+     ]
+    },
+    "South America": {
+     "n": 18,
+     "iou": 0.497,
+     "precision": 0.588,
+     "recall": 0.762,
+     "water_pct_error": 7.31,
+     "iou_ci95": [
+      0.346,
+      0.677
+     ]
+    },
+    "Asia": {
+     "n": 16,
+     "iou": 0.463,
+     "precision": 0.642,
+     "recall": 0.624,
+     "water_pct_error": 6.69,
+     "iou_ci95": [
+      0.307,
+      0.625
+     ]
+    },
+    "Africa": {
+     "n": 10,
+     "iou": 0.583,
+     "precision": 0.755,
+     "recall": 0.719,
+     "water_pct_error": 7.15,
+     "iou_ci95": [
+      0.393,
+      0.8
+     ]
+    },
+    "Oceania": {
+     "n": 3,
+     "iou": 0.584,
+     "precision": 0.725,
+     "recall": 0.751,
+     "water_pct_error": 1.65,
+     "iou_ci95": [
+      0.0,
+      0.694
+     ]
+    }
+   },
+   "by_type": {
+    "lake": {
+     "n": 72,
+     "iou": 0.539,
+     "precision": 0.682,
+     "recall": 0.72,
+     "water_pct_error": 6.05,
+     "iou_ci95": [
+      0.459,
+      0.622
+     ]
+    },
+    "reservoir": {
+     "n": 18,
+     "iou": 0.773,
+     "precision": 0.896,
+     "recall": 0.85,
+     "water_pct_error": 1.15,
+     "iou_ci95": [
+      0.7,
+      0.823
+     ]
+    }
+   }
+  },
+  "excluded_tiles": {
+   "almost no labelled water": 12,
+   "mostly ignored (snow, cloud or no data)": 2
+  },
+  "failures": 22,
+  "worst_tiles": [
+   {
+    "site": "lake 9433",
+    "country": "United States of America",
+    "biome": "Temperate broadleaf forest",
+    "iou": 0.0,
+    "true_pct": 3.1,
+    "pred_pct": 0.02
+   },
+   {
+    "site": "lake 1299",
+    "country": "Kazakhstan",
+    "biome": "Desert",
+    "iou": 0.0,
+    "true_pct": 2.66,
+    "pred_pct": 0.61
+   },
+   {
+    "site": "lake 183947",
+    "country": "Australia",
+    "biome": "Mediterranean",
+    "iou": 0.0,
+    "true_pct": 2.26,
+    "pred_pct": 0.6
+   },
+   {
+    "site": "lake 120934",
+    "country": "Argentina",
+    "biome": "Montane grassland",
+    "iou": 0.0,
+    "true_pct": 1.38,
+    "pred_pct": 1.11
+   },
+   {
+    "site": "lake 17307",
+    "country": "Denmark",
+    "biome": "Tundra",
+    "iou": 0.02,
+    "true_pct": 14.47,
+    "pred_pct": 0.49
+   },
+   {
+    "site": "lake 116375",
+    "country": "Venezuela",
+    "biome": "Tropical moist forest",
+    "iou": 0.05,
+    "true_pct": 17.6,
+    "pred_pct": 0.93
+   },
+   {
+    "site": "lake 116502",
+    "country": "Panama",
+    "biome": "Mangrove",
+    "iou": 0.1,
+    "true_pct": 14.69,
+    "pred_pct": 20.7
+   },
+   {
+    "site": "lake 177757",
+    "country": "India",
+    "biome": "Tropical moist forest",
+    "iou": 0.12,
+    "true_pct": 32.12,
+    "pred_pct": 4.73
+   }
+  ]
+ },
+ "previous (v1)": {
+  "all_tiles": {
+   "n": 104,
+   "iou": 0.442,
+   "precision": 0.612,
+   "recall": 0.614,
+   "water_pct_error": 8.14
+  },
+  "clean": {
+   "overall": {
+    "n": 90,
+    "iou": 0.449,
+    "precision": 0.625,
+    "recall": 0.614,
+    "water_pct_error": 7.71,
+    "iou_ci95": [
+     0.365,
+     0.535
+    ]
+   },
+   "by_biome": {
+    "Boreal forest": {
+     "n": 8,
+     "iou": 0.579,
+     "precision": 0.663,
+     "recall": 0.821,
+     "water_pct_error": 3.07,
+     "iou_ci95": [
+      0.378,
+      0.721
+     ]
+    },
+    "Mangrove": {
+     "n": 8,
+     "iou": 0.585,
+     "precision": 0.834,
+     "recall": 0.663,
+     "water_pct_error": 8.21,
+     "iou_ci95": [
+      0.278,
+      0.729
+     ]
+    },
+    "Desert": {
+     "n": 7,
+     "iou": 0.56,
+     "precision": 0.663,
+     "recall": 0.784,
+     "water_pct_error": 4.26,
+     "iou_ci95": [
+      0.333,
+      0.719
+     ]
+    },
+    "Temperate broadleaf forest": {
+     "n": 7,
+     "iou": 0.477,
+     "precision": 0.753,
+     "recall": 0.566,
+     "water_pct_error": 3.92,
+     "iou_ci95": [
+      0.319,
+      0.658
+     ]
+    },
+    "Tropical dry forest": {
+     "n": 7,
+     "iou": 0.602,
+     "precision": 0.818,
+     "recall": 0.695,
+     "water_pct_error": 2.7,
+     "iou_ci95": [
+      0.306,
+      0.793
+     ]
+    },
+    "Temperate conifer forest": {
+     "n": 7,
+     "iou": 0.403,
+     "precision": 0.704,
+     "recall": 0.485,
+     "water_pct_error": 2.67,
+     "iou_ci95": [
+      0.24,
+      0.62
+     ]
+    },
+    "Mediterranean": {
+     "n": 7,
+     "iou": 0.496,
+     "precision": 0.639,
+     "recall": 0.689,
+     "water_pct_error": 7.18,
+     "iou_ci95": [
+      0.202,
+      0.673
+     ]
+    },
+    "Montane grassland": {
+     "n": 7,
+     "iou": 0.382,
+     "precision": 0.512,
+     "recall": 0.602,
+     "water_pct_error": 5.97,
+     "iou_ci95": [
+      0.113,
+      0.736
+     ]
+    },
+    "Tropical moist forest": {
+     "n": 6,
+     "iou": 0.208,
+     "precision": 0.292,
+     "recall": 0.419,
+     "water_pct_error": 23.51,
+     "iou_ci95": [
+      0.041,
+      0.574
+     ]
+    },
+    "Tropical savanna": {
+     "n": 6,
+     "iou": 0.633,
+     "precision": 0.705,
+     "recall": 0.861,
+     "water_pct_error": 7.3,
+     "iou_ci95": [
+      0.387,
+      0.802
+     ]
+    },
+    "Tundra": {
+     "n": 5,
+     "iou": 0.31,
+     "precision": 0.866,
+     "recall": 0.325,
+     "water_pct_error": 16.02,
+     "iou_ci95": [
+      0.088,
+      0.46
+     ]
+    },
+    "Temperate grassland": {
+     "n": 5,
+     "iou": 0.337,
+     "precision": 0.438,
+     "recall": 0.593,
+     "water_pct_error": 4.83,
+     "iou_ci95": [
+      0.153,
+      0.788
+     ]
+    },
+    "Tropical conifer forest": {
+     "n": 5,
+     "iou": 0.639,
+     "precision": 0.804,
+     "recall": 0.756,
+     "water_pct_error": 2.66,
+     "iou_ci95": [
+      0.455,
+      0.834
+     ]
+    },
+    "Flooded grassland": {
+     "n": 5,
+     "iou": 0.222,
+     "precision": 0.35,
+     "recall": 0.379,
+     "water_pct_error": 22.84,
+     "iou_ci95": [
+      0.137,
+      0.322
+     ]
+    }
+   },
+   "by_continent": {
+    "North America": {
+     "n": 25,
+     "iou": 0.596,
+     "precision": 0.792,
+     "recall": 0.707,
+     "water_pct_error": 4.49,
+     "iou_ci95": [
+      0.464,
+      0.691
+     ]
+    },
+    "Europe": {
+     "n": 18,
+     "iou": 0.516,
+     "precision": 0.766,
+     "recall": 0.613,
+     "water_pct_error": 5.45,
+     "iou_ci95": [
+      0.374,
+      0.648
+     ]
+    },
+    "South America": {
+     "n": 18,
+     "iou": 0.317,
+     "precision": 0.434,
+     "recall": 0.541,
+     "water_pct_error": 11.3,
+     "iou_ci95": [
+      0.144,
+      0.533
+     ]
+    },
+    "Asia": {
+     "n": 16,
+     "iou": 0.348,
+     "precision": 0.518,
+     "recall": 0.514,
+     "water_pct_error": 9.8,
+     "iou_ci95": [
+      0.217,
+      0.507
+     ]
+    },
+    "Africa": {
+     "n": 10,
+     "iou": 0.44,
+     "precision": 0.586,
+     "recall": 0.638,
+     "water_pct_error": 11.86,
+     "iou_ci95": [
+      0.243,
+      0.678
+     ]
+    },
+    "Oceania": {
+     "n": 3,
+     "iou": 0.579,
+     "precision": 0.752,
+     "recall": 0.716,
+     "water_pct_error": 1.53,
+     "iou_ci95": [
+      0.0,
+      0.673
+     ]
+    }
+   },
+   "by_type": {
+    "lake": {
+     "n": 72,
+     "iou": 0.413,
+     "precision": 0.589,
+     "recall": 0.58,
+     "water_pct_error": 9.26,
+     "iou_ci95": [
+      0.324,
+      0.504
+     ]
+    },
+    "reservoir": {
+     "n": 18,
+     "iou": 0.726,
+     "precision": 0.851,
+     "recall": 0.832,
+     "water_pct_error": 1.48,
+     "iou_ci95": [
+      0.613,
+      0.802
+     ]
+    }
+   }
+  },
+  "excluded_tiles": {
+   "almost no labelled water": 12,
+   "mostly ignored (snow, cloud or no data)": 2
+  },
+  "failures": 35,
+  "worst_tiles": [
+   {
+    "site": "lake 177757",
+    "country": "India",
+    "biome": "Tropical moist forest",
+    "iou": 0.0,
+    "true_pct": 32.12,
+    "pred_pct": 0.0
+   },
+   {
+    "site": "lake 166007",
+    "country": "Russia",
+    "biome": "Temperate grassland",
+    "iou": 0.0,
+    "true_pct": 7.67,
+    "pred_pct": 0.31
+   },
+   {
+    "site": "lake 183947",
+    "country": "Australia",
+    "biome": "Mediterranean",
+    "iou": 0.0,
+    "true_pct": 2.26,
+    "pred_pct": 0.09
+   },
+   {
+    "site": "lake 16218",
+    "country": "Madagascar",
+    "biome": "Mangrove",
+    "iou": 0.0,
+    "true_pct": 8.68,
+    "pred_pct": 0.49
+   },
+   {
+    "site": "lake 17307",
+    "country": "Denmark",
+    "biome": "Tundra",
+    "iou": 0.0,
+    "true_pct": 14.47,
+    "pred_pct": 0.06
+   },
+   {
+    "site": "lake 116375",
+    "country": "Venezuela",
+    "biome": "Tropical moist forest",
+    "iou": 0.0,
+    "true_pct": 17.6,
+    "pred_pct": 0.24
+   },
+   {
+    "site": "lake 10056",
+    "country": "Brazil",
+    "biome": "Tropical dry forest",
+    "iou": 0.0,
+    "true_pct": 13.31,
+    "pred_pct": 0.61
+   },
+   {
+    "site": "lake 9433",
+    "country": "United States of America",
+    "biome": "Temperate broadleaf forest",
+    "iou": 0.01,
+    "true_pct": 3.1,
+    "pred_pct": 0.83
+   }
+  ]
+ },
+ "v2 (Kaggle retrain)": {
+  "all_tiles": {
+   "n": 104,
+   "iou": 0.461,
+   "precision": 0.682,
+   "recall": 0.587,
+   "water_pct_error": 7.97
+  },
+  "clean": {
+   "overall": {
+    "n": 90,
+    "iou": 0.466,
+    "precision": 0.693,
+    "recall": 0.588,
+    "water_pct_error": 7.48,
+    "iou_ci95": [
+     0.392,
+     0.547
+    ]
+   },
+   "by_biome": {
+    "Boreal forest": {
+     "n": 8,
+     "iou": 0.581,
+     "precision": 0.689,
+     "recall": 0.788,
+     "water_pct_error": 3.41,
+     "iou_ci95": [
+      0.396,
+      0.722
+     ]
+    },
+    "Mangrove": {
+     "n": 8,
+     "iou": 0.375,
+     "precision": 0.875,
+     "recall": 0.396,
+     "water_pct_error": 16.45,
+     "iou_ci95": [
+      0.184,
+      0.557
+     ]
+    },
+    "Desert": {
+     "n": 7,
+     "iou": 0.656,
+     "precision": 0.872,
+     "recall": 0.726,
+     "water_pct_error": 2.85,
+     "iou_ci95": [
+      0.461,
+      0.769
+     ]
+    },
+    "Temperate broadleaf forest": {
+     "n": 7,
+     "iou": 0.521,
+     "precision": 0.837,
+     "recall": 0.579,
+     "water_pct_error": 3.41,
+     "iou_ci95": [
+      0.344,
+      0.75
+     ]
+    },
+    "Tropical dry forest": {
+     "n": 7,
+     "iou": 0.683,
+     "precision": 0.881,
+     "recall": 0.753,
+     "water_pct_error": 2.04,
+     "iou_ci95": [
+      0.5,
+      0.789
+     ]
+    },
+    "Temperate conifer forest": {
+     "n": 7,
+     "iou": 0.412,
+     "precision": 0.768,
+     "recall": 0.47,
+     "water_pct_error": 3.14,
+     "iou_ci95": [
+      0.214,
+      0.65
+     ]
+    },
+    "Mediterranean": {
+     "n": 7,
+     "iou": 0.52,
+     "precision": 0.759,
+     "recall": 0.624,
+     "water_pct_error": 4.03,
+     "iou_ci95": [
+      0.281,
+      0.65
+     ]
+    },
+    "Montane grassland": {
+     "n": 7,
+     "iou": 0.484,
+     "precision": 0.782,
+     "recall": 0.56,
+     "water_pct_error": 3.21,
+     "iou_ci95": [
+      0.129,
+      0.853
+     ]
+    },
+    "Tropical moist forest": {
+     "n": 6,
+     "iou": 0.244,
+     "precision": 0.347,
+     "recall": 0.451,
+     "water_pct_error": 20.57,
+     "iou_ci95": [
+      0.047,
+      0.607
+     ]
+    },
+    "Tropical savanna": {
+     "n": 6,
+     "iou": 0.717,
+     "precision": 0.799,
+     "recall": 0.875,
+     "water_pct_error": 3.88,
+     "iou_ci95": [
+      0.499,
+      0.848
+     ]
+    },
+    "Tundra": {
+     "n": 5,
+     "iou": 0.406,
+     "precision": 0.956,
+     "recall": 0.414,
+     "water_pct_error": 14.7,
+     "iou_ci95": [
+      0.182,
+      0.507
+     ]
+    },
+    "Temperate grassland": {
+     "n": 5,
+     "iou": 0.582,
+     "precision": 0.801,
+     "recall": 0.68,
+     "water_pct_error": 1.08,
+     "iou_ci95": [
+      0.245,
+      0.872
+     ]
+    },
+    "Tropical conifer forest": {
+     "n": 5,
+     "iou": 0.699,
+     "precision": 0.839,
+     "recall": 0.807,
+     "water_pct_error": 2.47,
+     "iou_ci95": [
+      0.474,
+      0.887
+     ]
+    },
+    "Flooded grassland": {
+     "n": 5,
+     "iou": 0.295,
+     "precision": 0.402,
+     "recall": 0.527,
+     "water_pct_error": 29.06,
+     "iou_ci95": [
+      0.203,
+      0.42
+     ]
+    }
+   },
+   "by_continent": {
+    "North America": {
+     "n": 25,
+     "iou": 0.506,
+     "precision": 0.824,
+     "recall": 0.568,
+     "water_pct_error": 7.27,
+     "iou_ci95": [
+      0.39,
+      0.631
+     ]
+    },
+    "Europe": {
+     "n": 18,
+     "iou": 0.565,
+     "precision": 0.816,
+     "recall": 0.647,
+     "water_pct_error": 4.73,
+     "iou_ci95": [
+      0.468,
+      0.672
+     ]
+    },
+    "South America": {
+     "n": 18,
+     "iou": 0.374,
+     "precision": 0.545,
+     "recall": 0.545,
+     "water_pct_error": 8.01,
+     "iou_ci95": [
+      0.171,
+      0.617
+     ]
+    },
+    "Asia": {
+     "n": 16,
+     "iou": 0.389,
+     "precision": 0.578,
+     "recall": 0.543,
+     "water_pct_error": 11.73,
+     "iou_ci95": [
+      0.254,
+      0.552
+     ]
+    },
+    "Africa": {
+     "n": 10,
+     "iou": 0.525,
+     "precision": 0.712,
+     "recall": 0.666,
+     "water_pct_error": 6.78,
+     "iou_ci95": [
+      0.338,
+      0.72
+     ]
+    },
+    "Oceania": {
+     "n": 3,
+     "iou": 0.606,
+     "precision": 0.718,
+     "recall": 0.795,
+     "water_pct_error": 2.15,
+     "iou_ci95": [
+      0.0,
+      0.791
+     ]
+    }
+   },
+   "by_type": {
+    "lake": {
+     "n": 72,
+     "iou": 0.424,
+     "precision": 0.656,
+     "recall": 0.546,
+     "water_pct_error": 9.1,
+     "iou_ci95": [
+      0.349,
+      0.503
+     ]
+    },
+    "reservoir": {
+     "n": 18,
+     "iou": 0.777,
+     "precision": 0.896,
+     "recall": 0.854,
+     "water_pct_error": 0.97,
+     "iou_ci95": [
+      0.689,
+      0.83
+     ]
+    }
+   }
+  },
+  "excluded_tiles": {
+   "almost no labelled water": 12,
+   "mostly ignored (snow, cloud or no data)": 2
+  },
+  "failures": 30,
+  "worst_tiles": [
+   {
+    "site": "lake 116375",
+    "country": "Venezuela",
+    "biome": "Tropical moist forest",
+    "iou": 0.0,
+    "true_pct": 17.6,
+    "pred_pct": 0.0
+   },
+   {
+    "site": "lake 120934",
+    "country": "Argentina",
+    "biome": "Montane grassland",
+    "iou": 0.0,
+    "true_pct": 1.38,
+    "pred_pct": 0.05
+   },
+   {
+    "site": "lake 16218",
+    "country": "Madagascar",
+    "biome": "Mangrove",
+    "iou": 0.0,
+    "true_pct": 8.68,
+    "pred_pct": 0.06
+   },
+   {
+    "site": "lake 118027",
+    "country": "Ecuador",
+    "biome": "Mangrove",
+    "iou": 0.0,
+    "true_pct": 22.31,
+    "pred_pct": 3.19
+   },
+   {
+    "site": "lake 9433",
+    "country": "United States of America",
+    "biome": "Temperate broadleaf forest",
+    "iou": 0.0,
+    "true_pct": 3.1,
+    "pred_pct": 0.07
+   },
+   {
+    "site": "lake 14617",
+    "country": "China",
+    "biome": "Montane grassland",
+    "iou": 0.0,
+    "true_pct": 16.88,
+    "pred_pct": 0.47
+   },
+   {
+    "site": "lake 17307",
+    "country": "Denmark",
+    "biome": "Tundra",
+    "iou": 0.01,
+    "true_pct": 14.47,
+    "pred_pct": 0.24
+   },
+   {
+    "site": "lake 116502",
+    "country": "Panama",
+    "biome": "Mangrove",
+    "iou": 0.01,
+    "true_pct": 14.69,
+    "pred_pct": 0.18
+   }
+  ]
+ }
+}

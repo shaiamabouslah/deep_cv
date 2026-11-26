@@ -1,0 +1,84 @@
+{
+ "threshold_vv_median": {
+  "n_dam_dates": 416,
+  "n_with_optical": 321,
+  "n_optical_missing": 95,
+  "per_dam": {
+   "Bir M'cherga": {
+    "n": 61,
+    "fill_error_optical_curve_pts": 22.78,
+    "fill_error_radar_refit_cv_pts": 6.87,
+    "optical_cv_error_pts": 2.4
+   },
+   "Lakhmes": {
+    "n": 55,
+    "fill_error_optical_curve_pts": 7.85,
+    "fill_error_radar_refit_cv_pts": 6.32,
+    "optical_cv_error_pts": 3.6
+   },
+   "Mell\u00e8gue": {
+    "n": 79,
+    "fill_error_optical_curve_pts": 8.28,
+    "fill_error_radar_refit_cv_pts": 11.3,
+    "optical_cv_error_pts": 3.4
+   },
+   "Sidi El Barrak": {
+    "n": 81,
+    "fill_error_optical_curve_pts": 13.75,
+    "fill_error_radar_refit_cv_pts": 9.37,
+    "optical_cv_error_pts": 2.8
+   },
+   "Sidi Salem": {
+    "n": 82,
+    "fill_error_optical_curve_pts": 7.6,
+    "fill_error_radar_refit_cv_pts": 8.39,
+    "optical_cv_error_pts": 1.6
+   }
+  },
+  "radar_vs_optical_surface": {
+   "mae_pts": 13.88,
+   "correlation": 0.398
+  }
+ },
+ "unet": {
+  "n_dam_dates": 416,
+  "n_with_optical": 321,
+  "n_optical_missing": 95,
+  "per_dam": {
+   "Bir M'cherga": {
+    "n": 61,
+    "fill_error_optical_curve_pts": 7.28,
+    "fill_error_radar_refit_cv_pts": 7.05,
+    "optical_cv_error_pts": 2.4
+   },
+   "Lakhmes": {
+    "n": 55,
+    "fill_error_optical_curve_pts": 6.63,
+    "fill_error_radar_refit_cv_pts": 5.99,
+    "optical_cv_error_pts": 3.6
+   },
+   "Mell\u00e8gue": {
+    "n": 79,
+    "fill_error_optical_curve_pts": 5.78,
+    "fill_error_radar_refit_cv_pts": 7.73,
+    "optical_cv_error_pts": 3.4
+   },
+   "Sidi El Barrak": {
+    "n": 81,
+    "fill_error_optical_curve_pts": 3.94,
+    "fill_error_radar_refit_cv_pts": 1.99,
+    "optical_cv_error_pts": 2.8
+   },
+   "Sidi Salem": {
+    "n": 82,
+    "fill_error_optical_curve_pts": 4.0,
+    "fill_error_radar_refit_cv_pts": 1.99,
+    "optical_cv_error_pts": 1.6
+   }
+  },
+  "radar_vs_optical_surface": {
+   "mae_pts": 8.67,
+   "correlation": 0.712
+  }
+ }
+}

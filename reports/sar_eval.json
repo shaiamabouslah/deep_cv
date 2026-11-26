@@ -1,0 +1,181 @@
+{
+ "threshold_vv": {
+  "val": {
+   "iou": 0.6294,
+   "precision": 0.7401,
+   "recall": 0.8081
+  },
+  "test_world": {
+   "iou": 0.5907,
+   "precision": 0.7208,
+   "recall": 0.7659
+  },
+  "test_tunisia": {
+   "iou": 0.6705,
+   "precision": 0.7665,
+   "recall": 0.8425
+  },
+  "threshold_db": -17.5
+ },
+ "threshold_vv_median": {
+  "val": {
+   "iou": 0.657,
+   "precision": 0.7653,
+   "recall": 0.8227
+  },
+  "test_world": {
+   "iou": 0.6106,
+   "precision": 0.7563,
+   "recall": 0.7601
+  },
+  "test_tunisia": {
+   "iou": 0.7316,
+   "precision": 0.8397,
+   "recall": 0.8504
+  },
+  "threshold_db": -17.5
+ },
+ "threshold_vh": {
+  "val": {
+   "iou": 0.5942,
+   "precision": 0.6714,
+   "recall": 0.8378
+  },
+  "test_world": {
+   "iou": 0.5169,
+   "precision": 0.5664,
+   "recall": 0.8555
+  },
+  "test_tunisia": {
+   "iou": 0.5097,
+   "precision": 0.5453,
+   "recall": 0.8866
+  },
+  "threshold_db": -26.0
+ },
+ "gbm_features": {
+  "val": {
+   "iou": 0.6674,
+   "precision": 0.7738,
+   "recall": 0.8291
+  },
+  "test_world": {
+   "iou": 0.6471,
+   "precision": 0.7478,
+   "recall": 0.8277
+  },
+  "test_tunisia": {
+   "iou": 0.8038,
+   "precision": 0.8986,
+   "recall": 0.884
+  }
+ },
+ "unet_imagenet_init": {
+  "val": {
+   "iou": 0.7875,
+   "precision": 0.868,
+   "recall": 0.8946
+  },
+  "test_world": {
+   "iou": 0.7462,
+   "precision": 0.8336,
+   "recall": 0.8768
+  },
+  "test_tunisia": {
+   "iou": 0.8718,
+   "precision": 0.9647,
+   "recall": 0.9005
+  },
+  "best_val_iou": 0.7875,
+  "val_curve": [
+   0.6164,
+   0.5571,
+   0.7219,
+   0.5986,
+   0.6673,
+   0.4547,
+   0.5343,
+   0.7112,
+   0.6345,
+   0.7426,
+   0.6542,
+   0.6589,
+   0.7875,
+   0.6765,
+   0.6518,
+   0.6557,
+   0.725,
+   0.7035,
+   0.6794,
+   0.7358,
+   0.7303,
+   0.7345,
+   0.7064,
+   0.6989,
+   0.6774
+  ]
+ },
+ "unet_random_init": {
+  "val": {
+   "iou": 0.7441,
+   "precision": 0.8613,
+   "recall": 0.8454
+  },
+  "test_world": {
+   "iou": 0.518,
+   "precision": 0.7389,
+   "recall": 0.634
+  },
+  "test_tunisia": {
+   "iou": 0.8044,
+   "precision": 0.8966,
+   "recall": 0.8867
+  },
+  "best_val_iou": 0.7441,
+  "val_curve": [
+   0.6321,
+   0.6983,
+   0.6784,
+   0.6675,
+   0.6862,
+   0.6782,
+   0.7044,
+   0.6704,
+   0.7441,
+   0.646,
+   0.6134,
+   0.6672,
+   0.7113,
+   0.5729,
+   0.6461,
+   0.6553,
+   0.6506,
+   0.5993,
+   0.6718,
+   0.6191,
+   0.6172,
+   0.6423,
+   0.6206,
+   0.6092,
+   0.5951
+  ]
+ },
+ "data": {
+  "train": {
+   "patches": 323,
+   "sites": 73
+  },
+  "val": {
+   "patches": 71,
+   "sites": 16
+  },
+  "test_world": {
+   "patches": 66,
+   "sites": 16
+  },
+  "test_tunisia": {
+   "patches": 60,
+   "sites": 6
+  }
+ }
+}

@@ -215,3 +215,45 @@ résultat honnête en trois temps : un vrai problème résolu (la géométrie,
 sur les 6 sites), un autre correctement identifié et expliqué plutôt que
 masqué (surface ≠ volume), et une limite de validation assumée plutôt que
 cachée (plausibilité ≠ validation officielle) — pas une solution magique.
+
+## Round 4 (2026-11-26) : validation contre la source primaire, et correction du chiffre phare
+
+Jusqu'ici la validation reposait sur 3 à 11 chiffres relevés dans la presse. La Direction générale des
+barrages publie son bulletin quotidien officiel en PDF (`onagri.nat.tn/uploads/barrages/BARRAGES-J-M-AAAA.pdf`)
+avec, pour chaque barrage, le stock du jour et le **taux de remplissage**. 91 bulletins hebdomadaires de
+janvier 2024 à octobre 2025 ont été lus (`src/fetch_bulletins.py`, `src/official_fill.py`) : **528 relevés
+officiels** pour les 6 barrages, comparés à la mesure satellite de la même semaine. Les bulletins ont cessé
+en octobre 2025 : l'estimation calibrée ci-dessous est aujourd'hui le seul suivi par barrage qui continue.
+
+**Les chiffres de presse étaient approximatifs.** Exemple : Sidi Salem le 1er septembre 2025 est à 25.1 % dans
+le bulletin officiel, pas 22.7 % comme relevé dans la presse. Les points de presse des rounds précédents ne
+doivent plus être cités.
+
+**Constat sur le chiffre affiché jusqu'ici** (indice de surface, % de l'étendue maximale JRC) : très éloigné
+du taux officiel (erreur moyenne de 10 à 35 points selon le barrage), et la forme de la relation est propre
+à chaque barrage (courbe surface-volume du réservoir). Un exposant commun à tous les barrages ne convient
+pas non plus : l'exposant d'une loi puissance vaut environ 2.8 pour Sidi Salem et 1.4 pour Sidi El Barrak.
+
+**Correction : calibration monotone par barrage** (régression isotone ancrée à vide = 0 et plein = 100),
+évaluée par validation croisée par blocs temporels (chaque barrage est prédit à partir de ses autres
+périodes) :
+
+| Barrage | Relevés | Erreur surface brute | Erreur « moyenne constante » | Erreur calibrée | Gain vs constante | Estimation proposée |
+|---|---|---|---|---|---|---|
+| Sidi Salem | 61 | 34.1 | 8.4 | **1.6** | 0.82 | oui |
+| Sidi El Barrak | 55 | 10.4 | 13.4 | **2.8** | 0.79 | oui |
+| Mellègue | 61 | 9.6 | 15.8 | **3.4** | 0.79 | oui |
+| Bir M'cherga | 81 | 21.1 | 6.0 | **2.4** | 0.60 | oui |
+| Lakhmes | 74 | 19.9 | 6.1 | **3.6** | 0.40 | oui |
+| Nebhana | 78 | 35.0 | 2.6 | 3.4 | -0.27 | **non** |
+
+(Erreurs en points de taux de remplissage, sur des périodes non vues.) **Nebhana est refusé** : sa surface
+mesurée reste entre 34 et 47 % alors que son taux officiel reste entre 2.8 et 9.5 %, la corrélation est
+nulle, et une simple moyenne constante fait mieux que la calibration. Une estimation n'est proposée que si
+elle bat la moyenne constante d'au moins 30 % hors échantillon (`src/calibration.py`).
+
+**Limites assumées** : 55 à 81 points par barrage sur 21 mois seulement (la calibration est valable dans la
+plage de niveaux observée, 10 à 75 % de remplissage selon le barrage, et s'interpole vers 0 et 100 au-delà) ;
+les blocs de validation croisée viennent de la même période de 21 mois ; les relevés officiels sont des
+chiffres du jour alors que la mesure satellite est la meilleure image de la semaine ; le détail et la
+méthode sont dans [calibration.md](calibration.md).

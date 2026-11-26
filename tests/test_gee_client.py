@@ -1,4 +1,18 @@
-from src.gee_client import assess_water_balance, compute_indices, recommend_usage_from_indices
+import pytest
+
+from src.gee_client import (
+    MIN_VISIBLE_FRACTION,
+    _require_visible,
+    assess_water_balance,
+    compute_indices,
+    recommend_usage_from_indices,
+)
+
+
+def test_require_visible_refuses_mostly_clouded_site():
+    with pytest.raises(ValueError, match="masqué"):
+        _require_visible(MIN_VISIBLE_FRACTION - 0.01, "2026-01-01", "2026-01-31")
+    _require_visible(MIN_VISIBLE_FRACTION, "2026-01-01", "2026-01-31")
 
 
 def _bands(b2, b3, b4, b5, b8):
