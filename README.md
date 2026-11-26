@@ -1,7 +1,7 @@
-# Surveillance des plans d'eau par imagerie satellite — Industrialisation Vision par Ordinateur & MLOps
+# Surveillance des plans d'eau par imagerie satellite 
 
 Application **full-stack** de monitoring des barrages/plans d'eau tunisiens,
-combinant un **modèle de segmentation entraîné** (deep learning), une
+combinant un **modèle de segmentation entraîné** *, une
 **analyse spectrale réelle via Google Earth Engine** (NDVI/NDCI/NDTI +
 pluviométrie CHIRPS), un **agent IA** de synthèse, et une carte interactive
 permettant de créer n'importe quel nouveau site surveillé.
