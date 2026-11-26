@@ -138,7 +138,7 @@ def fetch_sentinel2_bands(lat, lon, buffer_m=500, days_back=30, project=None, po
     _require_visible(visible_fraction, start, end)
 
     bands = image.select(["B2", "B3", "B4", "B5", "B8", "B11"]).updateMask(_clear_mask(image))
-    means = bands.reduceRegion(reducer=ee.Reducer.mean(), geometry=region, scale=10).getInfo()
+    means = bands.reduceRegion(reducer=ee.Reducer.mean(), geometry=region, scale=10, maxPixels=1e9, bestEffort=True).getInfo()
 
     return {
         "bands": means,

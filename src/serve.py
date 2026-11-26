@@ -53,7 +53,7 @@ from src.alerts import (
     record_reading,
 )
 from src.data import build_normalize_transform, load_params
-from src import calibration, forecast_dl, lakes, monitoring, serve_metrics
+from src import assessment, calibration, forecast_dl, lakes, monitoring, place_report, serve_metrics
 from src.forecast import fetch_rain_forecast, project_risk
 from src.gee_client import (
     GEENotAuthenticated,
@@ -557,6 +557,62 @@ def lake_lookup(lat: float, lon: float):
     if lake is None:
         raise HTTPException(status_code=404, detail="Aucun lac ou réservoir cartographié à cet endroit.")
     return lake
+
+
+@app.get("/geocode")
+def geocode(q: str):
+    """Place search by name, anywhere in the world (Open-Meteo geocoding)."""
+    query = q.strip()
+    if len(query) < 2:
+        raise HTTPException(status_code=422, detail="Saisissez au moins 2 caractères.")
+    try:
+        return place_report.geocode(query)
+    except Exception as exc:
+        logger.warning("geocoding failed for %r: %s", query, exc)
+        raise HTTPException(status_code=502, detail="Recherche de lieu indisponible pour le moment.")
+
+
+class PlaceReportRequest(BaseModel):
+    lat: float
+    lon: float
+    polygon: Optional[list] = None
+    lake_id: Optional[int] = None
+
+
+@app.post("/place_report", dependencies=[Depends(gee_rate_limit)])
+def place_report_endpoint(req: PlaceReportRequest):
+    """Quick worldwide analysis of a place: local climate against its normal and
+    the 1984-2021 water-surface record. Each part fails on its own."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    project = _state["params"]["gee"]["project"]
+    result = {"climate": None, "record": None, "notes": []}
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        climate_job = pool.submit(place_report.climate_summary, req.lat, req.lon)
+        record_job = pool.submit(place_report.water_record, req.polygon, req.lat, req.lon, 3000, project, req.lake_id)
+        for key, job, label in (("climate", climate_job, "Climat"), ("record", record_job, "Relevé satellite")):
+            try:
+                result[key] = job.result()
+            except GEENotAuthenticated as exc:
+                result["notes"].append(str(exc))
+            except Exception as exc:
+                logger.warning("place report %s failed: %s", key, exc)
+                result["notes"].append(f"{label} indisponible pour le moment.")
+    record = result["record"]["record"] if result["record"] else None
+    result["assessment"] = assessment.assess(record=record, climate=result["climate"])
+    return result
+
+
+class AssessRequest(BaseModel):
+    surface_pct: Optional[float] = None
+    fill_pct: Optional[float] = None
+    record: Optional[list] = None
+    climate: Optional[dict] = None
+
+
+@app.post("/assess")
+def assess_place(req: AssessRequest):
+    return assessment.assess(req.surface_pct, req.fill_pct, req.record, req.climate)
 
 
 @app.get("/alerts")

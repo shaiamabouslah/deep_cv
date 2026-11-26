@@ -294,3 +294,42 @@ def test_sites_and_history_carry_the_calibrated_fill_rate(client):
     history = client.get("/history/Sidi Salem").json()
     assert "fill_pct" in history[-1]
     assert (history[-1]["fill_pct"] is None) == (fill is None)
+
+
+def test_geocode_endpoint_validates_and_forwards(client, monkeypatch):
+    from src import serve
+
+    monkeypatch.setattr(serve.place_report, "geocode", lambda q: [{"name": q, "lat": 1.0, "lon": 2.0}])
+    assert client.get("/geocode", params={"q": "a"}).status_code == 422
+    assert client.get("/geocode", params={"q": "Mead"}).json()[0]["name"] == "Mead"
+
+
+def test_geocode_endpoint_hides_upstream_failures(client, monkeypatch):
+    from src import serve
+
+    def broken(q):
+        raise RuntimeError("down")
+
+    monkeypatch.setattr(serve.place_report, "geocode", broken)
+    assert client.get("/geocode", params={"q": "Mead"}).status_code == 502
+
+
+def test_place_report_returns_context_and_survives_a_failing_part(client, monkeypatch):
+    from src import serve
+
+    record = {"record": [{"year": 2000 + i, "area_km2": 10.0, "pct_of_max": 100.0} for i in range(20)], "max_km2": 10.0, "years": [2000, 2019]}
+    monkeypatch.setattr(serve.place_report, "water_record", lambda *a, **k: record)
+
+    def no_climate(*a, **k):
+        raise RuntimeError("open-meteo down")
+
+    monkeypatch.setattr(serve.place_report, "climate_summary", no_climate)
+    body = client.post("/place_report", json={"lat": 36.1, "lon": -114.4}).json()
+
+    assert body["climate"] is None and body["record"]["max_km2"] == 10.0
+    assert any("Climat" in n for n in body["notes"]) and body["assessment"]["basis"] == "contexte"
+
+
+def test_assess_endpoint_combines_a_measurement_with_context(client):
+    body = client.post("/assess", json={"surface_pct": 35, "climate": {"anomaly_pct": 100}}).json()
+    assert body["level"] == "alerte" and body["basis"] == "mesure"

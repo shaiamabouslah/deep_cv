@@ -3,528 +3,596 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Barrages — observation par satellite</title>
+<title>AquaSat : plans d'eau du monde</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
 <style>
   :root {
-    --paper: #f3f4f4; --panel: #ffffff; --ink: #0e1116; --muted: #5c6670; --rule: #d3d8db;
-    --accent: #0b3fd9; --ok: #17794a; --vigilance: #a86a00; --alerte: #cc4a0a; --critique: #b00020; --none: #8a949c;
+    --bg: #f3f1e7; --surface: #fffdf7; --ink: #1e261b; --ink-soft: #4c5545; --muted: #8a9078; --line: #e4e0cf;
+    --accent: #1f6b8a; --accent-deep: #124760; --sky: #3f7a8c; --sand: #c58a2e;
+    --normal: #2f7d4f; --vigilance: #b5822a; --alerte: #c4622a; --critique: #b5482a; --context: #3d6b8a;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 'IBM Plex Sans', system-ui, sans-serif; }
-  .num { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
-  a { color: var(--accent); }
-  button { font: inherit; cursor: pointer; }
+  body { margin: 0; color: var(--ink); font: 15px/1.55 'IBM Plex Sans', system-ui, sans-serif; background-color: var(--bg);
+    background-image: radial-gradient(1100px 480px at 84% -14%, rgba(63,122,140,.10), transparent 60%),
+      radial-gradient(900px 420px at -5% 0%, rgba(31,107,138,.07), transparent 55%),
+      repeating-linear-gradient(180deg, rgba(31,107,138,.028) 0 1px, transparent 1px 30px); }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 32px 20px 56px; }
   h1, h2, h3, p { margin: 0; }
-  .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  .muted { color: var(--muted); }
+  button { font: inherit; cursor: pointer; }
+  .mono { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+  .serif { font-family: 'Fraunces', Georgia, serif; }
 
-  .top { display: flex; align-items: center; gap: 28px; padding: 0 24px; height: 52px; background: var(--ink); color: #fff; }
-  .brand { font-weight: 600; letter-spacing: .01em; }
-  .brand span { font-weight: 400; color: #9aa6b0; margin-left: 10px; font-size: 13px; }
-  .top nav { display: flex; gap: 4px; height: 100%; }
-  .top nav button { white-space: nowrap; background: none; border: 0; color: #b8c2ca; padding: 0 14px; height: 100%; border-bottom: 3px solid transparent; }
-  .top nav button.on { color: #fff; border-bottom-color: #5b8cff; }
-  .top .aux { margin-left: auto; font-size: 13px; }
-  .top .aux a { color: #9aa6b0; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 6px 0 18px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .brandwrap { display: flex; align-items: center; gap: 14px; }
+  .mark { width: 44px; height: 44px; border-radius: 12px; flex: none; background: linear-gradient(145deg, var(--accent), var(--accent-deep));
+    display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(18,71,96,.28); }
+  .brand small { display: block; font: 600 .62rem 'IBM Plex Mono', monospace; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
+  .brand b { font: 600 1.5rem 'Fraunces', serif; letter-spacing: -.01em; }
+  .meta { text-align: right; font-size: .8rem; color: var(--muted); line-height: 1.55; } .meta b { color: var(--ink); }
+  .tabs { display: flex; gap: 22px; padding: 12px 0 0; flex-wrap: wrap; align-items: center; }
+  .tabs button { background: none; border: 0; padding: 4px 0; color: var(--ink-soft); font-weight: 500; border-bottom: 2px solid transparent; }
+  .tabs button.on { color: var(--ink); border-bottom-color: var(--accent); }
+  .tabs a { margin-left: auto; font-size: .82rem; color: var(--muted); }
 
-  #alerts { display: none; padding: 8px 24px; color: #fff; font-size: 14px; }
-  .view { display: none; padding: 24px; max-width: 1320px; margin: 0 auto; }
-  .view.on { display: block; }
-  .lead { max-width: 70ch; color: var(--muted); margin: 6px 0 20px; }
+  .view { display: none; } .view.on { display: block; }
+  .rail { display: flex; align-items: center; gap: 13px; margin: 32px 0 14px; }
+  .rail .idx { font: 600 .7rem 'IBM Plex Mono', monospace; letter-spacing: .05em; color: #fff; background: linear-gradient(145deg, var(--accent), var(--accent-deep));
+    border-radius: 7px; padding: 4px 9px; box-shadow: 0 3px 8px rgba(18,71,96,.22); }
+  .rail .t { font: 600 1.18rem 'Fraunces', serif; }
+  .rail .ln { flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+  .caption { color: var(--muted); font-size: .88rem; margin-bottom: 10px; }
 
-  .follow { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
-  .board { background: var(--panel); border: 1px solid var(--rule); }
-  .board header { padding: 14px 16px; border-bottom: 1px solid var(--rule); }
-  .board header p { margin-top: 4px; font-size: 13px; color: var(--muted); }
-  .site { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--rule); padding: 12px 16px; border-left: 4px solid transparent; }
-  .site:hover { background: #f7f9fa; }
-  .site.on { background: #eef2ff; border-left-color: var(--accent); }
-  .site .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-  .site .name { font-weight: 500; }
-  .site .big { font-size: 22px; }
-  .site .sub { font-size: 12px; color: var(--muted); }
-  .gauge { height: 4px; background: #e4e8ea; margin-top: 8px; }
-  .gauge i { display: block; height: 100%; background: var(--accent); }
-  .tag { display: inline-block; font-size: 11px; padding: 1px 7px; color: #fff; margin-left: 6px; vertical-align: 2px; }
-  .board footer { padding: 12px 16px; font-size: 13px; color: var(--muted); }
+  .row { display: flex; gap: 12px; }
+  input[type=text] { flex: 1; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: inherit; min-width: 0; }
+  select { padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; font: inherit; width: 100%; }
+  .btn { background: linear-gradient(145deg, var(--accent), var(--accent-deep)); color: #fff; border: 0; border-radius: 12px; padding: .62rem 1.3rem; font-weight: 600;
+    box-shadow: 0 6px 16px rgba(18,71,96,.22); transition: transform .12s ease, box-shadow .12s ease; }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(18,71,96,.30); }
+  .btn:disabled { opacity: .5; transform: none; cursor: default; }
+  .btn.alt { background: #fff; color: var(--accent-deep); border: 1px solid var(--accent); box-shadow: none; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .chips .lbl { font: 600 .62rem 'IBM Plex Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .chip { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 5px 13px; font-size: .85rem; color: var(--ink); }
+  .chip:hover { border-color: var(--accent); color: var(--accent-deep); }
+  .chip small { color: var(--muted); margin-left: 4px; }
 
-  .stage { display: grid; gap: 24px; min-width: 0; }
-  #map, #worldMap { border: 1px solid var(--rule); }
-  #map { height: 330px; }
-  #worldMap { height: 560px; }
-  .detail { background: var(--panel); border: 1px solid var(--rule); }
-  .detail .head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
-  .detail h2 { font-size: 22px; font-weight: 600; }
-  .primary { background: var(--accent); color: #fff; border: 0; padding: 10px 18px; font-weight: 500; }
-  .primary:disabled { opacity: .55; cursor: default; }
-  .ghost { background: none; border: 1px solid var(--rule); padding: 6px 12px; color: var(--ink); }
-  .ghost:hover { border-color: var(--ink); }
-  .figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--rule); }
-  .figures > div { padding: 16px 20px; border-right: 1px solid var(--rule); }
-  .figures > div:last-child { border-right: 0; }
-  .figures .v { font-size: 34px; line-height: 1.1; margin-top: 4px; }
-  .figures .n { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .block { padding: 16px 20px; border-bottom: 1px solid var(--rule); }
-  .block:last-child { border-bottom: 0; }
-  .block h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
-  .chartbar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-  .chartbar .links { font-size: 13px; color: var(--muted); }
-  .chartbar .links button { background: none; border: 0; color: var(--accent); padding: 0 4px; text-decoration: underline; }
-  .chartwrap { position: relative; height: 260px; }
-  table.kv { width: 100%; border-collapse: collapse; font-size: 14px; }
-  table.kv td { padding: 6px 0; border-top: 1px solid #e8ebed; vertical-align: top; }
-  table.kv td:first-child { color: var(--muted); width: 38%; padding-right: 12px; }
+  #map, #worldMap { border-radius: 16px; border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(30,38,27,.04); }
+  #map { height: 430px; } #worldMap { height: 560px; }
+  .selcard { background: linear-gradient(135deg, #e8f0f2, #dde9ee); border: 1px solid #cddde3; border-radius: 16px; padding: 18px 22px; margin-top: 14px; }
+  .selcard .lbl { font: 600 .66rem 'IBM Plex Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .selcard .name { font: 600 1.35rem 'Fraunces', serif; }
+  .selcard .sub { color: var(--ink-soft); font-size: .88rem; margin-top: 4px; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 34px 0 6px; }
+
+  .hero { position: relative; border-radius: 22px; padding: 30px 34px; color: #fff; overflow: hidden;
+    background: linear-gradient(135deg, var(--c), color-mix(in srgb, var(--c) 62%, #10222c)); box-shadow: 0 16px 40px rgba(20,32,40,.20); }
+  .hero svg { position: absolute; right: -10px; bottom: -24px; opacity: .16; }
+  .hero .eyebrow { font: 500 .7rem 'IBM Plex Mono', monospace; letter-spacing: .2em; text-transform: uppercase; opacity: .9; }
+  .hero .action { font: 600 3rem 'Fraunces', serif; line-height: 1.02; margin: 8px 0 6px; }
+  .hero .headline { font-size: 1.1rem; max-width: 68%; opacity: .97; }
+  .hero .badge { position: absolute; top: 26px; right: 30px; font: 500 .66rem 'IBM Plex Mono', monospace; letter-spacing: .14em; text-transform: uppercase;
+    background: rgba(255,255,255,.16); padding: 6px 12px; border-radius: 20px; }
+  .why { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 22px; margin-top: 16px; box-shadow: 0 2px 10px rgba(30,38,27,.04); }
+  .eyebrow2 { font: 600 .66rem 'IBM Plex Mono', monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; }
+  .why ul { margin: 0; padding: 0; list-style: none; }
+  .why li { margin: 7px 0; color: var(--ink-soft); padding-left: 18px; position: relative; }
+  .why li::before { content: ""; position: absolute; left: 0; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: .55; }
+  .why .foot { font-size: .8rem; color: var(--muted); margin-top: 10px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 15px; margin-top: 14px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 17px 19px; box-shadow: 0 2px 10px rgba(30,38,27,.04); }
+  .kpi-head { display: flex; align-items: center; gap: 9px; }
+  .kpi-head svg { width: 19px; height: 19px; flex: none; }
+  .kpi-label { font: 500 .62rem 'IBM Plex Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .kpi-value { font: 500 1.95rem 'IBM Plex Mono', monospace; line-height: 1.1; margin-top: 8px; }
+  .kpi-unit { font: 400 .78rem 'IBM Plex Sans'; color: var(--muted); margin-left: 3px; }
+  .kpi-note { font-size: .78rem; color: var(--muted); margin-top: 6px; }
+  .pill { display: inline-block; margin-top: 9px; font-size: .72rem; font-weight: 600; padding: 3px 11px; border-radius: 20px; color: var(--p); background: color-mix(in srgb, var(--p) 15%, #fff); }
+  .gaugewrap { position: relative; height: 15px; margin-top: 11px; }
+  .gauge { position: absolute; top: 4px; left: 0; right: 0; height: 8px; border-radius: 5px; overflow: hidden; display: flex; }
+  .gz { height: 100%; } .gz-r { background: #e0b3a3; width: 30%; } .gz-a { background: #e7cd94; width: 40%; } .gz-g { background: #b6d2ab; width: 30%; }
+  .gm { position: absolute; top: 0; width: 3px; height: 15px; border-radius: 2px; background: var(--ink); box-shadow: 0 0 0 2px var(--surface); }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 22px; margin-top: 16px; box-shadow: 0 2px 10px rgba(30,38,27,.04); }
+  .chartwrap { position: relative; height: 300px; }
+  .alerts { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .alert { display: flex; align-items: flex-start; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--s); border-radius: 14px; padding: 13px 18px; }
+  .alert .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--s); margin-top: 6px; flex: none; box-shadow: 0 0 0 4px color-mix(in srgb, var(--s) 16%, transparent); }
+  .alert b { font-size: .94rem; } .alert span { display: block; color: var(--ink-soft); font-size: .86rem; margin-top: 2px; }
+  table.kv { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  table.kv td { padding: 7px 0; border-top: 1px solid var(--line); vertical-align: top; }
   table.kv tr:first-child td { border-top: 0; }
-  table.kv.cols td { width: auto; color: var(--ink); padding-right: 16px; }
-  table.kv.cols td.label { color: var(--muted); }
-  .note { margin-top: 10px; padding: 8px 12px; background: #f3f5f6; border-left: 3px solid var(--rule); font-size: 13px; }
-  .note.warn { border-left-color: var(--vigilance); }
-  .note.bad { border-left-color: var(--critique); }
-  .note.good { border-left-color: var(--ok); }
-  .empty { padding: 28px 20px; color: var(--muted); }
+  table.kv td:first-child { color: var(--muted); width: 34%; padding-right: 12px; }
+  table.kv.cols td { width: auto; color: var(--ink); padding-right: 14px; } table.kv.cols td.h { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+  .note { margin-top: 10px; padding: 9px 13px; background: #f4f2e8; border-left: 3px solid var(--line); border-radius: 0 8px 8px 0; font-size: .86rem; color: var(--ink-soft); }
+  .muted { color: var(--muted); }
+  .spin { color: var(--muted); padding: 14px 0; }
 
-  .try { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
-  .panel { background: var(--panel); border: 1px solid var(--rule); padding: 18px; }
-  .panel h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
-  .drop { display: block; border: 1px dashed #98a3ab; padding: 22px 12px; text-align: center; color: var(--muted); cursor: pointer; margin: 10px 0; }
-  .drop.has { border-style: solid; color: var(--ink); }
-  .drop input { display: none; }
-  select { width: 100%; padding: 8px; border: 1px solid var(--rule); background: #fff; font: inherit; margin: 6px 0 14px; }
-  .compare { position: relative; line-height: 0; background: #e4e8ea; }
-  .compare canvas { width: 100%; height: auto; display: block; }
-  .compare canvas + canvas { position: absolute; inset: 0; }
-  .slider { display: flex; align-items: center; gap: 12px; margin: 12px 0; font-size: 13px; color: var(--muted); }
+  .try { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 22px; align-items: start; margin-top: 18px; }
+  .drop { display: block; border: 1px dashed #9aa58f; border-radius: 12px; padding: 22px 12px; text-align: center; color: var(--muted); cursor: pointer; margin: 10px 0 14px; background: #fff; }
+  .drop.has { border-style: solid; color: var(--ink); } .drop input { display: none; }
+  .compare { position: relative; line-height: 0; background: #e4e0cf; border-radius: 12px; overflow: hidden; }
+  .compare canvas { width: 100%; height: auto; display: block; } .compare canvas + canvas { position: absolute; inset: 0; }
+  .slider { display: flex; align-items: center; gap: 12px; font-size: .85rem; color: var(--muted); }
   .slider input { flex: 1; accent-color: var(--accent); }
+  .world { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 22px; align-items: start; margin-top: 18px; }
+  .score { padding: 12px 0; border-top: 1px solid var(--line); } .score:first-of-type { border-top: 0; }
+  .score .v { font: 500 1.9rem 'IBM Plex Mono', monospace; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .78rem; color: var(--muted); margin-top: 12px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+  .how ol { padding: 0; margin: 18px 0 0; list-style: none; counter-reset: s; max-width: 760px; }
+  .how li { counter-increment: s; padding: 14px 0 14px 54px; border-top: 1px solid var(--line); position: relative; }
+  .how li::before { content: counter(s); position: absolute; left: 0; top: 14px; width: 34px; height: 30px; text-align: center; line-height: 30px; color: #fff; border-radius: 7px;
+    background: linear-gradient(145deg, var(--accent), var(--accent-deep)); font: 600 .8rem 'IBM Plex Mono', monospace; }
+  .how li b { display: block; font: 600 1.05rem 'Fraunces', serif; }
 
-  .world { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
-  .score { padding: 12px 0; border-top: 1px solid var(--rule); }
-  .score:first-of-type { border-top: 0; }
-  .score .v { font-size: 28px; }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); margin-top: 12px; }
-  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+  #modal { display: none; position: fixed; inset: 0; background: rgba(30,38,27,.45); z-index: 1000; align-items: center; justify-content: center; }
+  #modal .box { background: #fff; padding: 22px; width: 340px; border-radius: 16px; }
+  .leaflet-container { font-family: inherit; }
 
-  .how { max-width: 78ch; }
-  .how ol { padding: 0; margin: 0; list-style: none; counter-reset: s; }
-  .how li { counter-increment: s; padding: 14px 0 14px 48px; border-top: 1px solid var(--rule); position: relative; }
-  .how li::before { content: counter(s); position: absolute; left: 0; top: 14px; width: 30px; height: 30px; border: 1px solid var(--ink); text-align: center; line-height: 28px; font-family: 'IBM Plex Mono', monospace; }
-  .how li b { display: block; }
-  .how .limits { margin-top: 24px; }
-
-  .marker { width: 16px; height: 16px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.45); }
-  .marker.sel { width: 22px; height: 22px; box-shadow: 0 0 0 3px var(--accent); }
-
-  #modal { display: none; position: fixed; inset: 0; background: rgba(14,17,22,.5); z-index: 1000; align-items: center; justify-content: center; }
-  #modal .box { background: #fff; padding: 20px; width: 340px; }
-  #modal input { width: 100%; padding: 8px; border: 1px solid var(--rule); font: inherit; margin: 10px 0 14px; }
-  #modal .btns { display: flex; justify-content: flex-end; gap: 8px; }
-
-  @media (max-width: 900px) {
-    .follow, .try, .world { grid-template-columns: 1fr; }
-    .top { gap: 10px; padding: 0 12px; overflow-x: auto; }
-    .top .brand span, .top .aux { display: none; }
-    .view { padding: 14px; }
-    .figures { grid-template-columns: 1fr; }
-    .figures > div { border-right: 0; border-bottom: 1px solid var(--rule); }
+  @media (max-width: 860px) {
+    .try, .world, .actions { grid-template-columns: 1fr; }
+    .hero { padding: 24px 22px; } .hero .action { font-size: 2.2rem; } .hero .headline { max-width: 100%; } .hero .badge { position: static; display: inline-block; margin-bottom: 10px; }
+    .meta { text-align: left; } .row { flex-direction: column; }
   }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<header class="top">
-  <div class="brand">Barrages<span>observation par satellite</span></div>
-  <nav>
-    <button data-view="follow" class="on">Suivi</button>
+  <div class="topbar">
+    <div class="brandwrap">
+      <div class="mark"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 5.5 6.9 5.5 9.8a5.5 5.5 0 0 1-11 0C6.5 9.9 8.6 7 12 3Z"/><path d="M9.2 14.5a2.9 2.9 0 0 0 2.6 2"/></svg></div>
+      <div class="brand"><small>Aide à la décision · ressource en eau</small><b>AquaSat · Plans d'eau du monde</b></div>
+    </div>
+    <div class="meta">Fusion satellite · météo · relevé 1984 à aujourd'hui<br>Couverture <b>mondiale</b></div>
+  </div>
+  <div class="tabs">
+    <button data-view="analyze" class="on">Analyser un plan d'eau</button>
     <button data-view="try">Tester une image</button>
     <button data-view="world">Précision dans le monde</button>
     <button data-view="how">Comment ça marche</button>
-  </nav>
-  <div class="aux"><a href="/monitoring.html">Supervision technique</a></div>
-</header>
-<div id="alerts"></div>
+    <a href="/monitoring.html">Supervision technique</a>
+  </div>
 
-<!-- SUIVI -->
-<section id="view-follow" class="view on">
-  <div class="follow">
-    <aside class="board">
-      <header>
-        <h2 style="font-size:16px">Plans d'eau suivis</h2>
-        <p>Le chiffre est le taux de remplissage, estimé depuis l'image satellite et calé sur les bulletins officiels ONAGRI.</p>
-      </header>
-      <div id="siteList"></div>
-      <footer>Pour suivre un autre plan d'eau, n'importe où dans le monde : sur la carte, choisissez l'outil point ou polygone (en haut à gauche) et placez-le sur l'eau.</footer>
-    </aside>
-
-    <div class="stage">
-      <div id="map"></div>
-      <div class="detail" id="detail"></div>
+  <!-- ANALYSER -->
+  <section id="view-analyze" class="view on">
+    <div class="rail"><span class="idx">01</span><span class="t">Localiser le plan d'eau</span><span class="ln"></span></div>
+    <div class="row">
+      <input type="text" id="q" placeholder="Rechercher un lac, un barrage, une ville ou un pays : ex. « Lake Mead », « Aral », « Sidi Salem »" />
+      <button class="btn" id="searchBtn">Rechercher</button>
     </div>
-  </div>
-</section>
+    <div id="geoResults" style="margin-top:12px"></div>
+    <div class="chips" id="examples"><span class="lbl">Exemples dans le monde</span></div>
 
-<!-- TESTER -->
-<section id="view-try" class="view">
-  <h2 style="font-size:22px">Tester le modèle sur une image</h2>
-  <p class="lead">Le modèle (un réseau de neurones U-Net) regarde chaque pixel d'une image satellite et décide : eau ou pas eau. Déposez une capture satellite en couleurs d'un lac ou d'un barrage ; une photo ordinaire ne marchera pas, il n'a vu que des images satellite.</p>
-  <div class="try">
-    <div class="panel">
-      <h3>1. Une image</h3>
-      <label class="drop" id="drop"><input type="file" id="file" accept="image/*" /><span id="dropText">Cliquer ou déposer une image ici</span></label>
-      <h3>2. Le barrage concerné</h3>
-      <select id="trySite"></select>
-      <button class="primary" id="tryBtn" style="width:100%" disabled>Détecter l'eau</button>
-      <p class="muted" style="font-size:13px;margin-top:12px">Le résultat n'est pas ajouté à l'historique du barrage : l'image d'un utilisateur n'est pas une mesure officielle.</p>
+    <div class="rail"><span class="idx">02</span><span class="t">Choisir le plan d'eau</span><span class="ln"></span></div>
+    <p class="caption">Cliquez sur un lac ou un réservoir : son contour est reconnu automatiquement. Pour une zone sans plan d'eau cartographié, utilisez l'outil rectangle ou polygone en haut à gauche de la carte.</p>
+    <div id="map"></div>
+    <div id="selection"></div>
+
+    <div class="rail"><span class="idx">03</span><span class="t">Lancer l'analyse</span><span class="ln"></span></div>
+    <div class="actions">
+      <button class="btn alt" id="quickBtn" disabled>Analyse rapide : climat et relevé 1984-2021</button>
+      <button class="btn" id="fullBtn" disabled>Analyse satellite complète (Sentinel-2)</button>
     </div>
-    <div class="panel" id="tryResult"><p class="muted">Le résultat s'affichera ici : votre image, avec l'eau détectée en bleu.</p></div>
-  </div>
-</section>
+    <p class="caption" style="margin-top:10px">Rapide : réponse en quelques secondes pour n'importe quel point du monde (pluie contre la normale, évaporation, évolution de la surface depuis 1984). Complète : ajoute la dernière image Sentinel-2, la mesure actuelle, l'état du plan d'eau et, pour les barrages tunisiens, le taux de remplissage et la prévision.</p>
 
-<!-- MONDE -->
-<section id="view-world" class="view">
-  <h2 style="font-size:22px">Le modèle est-il fiable hors de Tunisie ?</h2>
-  <p class="lead">Pour le savoir, il a été testé sur 90 lacs et réservoirs tirés au hasard dans 14 zones climatiques. Chaque point est un plan d'eau ; sa couleur dit à quel point le contour trouvé par le modèle coïncide avec la référence (IoU : 1 = identique, 0 = rien en commun).</p>
-  <div class="world">
-    <div class="panel" id="worldSummary"><p class="muted">Chargement…</p></div>
-    <div id="worldMap"></div>
-  </div>
-</section>
+    <hr />
+    <div id="results"></div>
+  </section>
 
-<!-- MODE D'EMPLOI -->
-<section id="view-how" class="view">
-  <h2 style="font-size:22px">Comment ça marche</h2>
-  <p class="lead">L'application répond à une question : à quel niveau est un barrage aujourd'hui, et où va-t-il dans quatre semaines ?</p>
-  <div class="how">
+  <!-- TESTER -->
+  <section id="view-try" class="view">
+    <div class="rail"><span class="idx">A</span><span class="t">Tester le modèle sur une image</span><span class="ln"></span></div>
+    <p class="caption" style="max-width:72ch">Le modèle (un réseau de neurones U-Net) regarde chaque pixel d'une image satellite et décide : eau ou pas eau. Déposez une capture satellite en couleurs d'un lac ou d'un barrage ; une photo ordinaire ne marchera pas, il n'a vu que des images satellite.</p>
+    <div class="try">
+      <div class="panel" style="margin-top:0">
+        <div class="eyebrow2">1. Une image</div>
+        <label class="drop" id="drop"><input type="file" id="file" accept="image/*" /><span id="dropText">Cliquer ou déposer une image ici</span></label>
+        <div class="eyebrow2">2. Le plan d'eau concerné</div>
+        <select id="trySite" style="margin-bottom:14px"></select>
+        <button class="btn" id="tryBtn" style="width:100%" disabled>Détecter l'eau</button>
+        <p class="muted" style="font-size:.82rem;margin-top:12px">Le résultat n'est pas ajouté à l'historique : l'image d'un utilisateur n'est pas une mesure officielle.</p>
+      </div>
+      <div class="panel" id="tryResult" style="margin-top:0"><p class="muted">Le résultat s'affichera ici : votre image, avec l'eau détectée en bleu.</p></div>
+    </div>
+  </section>
+
+  <!-- MONDE -->
+  <section id="view-world" class="view">
+    <div class="rail"><span class="idx">B</span><span class="t">Le modèle est-il fiable hors de Tunisie ?</span><span class="ln"></span></div>
+    <p class="caption" style="max-width:74ch">Pour le savoir, il a été testé sur 90 lacs et réservoirs tirés au hasard dans 14 zones climatiques. Chaque point est un plan d'eau ; sa couleur dit à quel point le contour trouvé par le modèle coïncide avec la référence (IoU : 1 = identique, 0 = rien en commun).</p>
+    <div class="world">
+      <div class="panel" id="worldSummary" style="margin-top:0"><p class="muted">Chargement…</p></div>
+      <div id="worldMap"></div>
+    </div>
+  </section>
+
+  <!-- MODE D'EMPLOI -->
+  <section id="view-how" class="view how">
+    <div class="rail"><span class="idx">C</span><span class="t">Comment ça marche</span><span class="ln"></span></div>
+    <p class="caption">L'application répond à une question : dans quel état est ce plan d'eau, et que dit son histoire ?</p>
     <ol>
-      <li><b>Choisir un plan d'eau</b>Dans l'onglet Suivi, cliquez un barrage dans la liste ou sur la carte. Pour un autre lac, placez un point ou dessinez un polygone sur l'eau.</li>
-      <li><b>Mesurer</b>« Mesurer maintenant » demande à Google Earth Engine la dernière image Sentinel-2 du plan d'eau, écarte les nuages, et compte les pixels d'eau. Le résultat est une surface, pas encore un niveau.</li>
-      <li><b>Convertir en taux de remplissage</b>Un barrage a la forme d'une cuvette : sa surface ne varie pas proportionnellement à son volume. Pour chaque barrage, une courbe apprise sur les bulletins hebdomadaires de l'ONAGRI (2024-2025) convertit la surface en taux de remplissage, avec l'erreur mesurée sur des périodes que la courbe n'avait pas vues (1,6 à 3,6 points). Si aucune courbe fiable n'existe pour un barrage, seule la surface est affichée.</li>
-      <li><b>Prévoir</b>Un petit réseau de neurones récurrent (GRU) lit les 12 dernières semaines de surface et de météo et prédit à +1, +2 et +4 semaines. Il est affiché avec son erreur typique, à comparer avec celle de « rien ne change ».</li>
-      <li><b>Tester le modèle</b>L'onglet Tester une image montre ce que fait le réseau de segmentation, pixel par pixel. L'onglet Précision dans le monde dit où on peut lui faire confiance.</li>
+      <li><b>Localiser et choisir</b>Cherchez un lieu ou cliquez sur la carte. Le contour du lac ou du réservoir vient de la base HydroLAKES (1,4 million de plans d'eau dans le monde).</li>
+      <li><b>Analyse rapide</b>Le climat des 90 derniers jours est comparé à la même période des cinq années précédentes (Open-Meteo), avec l'évaporation. Le relevé de la surface d'eau de 1984 à 2021 vient de Landsat (JRC Global Surface Water), ramené au maximum observé du plan d'eau.</li>
+      <li><b>Analyse satellite complète</b>La dernière image Sentinel-2 sans nuage donne la surface d'eau actuelle, comparée à son maximum historique, avec la turbidité, les algues et la végétation alentour. L'état affiché (normal, vigilance, alerte, critique) combine cette mesure, la tendance longue et la pluie ; les seuils sont des conventions du projet, pas des normes officielles.</li>
+      <li><b>Barrages tunisiens : remplissage et prévision</b>Pour six barrages tunisiens, une courbe apprise sur les bulletins ONAGRI 2024-2025 convertit la surface en taux de remplissage officiel (1,6 à 3,6 points d'erreur), et un réseau récurrent prévoit les 4 semaines suivantes. Ailleurs, ces données officielles n'existent pas : on affiche la surface, pas un taux.</li>
+      <li><b>Tester une image, précision dans le monde</b>Ces onglets montrent ce que fait le réseau de segmentation pixel par pixel, et où l'on peut lui faire confiance.</li>
     </ol>
-    <div class="limits">
-      <h3 style="font-size:14px;margin-bottom:6px">Ce qu'il faut savoir</h3>
-      <p class="muted">Les scores du modèle sont mesurés contre un masque NDWI de la même image : une référence approchée, pas une annotation manuelle. Le modèle ne voit que le rouge, le vert et le bleu, et se trompe parfois sur les ombres de nuages et la végétation sombre. Il est meilleur sur les réservoirs que sur les lacs naturels. La prévision est expérimentale : elle améliore les semaines ordinaires mais ne prévoit pas les grandes variations.</p>
+    <div class="panel" style="max-width:760px">
+      <div class="eyebrow2">Limites</div>
+      <p class="muted">Le relevé JRC s'arrête en 2021 : l'état actuel vient uniquement de la mesure Sentinel-2. Pour un lac trop grand pour être analysé en entier (plus de 2000 km²), la mesure Sentinel-2 porte sur un disque de 6 km autour du point ; le relevé 1984-2021, lui, couvre tout le plan d'eau. Les scores du modèle sont mesurés contre un masque NDWI, une référence approchée. La prévision est expérimentale.</p>
     </div>
-  </div>
-</section>
+  </section>
+</div>
 
 <div id="modal"><div class="box">
-  <h3 style="font-size:16px">Nom du nouveau site</h3>
-  <input id="modalInput" type="text" />
-  <div class="btns"><button class="ghost" id="modalCancel">Annuler</button><button class="primary" id="modalOk">Créer</button></div>
+  <h3 class="serif" style="font-size:1.1rem">Nom de la zone</h3>
+  <input type="text" id="modalInput" style="width:100%;margin:12px 0 14px" />
+  <div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn alt" id="modalCancel">Annuler</button><button class="btn" id="modalOk">Valider</button></div>
 </div></div>
 
 <script>
-  const LEVEL_COLOR = { critique: '#b00020', alerte: '#cc4a0a', vigilance: '#a86a00' };
-  const LEVEL_RANK = { critique: 3, alerte: 2, vigilance: 1 };
-  const state = { sites: [], selected: 'Sidi Salem', measuring: false };
-  const markers = {};
-  let map, worldMap, chart, drawnItems, worldLoaded = false, tryFile = null;
+  const LEVEL = { normal: '#2f7d4f', vigilance: '#b5822a', alerte: '#c4622a', critique: '#b5482a', contexte: '#3d6b8a' };
+  const EXAMPLES = [
+    { label: 'Lake Mead', sub: 'États-Unis', lat: 36.05, lon: -114.75, zoom: 10 },
+    { label: 'Mer d\'Aral', sub: 'Asie centrale', lat: 44.5, lon: 59.5, zoom: 7 },
+    { label: 'Lac d\'Ourmia', sub: 'Iran', lat: 37.6, lon: 45.4, zoom: 9 },
+    { label: 'Lac Poopó', sub: 'Bolivie', lat: -18.75, lon: -67.1, zoom: 9 },
+    { label: 'Lac Tchad', sub: 'Afrique', lat: 13.3, lon: 14.4, zoom: 8 },
+    { label: 'Lac Oroville', sub: 'Californie', lat: 39.55, lon: -121.45, zoom: 11 },
+    { label: 'Lac Titicaca', sub: 'Pérou, Bolivie', lat: -15.9, lon: -69.4, zoom: 8 },
+    { label: 'Sidi Salem', sub: 'Tunisie · taux officiel', lat: 36.64, lon: 9.36, zoom: 11 },
+  ];
+  const state = { sel: null, report: null, sat: null, seeds: [], busy: false };
+  let map, outline, mark, worldMap, worldLoaded = false, tryFile = null, historyChart = null, drawn;
 
-  function esc(text) {
-    return String(text ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  }
+  const esc = (t) => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const $ = (id) => document.getElementById(id);
   const fmtDate = (iso) => new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
-  const fmtFullDate = (iso) => new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  /* ---------- navigation ---------- */
-  document.querySelectorAll('.top nav button').forEach(b => b.addEventListener('click', () => {
-    document.querySelectorAll('.top nav button').forEach(x => x.classList.toggle('on', x === b));
+  /* ---------- onglets ---------- */
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
     document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === 'view-' + b.dataset.view));
-    if (b.dataset.view === 'follow') setTimeout(() => map.invalidateSize(), 50);
+    if (b.dataset.view === 'analyze') setTimeout(() => map.invalidateSize(), 50);
     if (b.dataset.view === 'world') openWorld();
   }));
 
-  /* ---------- alertes ---------- */
-  async function loadAlerts() {
-    const alerts = await (await fetch('/alerts')).json();
-    const bar = document.getElementById('alerts');
-    if (!alerts.length) { bar.style.display = 'none'; return; }
-    const worst = alerts.reduce((a, b) => (LEVEL_RANK[b.level] || 0) > (LEVEL_RANK[a.level] || 0) ? b : a);
-    bar.style.display = 'block';
-    bar.style.background = LEVEL_COLOR[worst.level] || LEVEL_COLOR.critique;
-    bar.textContent = alerts.length + ' alerte(s) : ' + [...new Set(alerts.map(a => a.site + ' (' + a.level + ')'))].join(', ');
-  }
+  /* ---------- 01 : recherche ---------- */
+  $('examples').insertAdjacentHTML('beforeend', EXAMPLES.map((e, i) => `<button class="chip" data-i="${i}">${esc(e.label)}<small>${esc(e.sub)}</small></button>`).join(''));
+  $('examples').querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    const e = EXAMPLES[c.dataset.i];
+    map.setView([e.lat, e.lon], e.zoom);
+    pickAt(e.lat, e.lon);
+  }));
 
-  /* ---------- liste des sites ---------- */
-  function siteColor(site) {
-    if (site.alert_level && LEVEL_COLOR[site.alert_level]) return LEVEL_COLOR[site.alert_level];
-    return site.latest_reading ? '#17794a' : '#8a949c';
-  }
-
-  function renderBoard() {
-    const list = document.getElementById('siteList');
-    list.innerHTML = state.sites.map(s => {
-      const r = s.latest_reading, fill = r && r.fill_estimate;
-      const big = fill ? fill.fill_pct.toFixed(0) + ' %' : (r ? '—' : '');
-      const sub = !r ? 'pas encore mesuré'
-        : fill ? 'remplissage · ± ' + fill.typical_error_pts + ' pts'
-        : 'surface ' + r.water_area_pct.toFixed(0) + ' % · pas de calibration officielle';
-      const tag = s.alert_level ? `<span class="tag" style="background:${LEVEL_COLOR[s.alert_level]}">${esc(s.alert_level)}</span>` : '';
-      const level = fill ? fill.fill_pct : 0;
-      return `<button class="site ${s.name === state.selected ? 'on' : ''}" data-name="${esc(s.name)}">
-        <div class="row"><span class="name">${esc(s.name)}${tag}</span><span class="big num">${big}</span></div>
-        <div class="sub">${esc(sub)}</div>
-        ${fill ? `<div class="gauge"><i style="width:${Math.min(level, 100)}%"></i></div>` : ''}
-      </button>`;
-    }).join('');
-    list.querySelectorAll('.site').forEach(b => b.addEventListener('click', () => selectSite(b.dataset.name)));
-
-    const trySel = document.getElementById('trySite');
-    const keep = trySel.value || state.selected;
-    trySel.innerHTML = state.sites.map(s => `<option ${s.name === keep ? 'selected' : ''}>${esc(s.name)}</option>`).join('');
-  }
-
-  function markerIcon(site) {
-    const sel = site.name === state.selected ? ' sel' : '';
-    return L.divIcon({ className: '', html: `<div class="marker${sel}" style="background:${siteColor(site)}"></div>`, iconSize: [22, 22], iconAnchor: [11, 11] });
-  }
-
-  async function loadSites() {
-    state.sites = await (await fetch('/sites')).json();
-    renderBoard();
-    state.sites.forEach(s => {
-      if (markers[s.name]) markers[s.name].setIcon(markerIcon(s));
-      else addMarker(s);
-    });
-  }
-
-  function addMarker(site) {
-    const m = L.marker([site.lat, site.lon], { icon: markerIcon(site) }).addTo(map);
-    m.bindTooltip(esc(site.name));
-    m.on('click', () => selectSite(site.name));
-    markers[site.name] = m;
-  }
-
-  async function selectSite(name) {
-    state.selected = name;
-    renderBoard();
-    state.sites.forEach(s => markers[s.name] && markers[s.name].setIcon(markerIcon(s)));
-    const site = state.sites.find(s => s.name === name);
-    if (site) map.panTo([site.lat, site.lon]);
-    await renderDetail();
-  }
-
-  /* ---------- détail d'un site ---------- */
-  async function renderDetail(extra) {
-    const site = state.sites.find(s => s.name === state.selected);
-    const box = document.getElementById('detail');
-    if (!site) { box.innerHTML = ''; return; }
-    const r = site.latest_reading, fill = r && r.fill_estimate;
-    const history = await (await fetch('/history/' + encodeURIComponent(site.name))).json();
-
-    box.innerHTML = `
-      <div class="head">
-        <div><h2>${esc(site.name)}</h2><div class="muted" style="font-size:13px">${r ? 'Dernière mesure : ' + fmtFullDate(r.timestamp) : 'Aucune mesure pour ce site'}</div></div>
-        <div style="text-align:right">
-          <button class="primary" id="measureBtn" ${state.measuring ? 'disabled' : ''}>${state.measuring ? 'Mesure en cours…' : 'Mesurer maintenant'}</button>
-          <div class="muted" style="font-size:12px;margin-top:4px">Récupère la dernière image Sentinel-2 (≈ 30 s)</div>
-        </div>
-      </div>
-      <div class="figures">
-        <div><div class="label">Taux de remplissage</div>
-          <div class="v num">${fill ? fill.fill_pct.toFixed(1) + ' %' : '—'}</div>
-          <div class="n">${fill ? '± ' + fill.typical_error_pts + ' points, mesuré sur des périodes non vues' : 'pas de courbe officielle fiable pour ce site'}</div></div>
-        <div><div class="label">Surface d'eau (indice)</div>
-          <div class="v num">${r ? r.water_area_pct.toFixed(0) + ' %' : '—'}</div>
-          <div class="n">de l'étendue maximale observée</div></div>
-        <div><div class="label">Végétation autour (NDVI)</div>
-          <div class="v num">${r && r.ndvi != null ? r.ndvi : '—'}</div>
-          <div class="n">proche de 0 : sol nu ou eau</div></div>
-      </div>
-      <div class="block">
-        <div class="chartbar">
-          <h3 style="margin:0">Évolution${history.some(h => h.fill_pct != null) ? ' du taux de remplissage' : ' de la surface'}</h3>
-          <div class="links">Remplir l'historique :
-            <button data-m="6">6 mois</button><button data-m="12">12 mois</button><button data-m="24">24 mois</button>
-            <span id="backfillState"></span></div>
-        </div>
-        ${history.length ? '<div class="chartwrap"><canvas id="historyChart"></canvas></div>' : '<div class="empty">Aucune mesure pour l\'instant. Cliquez « Mesurer maintenant », ou remplissez l\'historique pour voir le cycle des saisons.</div>'}
-      </div>
-      <div id="measureOut">${extra || ''}</div>`;
-
-    document.getElementById('measureBtn').addEventListener('click', () => measure(site));
-    box.querySelectorAll('.links button').forEach(b => b.addEventListener('click', () => backfill(site.name, parseInt(b.dataset.m, 10))));
-    if (history.length) drawChart(history, window.__forecast && window.__forecast.site === site.name ? window.__forecast.dl : null);
-  }
-
-  function drawChart(history, dl) {
-    const useFill = history.some(h => h.fill_pct != null);
-    const key = useFill ? 'fill_pct' : 'water_area_pct';
-    const lastPerDay = new Map();
-    history.filter(h => h[key] != null).forEach(h => lastPerDay.set(h.timestamp.slice(0, 10), h));
-    const points = [...lastPerDay.values()];
-    const labels = points.map(h => fmtDate(h.timestamp));
-    const observed = points.map(h => h[key]);
-    const datasets = [{ label: useFill ? 'Taux de remplissage' : 'Surface d\'eau', data: observed.slice(), borderColor: '#0b3fd9',
-      backgroundColor: '#0b3fd9', borderWidth: 2, pointRadius: 2.5, tension: 0.2 }];
-    if (dl && useFill && dl.horizons.every(h => h.fill_pct != null)) {
-      const proj = observed.map(() => null);
-      proj[proj.length - 1] = observed[observed.length - 1];
-      dl.horizons.forEach(h => { labels.push(fmtDate(h.target_week)); proj.push(h.fill_pct); });
-      datasets[0].data = observed.concat(dl.horizons.map(() => null));
-      datasets.push({ label: 'Prévision', data: proj, borderColor: '#0b3fd9', borderDash: [5, 4], borderWidth: 2, pointStyle: 'rectRot', pointRadius: 4, backgroundColor: '#fff' });
-    }
-    if (chart) chart.destroy();
-    chart = new Chart(document.getElementById('historyChart'), {
-      type: 'line', data: { labels, datasets },
-      options: {
-        maintainAspectRatio: false, animation: { duration: 300 },
-        plugins: { legend: { display: datasets.length > 1, labels: { boxWidth: 12 } } },
-        scales: {
-          y: { min: 0, max: 100, grid: { color: '#e8ebed' }, ticks: { callback: v => v + ' %' } },
-          x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
-        },
-      },
-    });
-  }
-
-  /* ---------- mesure satellite ---------- */
-  function renderMeasure(d) {
-    const rows = [
-      ['Image utilisée', `${esc(d.acquisition_date)} · nuages ${esc(d.cloud_pct)} %`],
-      ['Surface d\'eau', `${d.water_area.current_area_ha} ha sur ${d.water_area.max_observed_area_ha} ha au maximum observé`],
-      ['Turbidité (NDTI)', esc(d.indices.ndti)],
-      ['Algues (NDCI)', esc(d.indices.ndci)],
-      ['Pluie', `${d.rainfall.mm} mm sur ${d.rainfall.days} jours (${esc(d.rainfall.level)})`],
-    ];
-    const notes = [];
-    if (d.level_change_explanation) notes.push(`<div class="note">${esc(d.level_change_explanation)}</div>`);
-    if (d.water_balance) notes.push(`<div class="note">Bilan hydrique : ${esc(d.water_balance)}</div>`);
-    if (d.alert) notes.push(`<div class="note bad">Alerte ${esc(d.alert.level)} : baisse de ${d.alert.drop_pct.toFixed(1)} % par rapport à l'historique</div>`);
-    const needsTreatment = d.usage.label === 'traitement requis';
-    notes.push(`<div class="note ${needsTreatment ? 'bad' : 'good'}">Usage de l'eau : <b>${esc(d.usage.label)}</b>. ${esc(d.usage.detail)}</div>`);
-    return `<div class="block"><h3>Dernière mesure</h3>
-      <table class="kv">${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>${notes.join('')}</div>
-      <div class="block" id="forecastBlock"><h3>Prévision</h3><p class="muted">Calcul en cours (jusqu'à 30 s la première fois)…</p></div>`;
-  }
-
-  async function runAnalysis(name, lat, lon, polygon, lake) {
-    state.measuring = true;
-    await renderDetail('<div class="block"><p class="muted">Récupération de l\'image Sentinel-2 la plus récente…</p></div>');
+  async function search() {
+    const q = $('q').value.trim(), box = $('geoResults');
+    if (q.length < 2) return;
+    box.innerHTML = '<p class="spin">Recherche…</p>';
     try {
-      const res = await fetch('/analyze_location', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lat, lon, name, polygon: polygon || null }) });
+      const res = await fetch('/geocode?q=' + encodeURIComponent(q));
       const data = await res.json();
-      state.measuring = false;
-      if (!res.ok) { await renderDetail(`<div class="block"><div class="note bad">${esc(data.detail)}</div></div>`); return; }
-      await loadSites();
-      await renderDetail(renderMeasure(data) + (lake ? lakeBlock(lake) : ''));
-      loadAlerts();
-      loadForecast(name);
+      if (!res.ok) { box.innerHTML = `<div class="note">${esc(data.detail)}</div>`; return; }
+      if (!data.length) { box.innerHTML = '<div class="note">Aucun lieu trouvé. Essayez un autre nom ou cliquez directement sur la carte.</div>'; return; }
+      box.innerHTML = `<select id="geoSelect">${data.map((g, i) => `<option value="${i}">${esc([g.name, g.admin1, g.country].filter(Boolean).join(', '))}</option>`).join('')}</select>
+        <button class="btn alt" id="geoGo" style="margin-top:10px">Centrer la carte sur ce lieu</button>`;
+      $('geoGo').addEventListener('click', () => {
+        const g = data[$('geoSelect').value];
+        map.setView([g.lat, g.lon], 10); box.innerHTML = ''; pickAt(g.lat, g.lon, g.name);
+      });
+    } catch (e) { box.innerHTML = '<div class="note">Erreur réseau.</div>'; }
+  }
+  $('searchBtn').addEventListener('click', search);
+  $('q').addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+
+  /* ---------- 02 : carte et sélection ---------- */
+  function setSelection(sel) {
+    state.sel = sel; state.report = null; state.sat = null;
+    $('quickBtn').disabled = $('fullBtn').disabled = !sel;
+    $('results').innerHTML = '';
+    if (outline) { map.removeLayer(outline); outline = null; }
+    if (mark) { map.removeLayer(mark); mark = null; }
+    if (!sel) { $('selection').innerHTML = ''; return; }
+    if (sel.polygon) {
+      outline = L.polygon(sel.polygon.map(p => [p[1], p[0]]), { color: '#7fd4ff', weight: 2.5, fillOpacity: 0.18 }).addTo(map);
+      if (sel.fit) map.fitBounds(outline.getBounds(), { maxZoom: 13, padding: [20, 20] });
+    } else {
+      mark = L.circleMarker([sel.lat, sel.lon], { radius: 8, color: '#fff', weight: 2, fillColor: '#1f6b8a', fillOpacity: 1 }).addTo(map);
+    }
+    const lake = sel.lake;
+    const facts = lake ? [lake.type === 'reservoir' ? 'Réservoir' : 'Lac naturel', lake.country, lake.area_km2 + ' km²',
+      lake.mean_depth_m != null ? 'profondeur moyenne ' + Number(lake.mean_depth_m).toFixed(1) + ' m' : null,
+      lake.volume_mm3 != null ? Math.round(Number(lake.volume_mm3)) + ' millions de m³' : null].filter(Boolean).join(' · ') : (sel.message || '');
+    const dam = sel.dam ? '<div class="sub" style="margin-top:6px;color:var(--accent-deep)"><b>Barrage suivi avec données officielles :</b> taux de remplissage et prévision disponibles.</div>' : '';
+    const big = lake && !lake.polygon ? '<div class="sub" style="margin-top:6px">Plan d\'eau très grand : le relevé 1984-2021 couvre tout le plan d\'eau, mais la mesure Sentinel-2 portera sur un disque de 6 km autour du point.</div>' : '';
+    $('selection').innerHTML = `<div class="selcard"><div class="lbl">Plan d'eau sélectionné</div><div class="name">${esc(sel.name)}</div>
+      <div class="sub">${esc(facts)}</div><div class="sub mono" style="margin-top:4px">${sel.lat.toFixed(4)}, ${sel.lon.toFixed(4)}</div>${dam}${big}</div>`;
+  }
+
+  function nearSeed(lat, lon) {
+    return state.seeds.find(s => Math.hypot((s.lat - lat) * 111, (s.lon - lon) * 111 * Math.cos(lat * Math.PI / 180)) < 5);
+  }
+
+  async function pickAt(lat, lon, label) {
+    $('selection').innerHTML = '<div class="selcard"><div class="lbl">Plan d\'eau sélectionné</div><div class="sub">Recherche du plan d\'eau à cet endroit (HydroLAKES)…</div></div>';
+    $('quickBtn').disabled = $('fullBtn').disabled = true;
+    const seed = nearSeed(lat, lon);
+    try {
+      const res = await fetch(`/lake_at?lat=${lat}&lon=${lon}`);
+      if (res.ok) {
+        const lake = await res.json();
+        const name = seed ? seed.name : (lake.name || label || `Plan d'eau (${lat.toFixed(3)}, ${lon.toFixed(3)})`);
+        setSelection({ lat, lon, lake, polygon: lake.polygon, name, dam: seed ? seed.name : null, fit: true });
+        return;
+      }
+      const err = await res.json();
+      setSelection({ lat, lon, lake: null, polygon: null, name: seed ? seed.name : (label || `Point (${lat.toFixed(3)}, ${lon.toFixed(3)})`),
+        dam: seed ? seed.name : null, message: (err.detail || 'Aucun plan d\'eau cartographié ici.') + ' L\'analyse portera sur un disque de 3 à 6 km autour du point.' });
     } catch (e) {
-      state.measuring = false;
-      await renderDetail(`<div class="block"><div class="note bad">Erreur réseau : ${esc(e)}</div></div>`);
+      setSelection({ lat, lon, lake: null, polygon: null, name: label || 'Point choisi', dam: null, message: 'Recherche du contour indisponible : analyse sur un disque autour du point.' });
     }
   }
 
-  function measure(site) { return runAnalysis(site.name, site.lat, site.lon); }
-
-  function lakeBlock(lake) {
-    const kind = lake.type === 'reservoir' ? 'Réservoir' : 'Lac naturel';
-    const bits = [`${lake.area_km2} km²`];
-    if (lake.mean_depth_m != null) bits.push('profondeur moyenne ' + Number(lake.mean_depth_m).toFixed(1) + ' m');
-    if (lake.volume_mm3 != null) bits.push('volume ' + Math.round(Number(lake.volume_mm3)) + ' millions de m³');
-    return `<div class="block"><h3>Plan d'eau identifié</h3><p>${kind}${lake.name ? ' « ' + esc(lake.name) + ' »' : ''}, ${esc(lake.country || '')} · ${bits.join(' · ')}.
-      <span class="muted">Son contour réel (base HydroLAKES) a servi de zone d'analyse.</span></p></div>`;
+  function askName(defaultName) {
+    return new Promise(resolve => {
+      const modal = $('modal'), input = $('modalInput'), ok = $('modalOk'), cancel = $('modalCancel');
+      input.value = defaultName; modal.style.display = 'flex'; input.focus();
+      const done = (v) => { modal.style.display = 'none'; ok.onclick = cancel.onclick = null; resolve(v); };
+      ok.onclick = () => done(input.value.trim() || null); cancel.onclick = () => done(null);
+    });
   }
+
+  function baseLayer(kind) {
+    const path = kind === 'imagery' ? 'World_Imagery' : 'Canvas/World_Light_Gray_Base';
+    return L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${path}/MapServer/tile/{z}/{y}/{x}`, { attribution: 'Tiles © Esri', maxZoom: kind === 'imagery' ? 18 : 16 });
+  }
+
+  function initMap() {
+    map = L.map('map').setView([30, 10], 3);
+    baseLayer('imagery').addTo(map);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { opacity: .85, maxZoom: 18 }).addTo(map);
+    drawn = new L.FeatureGroup().addTo(map);
+    map.addControl(new L.Control.Draw({
+      draw: { polygon: { allowIntersection: false, showArea: true, shapeOptions: { color: '#7fd4ff' } }, rectangle: { shapeOptions: { color: '#7fd4ff' } },
+              polyline: false, circle: false, marker: false, circlemarker: false },
+      edit: { featureGroup: drawn, edit: false, remove: true },
+    }));
+    map.on('click', (e) => pickAt(e.latlng.lat, e.latlng.lng));
+    map.on(L.Draw.Event.CREATED, async (e) => {
+      drawn.clearLayers(); drawn.addLayer(e.layer);
+      const ring = e.layer.getLatLngs()[0].map(p => [p.lng, p.lat]);
+      const c = e.layer.getBounds().getCenter();
+      const name = await askName(`Zone (${c.lat.toFixed(3)}, ${c.lng.toFixed(3)})`);
+      if (!name) { drawn.clearLayers(); return; }
+      setSelection({ lat: c.lat, lon: c.lng, lake: null, polygon: null, drawnPolygon: ring, name, dam: null, message: 'Zone tracée à la main.' });
+    });
+  }
+
+  /* ---------- 03 : analyses ---------- */
+  const ICON = {
+    drop: '<svg viewBox="0 0 24 24" fill="none" stroke="#1f6b8a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.4 2.9 3.8 5 3.8 7.1A3.8 3.8 0 0 1 8.2 10C8.2 8 9.6 5.9 12 3Z"/><path d="M3 16.5c2 0 2 1.1 4.5 1.1S9.5 16.5 12 16.5s2 1.1 4.5 1.1S18.5 16.5 21 16.5"/></svg>',
+    trend: '<svg viewBox="0 0 24 24" fill="none" stroke="#b5482a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"/><path d="M15 17h6v-6"/></svg>',
+    rain: '<svg viewBox="0 0 24 24" fill="none" stroke="#3f7a8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4 4 0 0 1 .3-8A5 5 0 0 1 17 8.5a3.5 3.5 0 0 1-.4 6.5"/><path d="M8 18.5 7 21M12 18.5 11 21M16 18.5 15 21"/></svg>',
+    sun: '<svg viewBox="0 0 24 24" fill="none" stroke="#c58a2e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.5 5.5l1.5 1.5M16.9 16.9l1.6 1.6M18.5 5.5 17 7M7 17l-1.5 1.5"/></svg>',
+    leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="#2f7d4f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-7.7 5.8-12.5 14-12.5 0 7.7-5 13.5-12.7 13.5H5Z"/></svg>',
+  };
+  const MOTIF = '<svg width="230" height="150" viewBox="0 0 230 150" fill="none" stroke="#fff" stroke-width="2"><path d="M0 150 Q115 66 230 150"/><path d="M0 150 Q115 92 230 150"/><path d="M0 150 Q115 118 230 150"/><path d="M18 150 Q115 42 214 150"/></svg>';
+
+  const kpi = (icon, label, value, unit, pill, color, extra = '') => `<div class="kpi"><div class="kpi-head">${ICON[icon]}<span class="kpi-label">${label}</span></div>
+    <div class="kpi-value">${value}${unit ? `<span class="kpi-unit">${unit}</span>` : ''}</div>${pill ? `<span class="pill" style="--p:${color}">${pill}</span>` : ''}${extra}</div>`;
+  const gauge = (pct) => `<div class="gaugewrap"><div class="gauge"><div class="gz gz-r"></div><div class="gz gz-a"></div><div class="gz gz-g"></div></div><div class="gm" style="left:${Math.max(0, Math.min(100, pct))}%"></div></div>`;
+
+  function renderHero(a, partial) {
+    const c = a.basis === 'contexte' ? (a.level === 'alerte' ? LEVEL.alerte : a.level === 'vigilance' ? LEVEL.vigilance : LEVEL.contexte) : (LEVEL[a.level] || LEVEL.contexte);
+    const badge = a.basis === 'contexte' ? (partial ? 'Contexte · mesure sur disque non retenue' : 'Contexte · sans mesure actuelle') : 'Mesure satellite';
+    const reasons = a.reasons.map(r => `<li>${esc(r)}</li>`).join('');
+    return `<div class="hero" style="--c:${c}">${MOTIF}<span class="badge">${badge}</span>
+      <div class="eyebrow">${a.basis === 'contexte' ? 'Contexte du plan d\'eau' : 'État du plan d\'eau'}</div>
+      <div class="action">${esc(a.action)}</div><div class="headline">${esc(a.headline)}</div></div>
+      <div class="why"><div class="eyebrow2">Pourquoi</div><ul>${reasons || '<li>Aucun élément disponible.</li>'}</ul>
+      <div class="foot">Seuils de ce projet, pas des normes officielles : surface sous ${a.thresholds.surface_pct.join(' / ')} % du maximum historique = vigilance, alerte, critique.</div></div>`;
+  }
+
+  function renderKpis(sat, fill, partial) {
+    const cards = [];
+    const r = state.report || {}, cl = r.climate, a = r.assessment;
+    if (fill) cards.push(kpi('drop', 'Taux de remplissage', fill.fill_pct.toFixed(1), '%', '± ' + fill.typical_error_pts + ' pts', LEVEL.normal, gauge(fill.fill_pct)));
+    if (sat && sat.water_area.water_area_pct != null) {
+      const v = sat.water_area.water_area_pct;
+      cards.push(kpi('drop', partial ? 'Surface sur le disque central' : 'Surface d\'eau actuelle', v.toFixed(0), '% du max', v >= 70 ? 'Dans la normale' : v >= 50 ? 'Sous la normale' : v >= 30 ? 'Basse' : 'Très basse',
+        v >= 70 ? LEVEL.normal : v >= 50 ? LEVEL.vigilance : v >= 30 ? LEVEL.alerte : LEVEL.critique, gauge(v)));
+    }
+    if (a && a.long_term_change_pct != null) {
+      const ch = a.long_term_change_pct;
+      cards.push(kpi('trend', 'Tendance depuis 1984', (ch > 0 ? '+' : '') + ch.toFixed(0), '%', ch <= -20 ? 'En baisse' : ch >= 20 ? 'En hausse' : 'Stable', ch <= -20 ? LEVEL.critique : ch >= 20 ? LEVEL.normal : LEVEL.contexte,
+        '<div class="kpi-note">5 dernières années du relevé contre les années précédentes</div>'));
+    }
+    if (cl) {
+      const an = cl.anomaly_pct;
+      cards.push(kpi('rain', 'Pluie sur 90 jours', cl.precip_90d_mm.toFixed(0), 'mm', an == null ? '' : an < 60 ? 'Déficitaire' : an < 130 ? 'Proche de la normale' : 'Excédentaire',
+        an == null ? LEVEL.contexte : an < 60 ? LEVEL.alerte : an < 130 ? LEVEL.normal : LEVEL.contexte, `<div class="kpi-note">${an == null ? '' : an.toFixed(0) + ' % de la normale (' + cl.precip_normal_90d_mm + ' mm) · '}prévu sur 7 jours : ${cl.rain_next_7d_mm} mm</div>`));
+      cards.push(kpi('sun', 'Pluie moins évaporation', (cl.balance_mm > 0 ? '+' : '') + cl.balance_mm.toFixed(0), 'mm', cl.balance_mm < 0 ? 'Évaporation supérieure' : 'Apport net', cl.balance_mm < 0 ? LEVEL.vigilance : LEVEL.normal,
+        `<div class="kpi-note">évaporation de référence ${cl.et0_90d_mm} mm sur 90 jours</div>`));
+    }
+    if (sat) cards.push(kpi('leaf', 'Végétation alentour (NDVI)', sat.indices.ndvi, '', '', '', '<div class="kpi-note">proche de 0 : sol nu ou eau</div>'));
+    return `<div class="kpis">${cards.join('')}</div>`;
+  }
+
+  function renderAlerts(sat, notes, extra) {
+    const items = [];
+    (notes || []).forEach(n => items.push(['info', n, '']));
+    (extra || []).forEach(n => items.push(['attention', n, '']));
+    if (sat) {
+      if (sat.alert) items.push([sat.alert.level === 'critique' ? 'critique' : 'attention', `Alerte ${sat.alert.level}`, `Baisse de ${sat.alert.drop_pct.toFixed(1)} % par rapport à l'historique mesuré de ce site.`]);
+      if (sat.level_change_explanation) items.push(['info', 'Évolution du niveau', sat.level_change_explanation]);
+      if (sat.water_balance) items.push(['info', 'Bilan hydrique', sat.water_balance]);
+      items.push([sat.usage.label === 'traitement requis' ? 'critique' : 'ok', 'Usage de l\'eau : ' + sat.usage.label, sat.usage.detail]);
+    }
+    const color = { critique: LEVEL.critique, attention: LEVEL.vigilance, info: LEVEL.contexte, ok: LEVEL.normal };
+    if (!items.length) return '';
+    return `<div class="eyebrow2" style="margin-top:28px">Signaux</div><div class="alerts">${items.map(([s, t, d]) => `<div class="alert" style="--s:${color[s]}"><span class="dot"></span><div><b>${esc(t)}</b>${d ? `<span>${esc(d)}</span>` : ''}</div></div>`).join('')}</div>`;
+  }
+
+  function renderRecordPanel() {
+    const rec = state.report && state.report.record;
+    if (!rec || !rec.record.length) return '<div class="panel"><div class="eyebrow2">Surface d\'eau depuis 1984</div><p class="muted">Relevé satellite indisponible pour ce plan d\'eau.</p></div>';
+    return `<div class="panel"><div class="eyebrow2">Surface d'eau, en % du maximum observé</div>
+      <div class="chartwrap"><canvas id="recordChart"></canvas></div>
+      <p class="caption" style="margin:10px 0 0">Une valeur par an, de ${rec.years[0]} à ${rec.years[1]} (Landsat, JRC Global Surface Water). Maximum observé : ${rec.max_km2} km². ${state.sat && !(state.sel.lake && !state.sel.lake.polygon) ? 'Le losange est la mesure Sentinel-2 actuelle.' : ''}</p></div>`;
+  }
+
+  function drawRecordChart() {
+    const canvas = $('recordChart');
+    if (!canvas) return;
+    const rec = state.report.record.record;
+    const datasets = [{ label: 'Relevé annuel (Landsat)', data: rec.map(p => ({ x: p.year, y: p.pct_of_max })), borderColor: '#1f6b8a', backgroundColor: '#1f6b8a',
+      borderWidth: 2, pointRadius: 2.5, tension: 0.15 }];
+    const sat = state.sat;
+    if (sat && sat.water_area.water_area_pct != null && !(state.sel.lake && !state.sel.lake.polygon)) {
+      const d = new Date(sat.acquisition_date), x = d.getFullYear() + (d.getMonth() / 12);
+      const color = LEVEL[state.report.assessment.level];
+      datasets.push({ label: 'Mesure Sentinel-2', data: [{ x, y: sat.water_area.water_area_pct }], borderColor: color, backgroundColor: color, pointRadius: 7, pointStyle: 'rectRot', showLine: false });
+    }
+    if (historyChart) historyChart.destroy();
+    historyChart = new Chart(canvas, { type: 'line', data: { datasets }, options: {
+      maintainAspectRatio: false, animation: { duration: 300 }, parsing: false,
+      plugins: { legend: { labels: { boxWidth: 12 } } },
+      scales: { y: { min: 0, max: 105, grid: { color: '#e4e0cf' }, ticks: { callback: v => v <= 100 ? v + ' %' : '' } },
+                x: { type: 'linear', grid: { display: false }, ticks: { callback: v => String(Math.round(v)), maxTicksLimit: 10 } } } } });
+  }
+
+  function paint(extra = {}) {
+    const a = state.report.assessment, sat = state.sat, fill = sat && sat.fill_estimate;
+    const partial = sat && state.sel.lake && !state.sel.lake.polygon;
+    $('results').innerHTML = renderHero(a, partial) + renderKpis(sat, fill, partial) + renderRecordPanel() +
+      renderAlerts(sat, state.report.notes, (extra.alerts || []).concat(partial ? ['Plan d\'eau trop grand pour une mesure complète : la mesure Sentinel-2 porte sur un disque de 6 km autour du point et n\'est pas utilisée pour l\'état affiché, qui repose sur le relevé 1984-2021 et le climat.'] : [])) + (sat ? renderSatellite(sat) : '') + '<div id="forecastSlot"></div>';
+    drawRecordChart();
+  }
+
+  function renderSatellite(d) {
+    return `<div class="panel"><div class="eyebrow2">Dernière mesure satellite</div><table class="kv">
+      <tr><td>Image utilisée</td><td>${esc(d.acquisition_date)} · nuages ${esc(d.cloud_pct)} %</td></tr>
+      <tr><td>Surface d'eau</td><td>${d.water_area.current_area_ha} ha sur ${d.water_area.max_observed_area_ha} ha au maximum observé</td></tr>
+      <tr><td>Turbidité (NDTI)</td><td>${esc(d.indices.ndti)}</td></tr><tr><td>Algues (NDCI)</td><td>${esc(d.indices.ndci)}</td></tr>
+      <tr><td>Pluie récente</td><td>${d.rainfall.mm} mm sur ${d.rainfall.days} jours (${esc(d.rainfall.level)})</td></tr></table></div>`;
+  }
+
+  async function ensureReport() {
+    if (state.report) return true;
+    const sel = state.sel;
+    $('results').innerHTML = '<p class="spin">Analyse rapide en cours : climat et relevé satellite 1984-2021 (quelques secondes)…</p>';
+    try {
+      const res = await fetch('/place_report', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat: sel.lat, lon: sel.lon, polygon: sel.drawnPolygon || null, lake_id: sel.lake ? sel.lake.id : null }) });
+      const data = await res.json();
+      if (!res.ok) { $('results').innerHTML = `<div class="note">${esc(data.detail || 'Analyse indisponible.')}</div>`; return false; }
+      state.report = data; state.sat = null;
+      return true;
+    } catch (e) { $('results').innerHTML = '<div class="note">Erreur réseau.</div>'; return false; }
+  }
+
+  async function runQuick() {
+    if (!state.sel || state.busy) return;
+    state.busy = true; state.report = null; state.sat = null;
+    try { if (await ensureReport()) paint(); } finally { state.busy = false; }
+  }
+
+  async function runFull() {
+    const sel = state.sel;
+    if (!sel || state.busy) return;
+    state.busy = true;
+    $('fullBtn').disabled = true;
+    try {
+      if (!(await ensureReport())) return;
+      paint();
+      $('results').insertAdjacentHTML('afterbegin', '<p class="spin" id="satSpin">Récupération de la dernière image Sentinel-2 sans nuage (environ 30 secondes)…</p>');
+      // Tracked dams use their own validated geometry (the one the calibration was fitted on), not the generic outline.
+      const res = sel.dam ? await fetch('/live/' + encodeURIComponent(sel.dam))
+        : await fetch('/analyze_location', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat: sel.lat, lon: sel.lon, name: sel.name, polygon: sel.polygon || sel.drawnPolygon || null }) });
+      const sat = await res.json();
+      const spin = $('satSpin'); if (spin) spin.remove();
+      if (!res.ok) { paint({ alerts: ['Mesure satellite impossible : ' + (sat.detail || 'erreur')] }); return; }
+      state.sat = sat;
+      const partialLake = !!(sel.lake && !sel.lake.polygon);
+      const assessRes = await fetch('/assess', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+        surface_pct: partialLake ? null : sat.water_area.water_area_pct, fill_pct: !partialLake && sat.fill_estimate ? sat.fill_estimate.fill_pct : null,
+        record: state.report.record ? state.report.record.record : null, climate: state.report.climate }) });
+      state.report.assessment = await assessRes.json();
+      paint();
+      if (sel.dam) loadForecast(sel.dam);
+    } catch (e) {
+      const spin = $('satSpin'); if (spin) spin.remove();
+      $('results').insertAdjacentHTML('afterbegin', '<div class="note">Erreur réseau pendant la mesure satellite.</div>');
+    } finally { state.busy = false; $('fullBtn').disabled = !state.sel; }
+  }
+  $('quickBtn').addEventListener('click', runQuick);
+  $('fullBtn').addEventListener('click', runFull);
 
   async function loadForecast(name) {
-    const slotHtml = (html) => { const el = document.getElementById('forecastBlock'); if (el) el.innerHTML = '<h3>Prévision</h3>' + html; };
+    const slot = $('forecastSlot');
+    if (!slot) return;
+    slot.innerHTML = '<div class="panel"><div class="eyebrow2">Prévision à 4 semaines</div><p class="spin">Calcul de la prévision (jusqu\'à 30 s la première fois)…</p></div>';
     try {
       const res = await fetch('/forecast/' + encodeURIComponent(name));
       const data = await res.json();
-      if (!res.ok) { slotHtml('<p class="muted">Indisponible pour ce site.</p>'); return; }
-      const dl = data.deep_learning;
-      if (dl && dl.available) {
-        window.__forecast = { site: name, dl };
-        const hasFill = dl.horizons.every(h => h.fill_pct != null);
-        const rows = dl.horizons.map(h => `<tr><td>semaine du ${fmtDate(h.target_week)} (+${h.weeks})</td>
-          <td class="num"><b>${h.predicted_pct} %</b></td>${hasFill ? `<td class="num">${h.fill_pct} %</td>` : ''}<td class="num">± ${h.typical_error_pts.toFixed(1)}</td><td class="num muted">± ${h.no_change_error_pts.toFixed(1)}</td></tr>`).join('');
-        slotHtml(`<table class="kv cols"><tr><td class="label">Échéance</td><td class="label">Surface prévue</td>${hasFill ? '<td class="label">Remplissage correspondant</td>' : ''}<td class="label">Erreur du modèle</td><td class="label">Erreur « rien ne change »</td></tr>${rows}</table>
-          <div class="note">Le modèle prévoit la surface d'eau (${dl.current_pct} % la semaine du ${fmtDate(dl.origin_week)})${hasFill ? ', puis la courbe officielle du barrage la convertit en taux de remplissage' : ''}. Les erreurs sont en points de surface, mesurées sur des semaines que le modèle n'avait jamais vues. Il fait mieux que « rien ne change » sur les semaines ordinaires, mais ne prévoit pas les grandes variations.${dl.projected_alert_level ? ' Risque projeté : <b>' + esc(dl.projected_alert_level) + '</b>.' : ''}</div>`);
-        const history = await (await fetch('/history/' + encodeURIComponent(name))).json();
-        if (document.getElementById('historyChart')) drawChart(history, dl);
-      } else if (!data.insufficient_history) {
-        slotHtml(`<p>Tendance linéaire à ${data.days_ahead} jours : ${data.current_pct} % vers ${data.projected_pct} % (${esc(data.trend_label)}). Pluie prévue : ${data.rain_forecast.total_mm} mm.</p>
-          ${data.caveat ? `<div class="note">${esc(data.caveat)}</div>` : ''}`);
-      } else {
-        slotHtml(`<p class="muted">${esc(data.note)}</p>`);
-      }
-    } catch (e) { slotHtml('<p class="muted">Prévision indisponible.</p>'); }
-  }
-
-  async function backfill(name, months) {
-    const stateEl = document.getElementById('backfillState');
-    if (stateEl) stateEl.textContent = ' chargement en arrière-plan…';
-    await fetch(`/sites/${encodeURIComponent(name)}/backfill?months_back=${months}`, { method: 'POST' });
-    const rounds = Math.max(6, Math.ceil(months * 1.5));
-    for (let i = 0; i < rounds; i++) {
-      await new Promise(r => setTimeout(r, 15000));
-      if (state.selected !== name) return;
-      await loadSites();
-      await renderDetail();
-    }
+      const dl = res.ok ? data.deep_learning : null;
+      if (!dl || !dl.available) { slot.innerHTML = ''; return; }
+      const hasFill = dl.horizons.every(h => h.fill_pct != null);
+      const rows = dl.horizons.map(h => `<tr><td>semaine du ${fmtDate(h.target_week)} (+${h.weeks})</td><td class="mono"><b>${h.predicted_pct} %</b></td>${hasFill ? `<td class="mono">${h.fill_pct} %</td>` : ''}<td class="mono">± ${h.typical_error_pts.toFixed(1)}</td><td class="mono muted">± ${h.no_change_error_pts.toFixed(1)}</td></tr>`).join('');
+      slot.innerHTML = `<div class="panel"><div class="eyebrow2">Prévision à 4 semaines (réseau récurrent GRU)</div>
+        <table class="kv cols"><tr><td class="h">Échéance</td><td class="h">Surface prévue</td>${hasFill ? '<td class="h">Remplissage</td>' : ''}<td class="h">Erreur du modèle</td><td class="h">Erreur « rien ne change »</td></tr>${rows}</table>
+        <div class="note">Niveau actuel ${dl.current_pct} % de surface${dl.current_fill_pct != null ? ', soit ' + dl.current_fill_pct + ' % de remplissage' : ''}. Les erreurs sont en points de surface, mesurées sur des semaines que le modèle n'avait jamais vues. Il fait mieux que « rien ne change » sur les semaines ordinaires, mais ne prévoit pas les grandes variations.${dl.projected_alert_level ? ' Risque projeté : <b>' + esc(dl.projected_alert_level) + '</b>.' : ''}</div></div>`;
+    } catch (e) { slot.innerHTML = ''; }
   }
 
   /* ---------- tester une image ---------- */
-  const fileInput = document.getElementById('file');
   function setFile(f) {
-    tryFile = f;
-    document.getElementById('drop').classList.toggle('has', !!f);
-    document.getElementById('dropText').textContent = f ? f.name : 'Cliquer ou déposer une image ici';
-    document.getElementById('tryBtn').disabled = !f;
+    tryFile = f; $('drop').classList.toggle('has', !!f);
+    $('dropText').textContent = f ? f.name : 'Cliquer ou déposer une image ici'; $('tryBtn').disabled = !f;
   }
-  fileInput.addEventListener('change', () => setFile(fileInput.files[0] || null));
-  const drop = document.getElementById('drop');
-  drop.addEventListener('dragover', e => { e.preventDefault(); });
-  drop.addEventListener('drop', e => { e.preventDefault(); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+  $('file').addEventListener('change', () => setFile($('file').files[0] || null));
+  $('drop').addEventListener('dragover', e => e.preventDefault());
+  $('drop').addEventListener('drop', e => { e.preventDefault(); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
 
-  document.getElementById('tryBtn').addEventListener('click', async () => {
-    const out = document.getElementById('tryResult'), btn = document.getElementById('tryBtn');
-    btn.disabled = true;
-    out.innerHTML = '<p class="muted">Analyse en cours…</p>';
+  $('tryBtn').addEventListener('click', async () => {
+    const out = $('tryResult'), btn = $('tryBtn');
+    btn.disabled = true; out.innerHTML = '<p class="spin">Analyse en cours…</p>';
     try {
-      const form = new FormData();
-      form.append('file', tryFile);
-      form.append('site', document.getElementById('trySite').value);
+      const form = new FormData(); form.append('file', tryFile); form.append('site', $('trySite').value);
       const res = await fetch('/predict', { method: 'POST', body: form });
       const d = await res.json();
-      if (!res.ok) { out.innerHTML = `<div class="note bad">${esc(d.detail)}</div>`; return; }
+      if (!res.ok) { out.innerHTML = `<div class="note">${esc(d.detail)}</div>`; return; }
       showPrediction(out, d);
-    } catch (e) {
-      out.innerHTML = `<div class="note bad">Erreur : ${esc(e)}</div>`;
-    } finally { btn.disabled = !tryFile; }
+    } catch (e) { out.innerHTML = `<div class="note">Erreur : ${esc(e)}</div>`; } finally { btn.disabled = !tryFile; }
   });
 
   function showPrediction(out, d) {
     const warn = [];
-    if (d.image_quality.blurry) warn.push(`<div class="note warn">Image floue (netteté ${d.image_quality.sharpness}) : le résultat peut être peu fiable.</div>`);
-    if (d.using_fallback_untrained_model) warn.push('<div class="note warn">Modèle non entraîné (de remplacement) : résultat sans valeur.</div>');
+    if (d.image_quality.blurry) warn.push(`<div class="note">Image floue (netteté ${d.image_quality.sharpness}) : le résultat peut être peu fiable.</div>`);
+    if (d.using_fallback_untrained_model) warn.push('<div class="note">Modèle non entraîné (de remplacement) : résultat sans valeur.</div>');
     const q = d.water_quality;
-    out.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
-        <div><div class="label">Eau détectée</div><div class="num" style="font-size:34px">${d.water_area_pct} %</div><div class="muted" style="font-size:12px">de l'image</div></div>
-        <div class="slider" style="margin:0;min-width:260px;flex:1;max-width:380px"><span>Image</span><input type="range" id="reveal" min="0" max="100" value="100" /><span>Eau</span></div>
-      </div>
-      <div class="compare" style="margin-top:12px"><canvas id="cBase"></canvas><canvas id="cOver"></canvas></div>
-      ${warn.join('')}
-      <div class="note ${q.usage.label === 'traitement requis' ? 'bad' : 'good'}">Lecture de la couleur de l'eau (heuristique, indépendante du modèle) : <b>${esc(q.usage.label)}</b>. ${esc(q.usage.detail)}</div>`;
+    out.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <div><div class="eyebrow2" style="margin:0">Eau détectée</div><div class="mono" style="font-size:2.2rem">${d.water_area_pct} %</div><div class="muted" style="font-size:.8rem">de l'image</div></div>
+        <div class="slider" style="min-width:260px;flex:1;max-width:380px"><span>Image</span><input type="range" id="reveal" min="0" max="100" value="100" /><span>Eau</span></div></div>
+      <div class="compare" style="margin-top:12px"><canvas id="cBase"></canvas><canvas id="cOver"></canvas></div>${warn.join('')}
+      <div class="note">Lecture de la couleur de l'eau (heuristique, indépendante du modèle) : <b>${esc(q.usage.label)}</b>. ${esc(q.usage.detail)}</div>`;
     drawComparison(tryFile, d.mask_png_base64);
-    const reveal = document.getElementById('reveal');
-    reveal.addEventListener('input', () => { document.getElementById('cOver').style.clipPath = `inset(0 ${100 - reveal.value}% 0 0)`; });
+    $('reveal').addEventListener('input', (e) => { $('cOver').style.clipPath = `inset(0 ${100 - e.target.value}% 0 0)`; });
   }
 
   function drawComparison(file, maskB64) {
     const url = URL.createObjectURL(file), img = new Image();
     img.onload = () => {
-      const W = Math.min(720, img.width), H = Math.round(W * img.height / img.width);
-      const base = document.getElementById('cBase'), over = document.getElementById('cOver');
+      const W = Math.min(720, img.width), H = Math.round(W * img.height / img.width), base = $('cBase'), over = $('cOver');
       base.width = over.width = W; base.height = over.height = H;
       base.getContext('2d').drawImage(img, 0, 0, W, H);
       const m = new Image();
@@ -532,12 +600,8 @@
         const tmp = document.createElement('canvas'); tmp.width = W; tmp.height = H;
         const t = tmp.getContext('2d'); t.drawImage(m, 0, 0, W, H);
         const px = t.getImageData(0, 0, W, H);
-        for (let i = 0; i < px.data.length; i += 4) {
-          const water = px.data[i] > 127;
-          px.data[i] = 11; px.data[i + 1] = 63; px.data[i + 2] = 217; px.data[i + 3] = water ? 160 : 0;
-        }
-        over.getContext('2d').putImageData(px, 0, 0);
-        URL.revokeObjectURL(url);
+        for (let i = 0; i < px.data.length; i += 4) { const water = px.data[i] > 127; px.data[i] = 31; px.data[i + 1] = 140; px.data[i + 2] = 230; px.data[i + 3] = water ? 160 : 0; }
+        over.getContext('2d').putImageData(px, 0, 0); URL.revokeObjectURL(url);
       };
       m.src = 'data:image/png;base64,' + maskB64;
     };
@@ -545,15 +609,13 @@
   }
 
   /* ---------- monde ---------- */
-  function iouColor(iou, issue) { return issue ? '#8a949c' : iou >= 0.7 ? '#17794a' : iou >= 0.4 ? '#d19a00' : '#b00020'; }
-
+  const iouColor = (iou, issue) => issue ? '#8a9078' : iou >= 0.7 ? '#2f7d4f' : iou >= 0.4 ? '#c58a2e' : '#b5482a';
   async function openWorld() {
     if (worldLoaded) { setTimeout(() => worldMap.invalidateSize(), 50); return; }
     worldMap = L.map('worldMap', { worldCopyJump: true }).setView([20, 10], 2);
-    baseTiles('gray').addTo(worldMap);
-    const box = document.getElementById('worldSummary');
-    const res = await fetch('/world/benchmark');
-    const data = await res.json();
+    baseLayer('gray').addTo(worldMap);
+    const box = $('worldSummary');
+    const res = await fetch('/world/benchmark'), data = await res.json();
     if (!res.ok) { box.innerHTML = `<p class="muted">${esc(data.detail)}</p>`; return; }
     worldLoaded = true;
     data.tiles.forEach(t => {
@@ -562,75 +624,23 @@
         .bindTooltip(`${esc(t.country)} · ${esc(t.biome)}<br>${kind}, ${t.area_km2} km²<br>IoU ${iou.toFixed(2)}${t.quality_issue ? ' (référence peu fiable)' : ''}`).addTo(worldMap);
     });
     const s = data.summary || {}, ty = s.by_type || {};
-    const score = (label, x, sub) => `<div class="score"><div class="label">${label}</div><div class="v num">${x != null ? x.toFixed(2) : '—'}</div><div class="muted" style="font-size:12px">${sub}</div></div>`;
+    const score = (label, x, sub) => `<div class="score"><div class="eyebrow2" style="margin:0">${label}</div><div class="v">${x != null ? x.toFixed(2) : '—'}</div><div class="muted" style="font-size:.78rem">${sub}</div></div>`;
     const ci = (x) => x && x.iou_ci95 ? `intervalle à 95 % : ${x.iou_ci95[0].toFixed(2)} à ${x.iou_ci95[1].toFixed(2)}` : '';
-    box.innerHTML = `<h3>Score du modèle servi (IoU)</h3>
-      ${score('Barrages tunisiens', s.tunisia_iou, 'l\'usage visé, 18 images')}
+    box.innerHTML = `<div class="eyebrow2">Score du modèle servi (IoU)</div>
+      ${score('Barrages tunisiens', s.tunisia_iou, 'l\'usage d\'origine, 18 images')}
       ${score('Réservoirs du monde', ty.reservoir && ty.reservoir.iou, `${ty.reservoir ? ty.reservoir.n : 0} plans d'eau · ${ci(ty.reservoir)}`)}
       ${score('Lacs naturels du monde', ty.lake && ty.lake.iou, `${ty.lake ? ty.lake.n : 0} plans d'eau · ${ci(ty.lake)}`)}
-      <p class="muted" style="font-size:13px;margin-top:10px">Lecture : le modèle est bon sur les réservoirs, comme ceux qu'on surveille, et plus fragile sur les lacs naturels (eau trouble, sombre ou végétalisée). Il a été entraîné sur des sites différents de ceux-ci.</p>
-      <div class="legend"><span><i style="background:#17794a"></i>IoU ≥ 0,7</span><span><i style="background:#d19a00"></i>0,4 à 0,7</span><span><i style="background:#b00020"></i>&lt; 0,4</span><span><i style="background:#8a949c"></i>référence peu fiable</span></div>`;
+      <p class="muted" style="font-size:.86rem;margin-top:10px">Le modèle est bon sur les réservoirs et plus fragile sur les lacs naturels (eau trouble, sombre ou végétalisée). Il a été entraîné sur des sites différents de ceux-ci.</p>
+      <div class="legend"><span><i style="background:#2f7d4f"></i>IoU ≥ 0,7</span><span><i style="background:#c58a2e"></i>0,4 à 0,7</span><span><i style="background:#b5482a"></i>&lt; 0,4</span><span><i style="background:#8a9078"></i>référence peu fiable</span></div>`;
   }
 
-  /* ---------- carte et dessin ---------- */
-  function baseTiles(kind) {
-    const imagery = kind === 'imagery';
-    const path = imagery ? 'World_Imagery' : 'Canvas/World_Light_Gray_Base';
-    return L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${path}/MapServer/tile/{z}/{y}/{x}`, {
-      attribution: 'Tiles © Esri', maxZoom: imagery ? 18 : 16 });
-  }
-
-  function askName(defaultName) {
-    return new Promise(resolve => {
-      const modal = document.getElementById('modal'), input = document.getElementById('modalInput');
-      input.value = defaultName; modal.style.display = 'flex'; input.focus();
-      const done = (v) => { modal.style.display = 'none'; ok.onclick = cancel.onclick = null; resolve(v); };
-      const ok = document.getElementById('modalOk'), cancel = document.getElementById('modalCancel');
-      ok.onclick = () => done(input.value.trim() || null);
-      cancel.onclick = () => done(null);
-    });
-  }
-
-  function initMap() {
-    map = L.map('map').setView([35.4, 9.6], 7);
-    baseTiles('imagery').addTo(map);
-    drawnItems = new L.FeatureGroup().addTo(map);
-    map.addControl(new L.Control.Draw({
-      draw: { marker: true, polygon: { allowIntersection: false, showArea: true }, polyline: false, rectangle: false, circle: false, circlemarker: false },
-      edit: { featureGroup: drawnItems, remove: true },
-    }));
-
-    map.on(L.Draw.Event.CREATED, async (e) => {
-      const layer = e.layer;
-      drawnItems.addLayer(layer);
-      let lat, lon, polygon = null, lake = null;
-      if (e.layerType === 'marker') {
-        ({ lat, lng: lon } = layer.getLatLng());
-        try {
-          const res = await fetch(`/lake_at?lat=${lat}&lon=${lon}`);
-          if (res.ok) { lake = await res.json(); polygon = lake.polygon; }
-        } catch (err) { /* hors ligne : disque par défaut */ }
-      } else if (e.layerType === 'polygon') {
-        polygon = layer.getLatLngs()[0].map(p => [p.lng, p.lat]);
-        const c = layer.getBounds().getCenter(); lat = c.lat; lon = c.lng;
-      }
-      const name = await askName(lake && lake.name ? lake.name : `Site (${lat.toFixed(3)}, ${lon.toFixed(3)})`);
-      if (!name) { drawnItems.removeLayer(layer); return; }
-      const created = await (await fetch('/sites', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, lat, lon }) })).json();
-      if (created.name_taken) {
-        drawnItems.removeLayer(layer);
-        alert(`Le nom « ${name} » est déjà utilisé par un autre site. Choisissez-en un autre.`);
-        return;
-      }
-      await loadSites();
-      await selectSite(name);
-      runAnalysis(name, lat, lon, polygon, lake);
-    });
-  }
-
+  /* ---------- démarrage ---------- */
+  Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
   initMap();
-  loadSites().then(() => selectSite(state.selected));
-  loadAlerts();
+  fetch('/sites').then(r => r.json()).then(sites => {
+    state.seeds = sites.filter(s => s.buffer_m !== undefined);
+    $('trySite').innerHTML = sites.map(s => `<option>${esc(s.name)}</option>`).join('');
+  });
 </script>
 </body>
 </html>

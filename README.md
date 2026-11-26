@@ -212,7 +212,7 @@ Sans `GROQ_API_KEY`, le briefing IA bascule sur un résumé par règles.
 - **Pluviométrie réelle** (CHIRPS) et explication croisée : une baisse malgré la pluie est signalée comme anormale
 - **Carte interactive** : sites prédéfinis + création de nouveaux sites par clic ou dessin de zone (polygone)
 - **Alertes automatiques** sur chute anormale du niveau d'eau, bannière visible en haut du dashboard
-- **Interface en quatre onglets** : Suivi (liste des barrages avec taux de remplissage, carte satellite, mesure, courbe, prévision), Tester une image (l'eau détectée superposée à l'image, avec curseur), Précision dans le monde (carte du benchmark), Comment ça marche. Le briefing de l'agent a été retiré de l'interface ; le code de l'agent (`src/agent.py`, endpoint `/briefing`) reste disponible mais n'est plus affiché
+- **Analyse de n'importe quel plan d'eau du monde, sur le modèle de l'interface AgriSat** (projet de stage en agriculture de précision) : 01 localiser (recherche de lieu mondiale ou exemples : Lake Mead, mer d'Aral, lac d'Ourmia, lac Poopó, lac Tchad...), 02 choisir (un clic sur la carte reconnaît le contour du lac, HydroLAKES), 03 analyser. Analyse rapide : climat des 90 derniers jours contre la normale des 5 années précédentes (Open-Meteo), évaporation, et relevé de la surface d'eau de 1984 à 2021 (Landsat, JRC) en % du maximum observé. Analyse complète : ajoute la mesure Sentinel-2 actuelle. Le résultat est un état (normal, vigilance, alerte, critique) avec ses raisons (`src/assessment.py`), des cartes d'indicateurs, la courbe longue et les signaux. Pour les 6 barrages tunisiens : taux de remplissage officiel calibré et prévision GRU. Autres onglets : tester une image (eau détectée superposée), précision du modèle dans le monde, mode d'emploi. Le briefing de l'agent a été retiré de l'interface ; le code (`src/agent.py`, `/briefing`) reste disponible
 - **Prévision par apprentissage profond** (GRU, +1/+2/+4 semaines) affichée après chaque analyse live avec son erreur mesurée sur des semaines jamais vues ; repli sur l'extrapolation linéaire + prévision de pluie Open-Meteo si le modèle ou les images récentes ne sont pas disponibles
 - **Rate limiting** sur les endpoints déclenchant un appel Earth Engine (protège le quota gratuit)
 
@@ -228,7 +228,7 @@ Chaque point ci-dessous se montre en interface **et** dans le code ; le détail
 | 2 | Expériences MLflow (params, métriques) | tous les entraînements et évaluations journalisent paramètres, métriques, courbes par epoch, commit git | `src/tracking.py`, `mlflow ui` (port 5000) |
 | 3 | Model Registry | 3 modèles enregistrés, versions, alias `champion` / `previous` / `rejected`, historique des promotions | `src/registry.py`, onglet Models |
 | 4 | Orchestration + gestion d'erreurs | **Prefect** : flux d'entraînement et d'entraînement continu, retries avec délais croissants, timeouts, hooks d'échec, UI | `orchestration/flows.py`, `prefect server start` |
-| 5 | CI : tests exécutés | GitHub Actions : lint (ruff), 190 tests avec couverture (69 %), validation DVC, build et test du conteneur | `.github/workflows/ci.yml` |
+| 5 | CI : tests exécutés | GitHub Actions : lint (ruff), 206 tests avec couverture (70 %), validation DVC, build et test du conteneur | `.github/workflows/ci.yml` |
 | 6 | CD et CT | CD : image publiée sur ghcr.io après tests ; CT : flux Prefect déclenché par la dérive ou la perte de performance, planifié chaque semaine | `.github/workflows/cd.yml`, `ct.yml`, `orchestration/deploy.py` |
 | 7 | Supervision système et modèle | Prometheus (`/metrics`) : trafic, latence, erreurs, CPU, mémoire ; dérive des données (PSI + Kolmogorov-Smirnov) ; qualité des prévisions dans le temps ; page `/monitoring.html`, Grafana | `src/monitoring.py`, `src/serve_metrics.py`, `monitoring/` |
 
@@ -245,7 +245,7 @@ Autres briques du projet :
 | Agent IA | synthèse en langage naturel (Groq) | `src/agent.py` |
 | Prévision deep learning | GRU, jeu de données, entraînement, service | `src/forecast_*.py`, `src/train_forecaster.py` |
 | API et dashboard | FastAPI, Leaflet, vue monde | `src/serve.py`, `static/index.html` |
-| Tests | 190 tests pytest | `tests/` |
+| Tests | 206 tests pytest | `tests/` |
 
 ## Limites connues (honnêteté avant l'oral)
 

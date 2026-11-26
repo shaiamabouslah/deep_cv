@@ -141,8 +141,8 @@ résumé du job), `pipeline` (`dvc dag` valide `dvc.yaml`), `docker` (construit
 l'image, la démarre et vérifie `/health`, `/metrics`, `/monitoring`). Cache pip,
 annulation des runs obsolètes.
 
-Vérifié localement : ruff sans erreur, **190 tests passent** (8 de plus
-s'exécutent dans l'environnement Prefect), couverture **69 %**. Les tests
+Vérifié localement : ruff sans erreur, **206 tests passent** (8 de plus
+s'exécutent dans l'environnement Prefect), couverture **70 %**. Les tests
 couvrent le modèle, l'évaluation, l'API (dont `/metrics` et la journalisation
 des prédictions), la calibration, le benchmark, le suivi MLflow, le registre, la
 dérive, les prévisions. Limite : les workflows n'ont pas encore tourné sur GitHub.
