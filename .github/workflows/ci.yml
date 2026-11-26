@@ -6,22 +6,82 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Ruff
+        run: ruff check .
+
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
       - name: Install dependencies
+        run: pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt -r requirements-dev.txt
+      - name: Tests with coverage
+        env:
+          MLFLOW_DISABLE_AGENT_HINT: "1"
+        run: pytest -v --cov --cov-report=xml --cov-report=term --cov-fail-under=65 --junitxml=reports/junit.xml
+      - name: Coverage in the job summary
+        if: always()
         run: |
-          pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+          echo "### Test coverage" >> "$GITHUB_STEP_SUMMARY"
+          coverage report --format=markdown >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            reports/junit.xml
+            coverage.xml
 
-      - name: Run tests
-        run: pytest -v
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate the DVC pipeline definition
+        run: |
+          pip install "dvc>=3,<4"
+          dvc dag
 
-      - name: Build Docker image
-        run: docker build -t visual-inspection:ci .
+  docker:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: |
+          mkdir -p models
+          docker build -t water-monitoring:ci .
+      - name: Smoke test the container
+        run: |
+          docker run -d --name api -p 8000:8000 water-monitoring:ci
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8000/health && break; sleep 3; done
+          curl -sf http://127.0.0.1:8000/health
+          curl -sf http://127.0.0.1:8000/metrics | grep -q http_requests_total
+          curl -sf http://127.0.0.1:8000/monitoring | grep -q retrain_needed
+      - name: Container logs on failure
+        if: failure()
+        run: docker logs api
