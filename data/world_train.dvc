@@ -1,0 +1,6 @@
+outs:
+- md5: b2c8cc5c417cd31a8e2a8f4159f34ecc.dir
+  size: 166063164
+  nfiles: 719
+  hash: md5
+  path: world_train

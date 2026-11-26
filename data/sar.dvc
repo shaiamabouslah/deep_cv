@@ -1,0 +1,6 @@
+outs:
+- md5: 2dfd04c07bc8f9ebb0680ff2cb7b5065.dir
+  size: 107201584
+  nfiles: 521
+  hash: md5
+  path: sar

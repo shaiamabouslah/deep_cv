@@ -7,6 +7,16 @@ mlflow.db
 data/raw/
 data/processed/
 data/*.db
-models/
+models/model_candidate.pt
 .pytest_cache/
 .env
+.venv-orchestrator/
+.prefect/
+mlartifacts/
+.prefect-test/
+data/monitoring_demo.db
+.coverage
+reports/orchestration.log
+reports/monitoring.json
+reports/junit.xml
+coverage.xml

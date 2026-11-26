@@ -1,0 +1,163 @@
+schema: '2.0'
+stages:
+  evaluate:
+    cmd: python -m src.evaluate
+    deps:
+    - path: data/eval
+      hash: md5
+      md5: 00fc3119a7f39deb1ed29b53e41b9635.dir
+      size: 8633524
+      nfiles: 37
+    - path: models/model.pt
+      hash: md5
+      md5: 9ff43924e3b591c7efc243ea13634e7c
+      size: 97917847
+    - path: src/data.py
+      hash: md5
+      md5: 96cb7a41492d4bcb69ac1bd79419c73c
+      size: 890
+    - path: src/evaluate.py
+      hash: md5
+      md5: 1eed19854ad97ab0ad1f163f4bbbd214
+      size: 4494
+    - path: src/metrics.py
+      hash: md5
+      md5: 004dcddcc24f6bcb1819fb68b26fa18d
+      size: 798
+    - path: src/model.py
+      hash: md5
+      md5: ece5506aa780dfa27f34a62df7c705af
+      size: 839
+    - path: src/preprocess.py
+      hash: md5
+      md5: f4c1839d3712224b348c553ef88d4aec
+      size: 3765
+    params:
+      params.yaml:
+        model:
+          encoder: resnet34
+          image_size: 256
+          model_path: models/model.pt
+    outs:
+    - path: reports/eval_per_image.json
+      hash: md5
+      md5: 4f7ca99d685897f5d492c0f9ff2bcdd1
+      size: 5180
+    - path: reports/metrics.json
+      hash: md5
+      md5: 5c304820c6d45b3cf50543c54e8d71bb
+      size: 150
+  train_forecaster:
+    cmd: python -m src.train_forecaster
+    deps:
+    - path: data/forecast/weekly.csv
+      hash: md5
+      md5: c4e4b9d2cea430436ecfab9f08e30409
+      size: 240365
+    - path: src/forecast_model.py
+      hash: md5
+      md5: 6914b3426800efeed631d4d332228556
+      size: 11056
+    - path: src/train_forecaster.py
+      hash: md5
+      md5: 543a62b68499c00ccc2ba80b223915eb
+      size: 8729
+    outs:
+    - path: models/forecaster.pt
+      hash: md5
+      md5: 84679b877c84b842d29cc75e4453b60b
+      size: 117493
+    - path: reports/forecast_eval.json
+      hash: md5
+      md5: 28cd0a27d9dc85259dc1df211f5d070b
+      size: 11319
+  calibration:
+    cmd: python -m src.calibration
+    deps:
+    - path: data/forecast/weekly.csv
+      hash: md5
+      md5: c4e4b9d2cea430436ecfab9f08e30409
+      size: 240365
+    - path: data/official/fill_points.json
+      hash: md5
+      md5: 268aa32d99eafaf4933ec4ab32207789
+      size: 87852
+    - path: src/calibration.py
+      hash: md5
+      md5: a9a88f352738add6b71aa55152575995
+      size: 7962
+    - path: src/official_fill.py
+      hash: md5
+      md5: e665fb494bf53109afb1c12bb1c91437
+      size: 3662
+    outs:
+    - path: data/official/calibration.json
+      hash: md5
+      md5: 8c7a83815c61c7d09f10e3afad5b568f
+      size: 25215
+    - path: reports/calibration.md
+      hash: md5
+      md5: 3f770b7b1b4c6d8c36af2478c8796a2f
+      size: 1060
+  world_benchmark:
+    cmd: python -m src.world_benchmark
+    deps:
+    - path: data/world
+      hash: md5
+      md5: d454a31f779ff8655a05be8ace8f359c.dir
+      size: 48709309
+      nfiles: 211
+    - path: models/model.pt
+      hash: md5
+      md5: 9ff43924e3b591c7efc243ea13634e7c
+      size: 97917847
+    - path: models/model_previous.pt
+      hash: md5
+      md5: ac66b4b81588cbb77ab50e85f4bd3990
+      size: 97904091
+    - path: models/model_v2.pt
+      hash: md5
+      md5: 1228f9097a44f9c356c6299f7d95a86c
+      size: 97904411
+    - path: src/evaluate.py
+      hash: md5
+      md5: 1eed19854ad97ab0ad1f163f4bbbd214
+      size: 4494
+    - path: src/world_benchmark.py
+      hash: md5
+      md5: 5ec89555805157daabdc035a833bca13
+      size: 6591
+    outs:
+    - path: reports/world_benchmark.json
+      hash: md5
+      md5: 56a2fac8f021cd4394a489f8166b15a1
+      size: 19009
+    - path: reports/world_tiles.json
+      hash: md5
+      md5: d82204ad6a07695f6c44a7b341d62c35
+      size: 32057
+  train_sar:
+    cmd: python -m src.train_sar
+    deps:
+    - path: data/sar
+      hash: md5
+      md5: 2dfd04c07bc8f9ebb0680ff2cb7b5065.dir
+      size: 107201584
+      nfiles: 521
+    - path: src/sar_model.py
+      hash: md5
+      md5: 67fe07781f0fcd4368617bcd55c38fa5
+      size: 9396
+    - path: src/train_sar.py
+      hash: md5
+      md5: 027217dbd41bcf8af79589d783723c41
+      size: 4425
+    outs:
+    - path: models/sar_unet.pt
+      hash: md5
+      md5: 869a6c7e30cf75fcf0568a404050dd7b
+      size: 57422351
+    - path: reports/sar_eval.json
+      hash: md5
+      md5: f8928e5474a714611b1e302288def1c5
+      size: 2771

@@ -1,0 +1,6 @@
+outs:
+- md5: d454a31f779ff8655a05be8ace8f359c.dir
+  size: 48709309
+  nfiles: 211
+  hash: md5
+  path: world

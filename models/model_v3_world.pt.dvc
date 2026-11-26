@@ -1,0 +1,5 @@
+outs:
+- md5: 9ff43924e3b591c7efc243ea13634e7c
+  size: 97917847
+  hash: md5
+  path: model_v3_world.pt

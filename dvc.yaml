@@ -2,12 +2,71 @@ stages:
   evaluate:
     cmd: python -m src.evaluate
     deps:
+      - src/evaluate.py
       - src/metrics.py
       - src/model.py
-      - src/evaluate.py
+      - src/data.py
+      - src/preprocess.py
+      - data/eval
       - models/model.pt
     params:
       - model
     metrics:
       - reports/metrics.json:
           cache: false
+    outs:
+      - reports/eval_per_image.json:
+          cache: false
+
+  train_forecaster:
+    cmd: python -m src.train_forecaster
+    deps:
+      - src/forecast_model.py
+      - src/train_forecaster.py
+      - data/forecast/weekly.csv
+    metrics:
+      - reports/forecast_eval.json:
+          cache: false
+    outs:
+      - models/forecaster.pt
+
+  calibration:
+    cmd: python -m src.calibration
+    deps:
+      - src/calibration.py
+      - src/official_fill.py
+      - data/official/fill_points.json
+      - data/forecast/weekly.csv
+    outs:
+      - data/official/calibration.json:
+          cache: false
+      - reports/calibration.md:
+          cache: false
+
+  world_benchmark:
+    cmd: python -m src.world_benchmark
+    deps:
+      - src/world_benchmark.py
+      - src/evaluate.py
+      - data/world
+      - models/model.pt
+      - models/model_previous.pt
+      - models/model_v2.pt
+    metrics:
+      - reports/world_benchmark.json:
+          cache: false
+    outs:
+      - reports/world_tiles.json:
+          cache: false
+
+  train_sar:
+    cmd: python -m src.train_sar
+    deps:
+      - src/sar_model.py
+      - src/train_sar.py
+      - data/sar
+    metrics:
+      - reports/sar_eval.json:
+          cache: false
+    outs:
+      - models/sar_unet.pt
