@@ -1,23 +1,31 @@
 """FastAPI backend: water-body segmentation + history + alerting.
 
 Exposes:
-  POST /predict           image + site name -> mask overlay, water area %, alert
-                           (runs the trained deep-learning segmentation model)
+  POST /predict           image + site name -> mask overlay, water area % of the photo
+                           (runs the trained deep-learning segmentation model;
+                           one-off check, not written to the site history)
   GET  /live/{site}       real Sentinel-2 + CHIRPS analysis for a known site
   POST /analyze_location  real Sentinel-2 + CHIRPS analysis for any point/polygon
   POST /sites             register a new site (drawn/clicked on the map)
   GET  /sites             all sites (seed dams + custom) with latest status
   GET  /history/{site}    time series of past readings for that site
-  GET  /forecast/{site}   trend extrapolation + 7-day rain forecast (Open-Meteo)
+  GET  /forecast/{site}   deep-learning (GRU) forecast at +1/+2/+4 weeks when a trained
+                           model is installed, plus the linear trend + 7-day rain (Open-Meteo)
+  GET  /world/benchmark   model results per site on the worldwide benchmark (world map)
+  GET  /lake_at           lake/reservoir outline + facts at any point of the world (HydroLAKES)
   GET  /alerts            currently triggered alerts across all sites
   GET  /briefing          AI agent synthesis of every site's status
   GET  /health
+  GET  /metrics           Prometheus metrics (traffic, latency, errors, CPU/memory, drift, forecast skill)
+  GET  /monitoring        drift and performance report as JSON (page: /monitoring.html)
 Serves the static dashboard (frontend) at /.
 """
 import base64
 import io
+import json
 import logging
 import os
+import time
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -25,9 +33,11 @@ import numpy as np
 import torch
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel
+from torchvision import transforms
 
 load_dotenv()  # picks up a local .env (GROQ_API_KEY, etc.) if present — gitignored, never committed
 
@@ -43,6 +53,7 @@ from src.alerts import (
     record_reading,
 )
 from src.data import build_normalize_transform, load_params
+from src import calibration, forecast_dl, lakes, monitoring, serve_metrics
 from src.forecast import fetch_rain_forecast, project_risk
 from src.gee_client import (
     GEENotAuthenticated,
@@ -53,7 +64,7 @@ from src.gee_client import (
 )
 from src.metrics import water_area_fraction
 from src.model import build_segmentation_model, load_model
-from src.preprocess import sharpness_score, standardize
+from src.preprocess import nodata_mask, sharpness_score
 from src.rate_limit import rate_limit
 from src.site_store import add_custom_site, get_custom_sites
 from src.sites import TUNISIA_DAMS
@@ -62,18 +73,20 @@ from src.water_quality import analyze as analyze_water_quality
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("water_monitoring")
 
-_state = {"model": None, "image_size": 256, "params": None, "using_fallback": False}
+_state = {"model": None, "image_size": 256, "threshold": 0.5, "params": None, "using_fallback": False}
 
 
 def _load_model_state():
     params = load_params()
     _state["params"] = params
+    _state["calibration"] = calibration.load()
     model_path = params["model"]["model_path"]
 
     if os.path.exists(model_path):
-        model, image_size = load_model(model_path)
+        model, image_size, threshold = load_model(model_path)
         _state["model"] = model
         _state["image_size"] = image_size
+        _state["threshold"] = threshold
         _state["using_fallback"] = False
         logger.info("Loaded trained model from %s (image_size=%s)", model_path, image_size)
     else:
@@ -83,6 +96,7 @@ def _load_model_state():
             params["model"]["encoder"], encoder_weights=None
         ).eval()
         _state["image_size"] = params["model"]["image_size"]
+        _state["threshold"] = 0.5
         _state["using_fallback"] = True
         logger.warning("No model.pt found at %s — serving an untrained fallback model", model_path)
 
@@ -94,6 +108,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Water Monitoring API", lifespan=lifespan)
+app.middleware("http")(serve_metrics.metrics_middleware)
 
 gee_rate_limit = rate_limit(max_calls=10, window_seconds=60)
 forecast_rate_limit = rate_limit(max_calls=20, window_seconds=60)
@@ -109,6 +124,54 @@ def health():
 
 
 MIN_SHARPNESS = 15.0
+MONITORING_CACHE_SECONDS = 30
+_monitoring_cache = {"at": 0.0, "report": None}
+
+
+def _monitoring_db():
+    return os.environ.get("MONITORING_DB", monitoring.DEFAULT_DB)
+
+
+def _record_prediction(site, rgb, sharpness, probabilities, valid, inference_seconds):
+    """Monitoring must never break serving: any failure is logged and dropped."""
+    try:
+        features = monitoring.image_features(rgb, sharpness, probabilities, valid)
+        monitoring.log_prediction(_monitoring_db(), site, features)
+        serve_metrics.record_prediction(inference_seconds, features)
+    except Exception as exc:
+        logger.warning("prediction monitoring skipped: %s", exc)
+
+
+def _monitoring_report(max_age=MONITORING_CACHE_SECONDS):
+    if _monitoring_cache["report"] is None or time.time() - _monitoring_cache["at"] > max_age:
+        _monitoring_cache["report"] = monitoring.check_all(_monitoring_db())
+        _monitoring_cache["at"] = time.time()
+        serve_metrics.publish_monitoring(_monitoring_cache["report"])
+    return _monitoring_cache["report"]
+
+
+@app.get("/metrics", include_in_schema=False)
+def prometheus_metrics():
+    try:
+        _monitoring_report()
+    except Exception as exc:
+        logger.warning("monitoring report unavailable for /metrics: %s", exc)
+    return Response(serve_metrics.render(), media_type="text/plain; version=0.0.4")
+
+
+@app.get("/monitoring")
+def monitoring_status():
+    """System resources + model monitoring: drift of the inputs against the
+    training reference, forecast accuracy against the no-change baseline."""
+    try:
+        report = _monitoring_report()
+    except Exception as exc:
+        logger.warning("monitoring report failed: %s", exc)
+        return JSONResponse(status_code=503, content={"detail": "monitoring indisponible"})
+    recent = monitoring.recent_predictions(_monitoring_db(), 20)
+    return {"system": serve_metrics.system_snapshot(), **report,
+            "recent_predictions": recent[["timestamp", "site", "source", "brightness", "water_pct", "confidence"]]
+            .round(2).to_dict("records")}
 
 
 @app.post("/predict")
@@ -118,36 +181,42 @@ async def predict(
     site: str = Form(...),
     fuse_satellite: bool = Form(False),
 ):
+    db_path = _state["params"]["paths"]["history_db"]
+    dam = next((d for d in TUNISIA_DAMS + get_custom_sites(db_path) if d["name"] == site), None)
+    if dam is None:
+        raise HTTPException(status_code=404, detail=f"Site inconnu : {site}")
+
     image_bytes = await file.read()
     raw_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
-    # Classical CV preprocessing before the image reaches the deep learning
-    # model: blur check, then aspect-ratio-preserving resize (letterbox)
-    # instead of a plain stretch — the same standardized image is reused
-    # below for the water-quality color analysis, so mask and RGB stay
-    # pixel-aligned.
     blur_score = float(sharpness_score(raw_image))
-    image = standardize(raw_image, _state["image_size"])
+    # Plain stretch, exactly as in training. A letterbox (padding) looks
+    # nicer but the model never saw padded inputs and reads the white bars
+    # as water: on a 16:9 image it reported 54-87% water vs 1-20% real.
+    # The same resized image feeds the color analysis so mask and RGB align.
+    image = transforms.Resize((_state["image_size"], _state["image_size"]))(raw_image)
 
     tensor = build_normalize_transform()(image).unsqueeze(0)
 
+    started = time.perf_counter()
     with torch.no_grad():
         logits = _state["model"](tensor)
-        mask = (torch.sigmoid(logits) > 0.5).float()
+        probabilities = torch.sigmoid(logits)
+        mask = (probabilities > _state["threshold"]).float()
+    inference_seconds = time.perf_counter() - started
 
-    area_pct = water_area_fraction(mask) * 100
-    db_path = _state["params"]["paths"]["history_db"]
+    resized_rgb = np.array(image)
+    valid = torch.from_numpy(~nodata_mask(resized_rgb))
+    mask = mask * valid
+    _record_prediction(site, resized_rgb, blur_score, probabilities[0, 0].numpy(), valid.numpy(), inference_seconds)
 
-    # Alert check must run BEFORE the new reading is recorded, otherwise the
-    # historical baseline it compares against includes the point being
-    # tested, diluting drop detection.
-    alert = check_and_record_alert(
-        db_path, site, area_pct, tiers=_state["params"]["alerts"]["tiers"]
-    )
-    record_reading(db_path, site, area_pct)
+    # Not recorded and not checked for alerts: this is "% of this photo that
+    # is water", while the site history holds "% of the dam's historical
+    # max extent" from the satellite path. Mixing the two produced false
+    # alerts (e.g. 75% by satellite vs ~12% for one uploaded tile).
+    area_pct = water_area_fraction(mask, valid) * 100
 
     mask_array = mask.squeeze().numpy()
-    resized_rgb = np.array(image)
     quality = analyze_water_quality(resized_rgb, mask_array)
 
     mask_image = Image.fromarray((mask_array * 255).astype("uint8"))
@@ -163,37 +232,31 @@ async def predict(
     signals = {
         "site": site, "water_area_pct": area_pct, "source": "upload",
         "rgb_quality": quality, "gee_indices": None, "rainfall": None,
-        "water_balance": None, "alert": alert,
+        "water_balance": None, "alert": None,
     }
     if fuse_satellite:
         gee_rate_limit(request)
-        all_sites = TUNISIA_DAMS + get_custom_sites(db_path)
-        dam = next((d for d in all_sites if d["name"] == site), None)
-        if dam is None:
-            logger.info("fuse_satellite requested but site=%s has no known coordinates", site)
-        else:
-            try:
-                gee_result = analyze_site_live(
-                    dam["lat"], dam["lon"], project=_state["params"]["gee"]["project"],
-                    area_buffer_m=dam.get("buffer_m", 6000),
-                )
-                signals["gee_indices"] = gee_result["indices"]
-                signals["rainfall"] = gee_result["rainfall"]
-            except (GEENotAuthenticated, ValueError) as exc:
-                logger.warning("GEE enrichment skipped for site=%s: %s", site, exc)
+        try:
+            gee_result = analyze_site_live(
+                dam["lat"], dam["lon"], project=_state["params"]["gee"]["project"],
+                area_buffer_m=dam.get("buffer_m", 6000),
+            )
+            signals["gee_indices"] = gee_result["indices"]
+            signals["rainfall"] = gee_result["rainfall"]
+        except (GEENotAuthenticated, ValueError) as exc:
+            logger.warning("GEE enrichment skipped for site=%s: %s", site, exc)
 
     recommendation = generate_fused_recommendation(signals)
 
     logger.info(
-        "predict site=%s water_area_pct=%.1f alert=%s blur_score=%.1f fuse_satellite=%s ai_generated=%s",
-        site, area_pct, bool(alert), blur_score, fuse_satellite, recommendation["ai_generated"],
+        "predict site=%s water_area_pct=%.1f blur_score=%.1f fuse_satellite=%s ai_generated=%s",
+        site, area_pct, blur_score, fuse_satellite, recommendation["ai_generated"],
     )
 
     return {
         "site": site,
         "water_area_pct": round(area_pct, 2),
         "mask_png_base64": mask_b64,
-        "alert": alert,
         "water_quality": quality,
         "recommendation": recommendation,
         "image_quality": {
@@ -234,16 +297,17 @@ def _run_live_analysis(site_name, lat, lon, polygon_coords=None, area_buffer_m=6
         if previous_ndvi is not None:
             water_balance = assess_water_balance(pct_change, current_ndvi - previous_ndvi)
 
-    # Same ordering fix as /predict: check the alert against history BEFORE
-    # writing the new point into it.
+    # Check the alert against history BEFORE writing the new point into it,
+    # otherwise the reading dilutes its own baseline.
     alert = check_and_record_alert(
         db_path, site_name, water_area_proxy, tiers=_state["params"]["alerts"]["tiers"]
     )
     record_reading(db_path, site_name, water_area_proxy, ndvi=current_ndvi, source="live")
 
+    fill_estimate = calibration.estimate_fill(site_name, water_area_proxy, _state.get("calibration"))
     recommendation = generate_fused_recommendation({
         "site": site_name, "water_area_pct": water_area_proxy, "source": "satellite",
-        "rgb_quality": None, "gee_indices": result["indices"],
+        "rgb_quality": None, "gee_indices": result["indices"], "fill_estimate": fill_estimate,
         "rainfall": result["rainfall"], "water_balance": water_balance, "alert": alert,
     })
 
@@ -257,6 +321,7 @@ def _run_live_analysis(site_name, lat, lon, polygon_coords=None, area_buffer_m=6
         "site": site_name, "alert": alert,
         "level_change_explanation": level_change,
         "water_balance": water_balance,
+        "fill_estimate": fill_estimate,
         "recommendation": recommendation,
         **result,
     }
@@ -385,7 +450,7 @@ def history(site: str):
 
 
 @app.get("/forecast/{site}", dependencies=[Depends(forecast_rate_limit)])
-def forecast(site: str):
+def forecast(site: str, request: Request):
     """Projects where this site's water level is likely headed, by
     extrapolating its own recorded trend and cross-referencing a 7-day
     rain forecast (Open-Meteo) as a qualitative caveat — see
@@ -407,7 +472,68 @@ def forecast(site: str):
     history_points = get_history(db_path, site)
     rain = fetch_rain_forecast(dam["lat"], dam["lon"])
     risk = project_risk(latest["water_area_pct"], history_points, rain)
-    return {"site": site, **risk}
+
+    deep = None
+    if forecast_dl.model_available():
+        if forecast_dl.cached_forecast(site) is None:
+            gee_rate_limit(request)
+        try:
+            deep = forecast_dl.deep_forecast(dam, project=_state["params"]["gee"]["project"])
+        except Exception as exc:
+            logger.warning("deep forecast failed for site=%s: %s", site, exc)
+            deep = {"available": False, "reason": "Prévision par modèle indisponible (Earth Engine injoignable)."}
+    if deep and deep.get("available", True) and deep.get("horizons"):
+        try:
+            monitoring.log_forecast(_monitoring_db(), site, deep)
+        except Exception as exc:
+            logger.warning("forecast monitoring skipped: %s", exc)
+    return {"site": site, **risk, "deep_learning": deep}
+
+
+WORLD_TILES_PATH = "reports/world_tiles.json"
+WORLD_SUMMARY_PATH = "reports/world_benchmark.json"
+TUNISIA_EVAL_PATH = "reports/metrics.json"
+
+
+def _read_json(path):
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@app.get("/world/benchmark")
+def world_benchmark_map():
+    """Per-site results of the served segmentation model on the worldwide
+    benchmark (see src/world_benchmark.py), for the dashboard's world map."""
+    tiles = _read_json(WORLD_TILES_PATH)
+    if tiles is None:
+        raise HTTPException(status_code=404, detail="Benchmark mondial non calculé (python -m src.world_benchmark).")
+    summary = (_read_json(WORLD_SUMMARY_PATH) or {}).get(tiles["served_model"], {}).get("clean", {})
+    tunisia = _read_json(TUNISIA_EVAL_PATH) or {}
+    return {
+        "served_model": tiles["served_model"], "tiles": tiles["tiles"],
+        "summary": {"overall": summary.get("overall"), "by_type": summary.get("by_type"),
+                    "tunisia_iou": tunisia.get("iou")},
+    }
+
+
+@app.get("/lake_at", dependencies=[Depends(gee_rate_limit)])
+def lake_lookup(lat: float, lon: float):
+    """The lake or reservoir at this point of the world (HydroLAKES), with its
+    outline, so the analysis uses its real shape wherever on Earth."""
+    if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+        raise HTTPException(status_code=422, detail="Coordonnées hors limites.")
+    try:
+        lake = lakes.lake_at(lat, lon, project=_state["params"]["gee"]["project"])
+    except GEENotAuthenticated as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        logger.warning("lake lookup failed at (%s, %s): %s", lat, lon, exc)
+        raise HTTPException(status_code=502, detail="Recherche du plan d'eau impossible pour le moment (Earth Engine).")
+    if lake is None:
+        raise HTTPException(status_code=404, detail="Aucun lac ou réservoir cartographié à cet endroit.")
+    return lake
 
 
 @app.get("/alerts")

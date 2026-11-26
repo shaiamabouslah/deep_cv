@@ -17,3 +17,6 @@ segmentation-models-pytorch==0.6.0
 earthengine-api==1.7.52
 groq==1.7.0
 python-dotenv==1.2.4
+pypdf==6.21.4
+prometheus-client==0.26.0
+psutil==7.2.2

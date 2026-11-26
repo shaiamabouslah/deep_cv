@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Supervision du modèle</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" />
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  .num { font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', monospace; }
+  .bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+  .bar > span { display: block; height: 100%; border-radius: 4px; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<header class="bg-gradient-to-r from-cyan-900 to-cyan-600 text-white">
+  <div class="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between gap-4 flex-wrap">
+    <div>
+      <h1 class="text-2xl font-bold">Supervision du modèle</h1>
+      <p class="text-cyan-100 text-sm">Ressources système, dérive des données, qualité des prévisions</p>
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <a href="/" class="underline">Tableau de bord</a>
+      <a href="/metrics" class="underline">Métriques Prometheus</a>
+      <span id="updated" class="text-cyan-100"></span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+  <section id="decision" class="rounded-xl border p-4"></section>
+
+  <section>
+    <h2 class="font-semibold mb-3">Système</h2>
+    <div id="system" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+  </section>
+
+  <section class="rounded-xl bg-white border p-4">
+    <div class="flex items-baseline justify-between flex-wrap gap-2">
+      <h2 class="font-semibold">Dérive des données d'entrée</h2>
+      <p class="text-xs text-slate-500">PSI &lt; 0,1 stable, 0,1 à 0,25 modérée, &gt; 0,25 forte (et test de Kolmogorov-Smirnov significatif)</p>
+    </div>
+    <p id="drift-summary" class="text-sm text-slate-600 mt-1"></p>
+    <div id="drift" class="mt-3 space-y-2"></div>
+  </section>
+
+  <section class="rounded-xl bg-white border p-4">
+    <div class="flex items-baseline justify-between flex-wrap gap-2">
+      <h2 class="font-semibold">Qualité des prévisions dans le temps</h2>
+      <p class="text-xs text-slate-500">Erreur du modèle comparée à « aucun changement », sur les semaines déjà observées</p>
+    </div>
+    <p id="forecast-summary" class="text-sm text-slate-600 mt-1"></p>
+    <div id="forecast" class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+  </section>
+
+  <section class="rounded-xl bg-white border p-4">
+    <h2 class="font-semibold mb-2">Dernières prédictions</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-slate-500"><tr><th class="py-1 pr-4">Heure (UTC)</th><th class="pr-4">Site</th><th class="pr-4">Source</th><th class="pr-4">Luminosité</th><th class="pr-4">Eau (%)</th><th>Confiance</th></tr></thead>
+        <tbody id="recent" class="num"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+  const STATUS = {
+    ok: { label: 'Stable', bar: '#16a34a', badge: 'bg-green-100 text-green-800' },
+    warn: { label: 'Dérive modérée', bar: '#f59e0b', badge: 'bg-amber-100 text-amber-800' },
+    alert: { label: 'Dérive forte', bar: '#dc2626', badge: 'bg-red-100 text-red-800' },
+  };
+  const FEATURE_LABELS = {
+    brightness: 'Luminosité', contrast: 'Contraste', sharpness: 'Netteté', red_mean: 'Rouge moyen',
+    green_mean: 'Vert moyen', blue_mean: 'Bleu moyen', confidence: 'Confiance du modèle', water_pct: 'Part d\'eau prédite',
+  };
+
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function card(label, value, unit, pct) {
+    const color = pct > 85 ? '#dc2626' : pct > 65 ? '#f59e0b' : '#0891b2';
+    return `<div class="rounded-xl bg-white border p-3">
+      <div class="text-xs text-slate-500">${escapeHtml(label)}</div>
+      <div class="num text-xl font-semibold">${escapeHtml(value)}<span class="text-sm text-slate-500"> ${escapeHtml(unit)}</span></div>
+      ${pct == null ? '' : `<div class="bar mt-2"><span style="width:${Math.min(pct, 100)}%;background:${color}"></span></div>`}
+    </div>`;
+  }
+
+  function render(data) {
+    const s = data.system;
+    document.getElementById('system').innerHTML =
+      card('CPU du service', s.process_cpu_percent.toFixed(1), '%', Math.min(s.process_cpu_percent, 100)) +
+      card('Mémoire du service', s.process_memory_mb.toFixed(0), 'Mo', null) +
+      card('CPU machine', s.host_cpu_percent.toFixed(1), '%', s.host_cpu_percent) +
+      card('Mémoire machine', s.host_memory_percent.toFixed(1), '%', s.host_memory_percent) +
+      card('Disque', s.host_disk_percent.toFixed(1), '%', s.host_disk_percent);
+
+    const el = document.getElementById('decision');
+    if (data.retrain_needed) {
+      el.className = 'rounded-xl border p-4 bg-red-50 border-red-200';
+      el.innerHTML = `<div class="font-semibold text-red-800">Réentraînement recommandé</div>
+        <ul class="text-sm text-red-700 list-disc ml-5 mt-1">${data.reasons.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>
+        <p class="text-xs text-red-700 mt-2">Le flux « continuous-training » (Prefect) déclenche l'entraînement et ne remplace le modèle en service que si la porte de promotion l'accepte.</p>`;
+    } else {
+      el.className = 'rounded-xl border p-4 bg-green-50 border-green-200';
+      el.innerHTML = `<div class="font-semibold text-green-800">Aucun réentraînement nécessaire</div>
+        <p class="text-sm text-green-700 mt-1">Les données d'entrée et la qualité des prévisions sont dans les limites.</p>`;
+    }
+
+    const drift = data.data_drift;
+    const summary = {
+      no_reference: 'Aucun échantillon de référence : lancer « python -m src.monitoring build-reference ».',
+      insufficient_data: `Pas assez de prédictions pour conclure (${drift.n_current} sur ${drift.min_samples} minimum).`,
+    }[drift.status] || `${drift.n_current} dernières prédictions comparées à l'échantillon d'entraînement.`;
+    document.getElementById('drift-summary').textContent = summary;
+    document.getElementById('drift').innerHTML = Object.entries(drift.features || {}).map(([name, f]) => {
+      const st = STATUS[f.status];
+      const width = Math.min(f.psi / 0.5 * 100, 100);
+      return `<div class="grid grid-cols-12 items-center gap-3 text-sm">
+        <div class="col-span-3 md:col-span-2">${escapeHtml(FEATURE_LABELS[name] || name)}</div>
+        <div class="col-span-6 md:col-span-6"><div class="bar"><span style="width:${width}%;background:${st.bar}"></span></div></div>
+        <div class="col-span-3 md:col-span-1 num">${f.psi.toFixed(3)}</div>
+        <div class="hidden md:block md:col-span-2 num text-slate-500">${f.reference_mean} → ${f.current_mean}</div>
+        <div class="col-span-12 md:col-span-1"><span class="text-xs px-2 py-0.5 rounded-full ${st.badge}">${st.label}</span></div>
+      </div>`;
+    }).join('');
+
+    const perf = data.forecast_performance;
+    document.getElementById('forecast-summary').textContent = {
+      no_forecasts: 'Aucune prévision enregistrée pour le moment : elles le sont à chaque appel de /forecast.',
+      waiting_for_actuals: `${perf.n_logged} prévisions enregistrées, en attente des observations réelles des semaines visées.`,
+      ok: `${perf.n_matured} prévisions déjà comparées à la réalité.`,
+      degraded: `${perf.n_matured} prévisions comparées à la réalité : le modèle ne fait plus mieux que « aucun changement ».`,
+    }[perf.status] || '';
+    document.getElementById('forecast').innerHTML = Object.entries(perf.horizons || {}).map(([h, e]) => {
+      const good = e.skill != null && e.skill > 0;
+      return `<div class="rounded-lg border p-3">
+        <div class="text-xs text-slate-500">Horizon +${escapeHtml(h)} semaine(s) — ${e.n} comparaisons</div>
+        <div class="num mt-1">Modèle ${e.model_mae} pts · Sans changement ${e.no_change_mae} pts</div>
+        <div class="mt-1 text-sm ${good ? 'text-green-700' : 'text-red-700'}">Gain : ${e.skill == null ? 'n/a' : (e.skill * 100).toFixed(0) + ' %'}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('recent').innerHTML = (data.recent_predictions || []).map(r =>
+      `<tr class="border-t"><td class="py-1 pr-4">${escapeHtml(String(r.timestamp).slice(0, 19).replace('T', ' '))}</td>
+       <td class="pr-4">${escapeHtml(r.site)}</td><td class="pr-4">${escapeHtml(r.source)}</td>
+       <td class="pr-4">${r.brightness ?? ''}</td><td class="pr-4">${r.water_pct ?? ''}</td><td>${r.confidence ?? ''}</td></tr>`).join('');
+    document.getElementById('updated').textContent = 'Mis à jour ' + new Date().toLocaleTimeString('fr-FR');
+  }
+
+  async function refresh() {
+    try {
+      const response = await fetch('/monitoring');
+      if (response.ok) render(await response.json());
+    } catch (e) { /* next refresh retries */ }
+  }
+  refresh();
+  setInterval(refresh, 15000);
+</script>
+</body>
+</html>

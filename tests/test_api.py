@@ -1,13 +1,20 @@
 import io
+import json
 
 import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 
+from src.alerts import record_reading
+
 
 @pytest.fixture()
-def client(tmp_path):
+def client(tmp_path, monkeypatch):
     from src import serve
+    # Never reach Earth Engine from a test: no deep forecast unless a test opts in.
+    monkeypatch.setattr(serve.forecast_dl, "model_available", lambda: False)
+    monkeypatch.setenv("MONITORING_DB", str(tmp_path / "monitoring.db"))
+    monkeypatch.setitem(serve._monitoring_cache, "report", None)
     with TestClient(serve.app) as test_client:
         # Isolate each test run's history/alerts from the developer's real DB.
         serve._state["params"]["paths"]["history_db"] = str(tmp_path / "history.db")
@@ -41,19 +48,55 @@ def test_predict_returns_mask_and_area(client):
     assert "mask_png_base64" in body
 
 
-def test_history_accumulates_readings(client):
-    client.post(
+def test_predict_unknown_site_returns_404(client):
+    response = client.post(
+        "/predict",
+        data={"site": "Nowhere"},
+        files={"file": ("test.png", _sample_image_bytes(), "image/png")},
+    )
+    assert response.status_code == 404
+
+
+def test_predict_does_not_touch_site_history_or_alerts(client):
+    from src import serve
+    db_path = serve._state["params"]["paths"]["history_db"]
+    record_reading(db_path, "Sidi Salem", 80.0, source="live")
+    record_reading(db_path, "Sidi Salem", 82.0, source="live")
+
+    response = client.post(
         "/predict",
         data={"site": "Sidi Salem"},
         files={"file": ("test.png", _sample_image_bytes(), "image/png")},
     )
-    client.post(
-        "/predict",
-        data={"site": "Sidi Salem"},
-        files={"file": ("test.png", _sample_image_bytes(), "image/png")},
-    )
-    history = client.get("/history/Sidi Salem").json()
-    assert len(history) == 2
+
+    assert response.status_code == 200
+    assert "alert" not in response.json()
+    assert len(client.get("/history/Sidi Salem").json()) == 2
+    assert client.get("/alerts").json() == []
+
+
+def test_predict_resizes_like_training(client, monkeypatch):
+    from src import serve
+    seen = {}
+    real_model = serve._state["model"]
+
+    def spy(tensor):
+        seen["shape"] = tuple(tensor.shape)
+        seen["corner"] = tensor[0, :, 0, 0].clone()
+        return real_model(tensor)
+
+    monkeypatch.setitem(serve._state, "model", spy)
+    img = Image.new("RGB", (160, 90), color=(20, 60, 120))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+
+    client.post("/predict", data={"site": "Sidi Salem"}, files={"file": ("wide.png", buf, "image/png")})
+
+    size = serve._state["image_size"]
+    assert seen["shape"] == (1, 3, size, size)
+    white_normalized = (1.0 - 0.485) / 0.229
+    assert float(seen["corner"][0]) < white_normalized - 1.0
 
 
 def test_alerts_endpoint_returns_list(client):
@@ -123,11 +166,8 @@ def test_forecast_returns_projection(client, monkeypatch):
         "src.serve.fetch_rain_forecast",
         lambda *a, **k: {"days": 7, "dates": [], "daily_mm": [], "total_mm": 0.0, "level": "faible"},
     )
-    client.post(
-        "/predict",
-        data={"site": "Sidi Salem"},
-        files={"file": ("test.png", _sample_image_bytes(), "image/png")},
-    )
+    from src import serve
+    record_reading(serve._state["params"]["paths"]["history_db"], "Sidi Salem", 75.0, source="live")
 
     response = client.get("/forecast/Sidi Salem")
 
@@ -135,3 +175,106 @@ def test_forecast_returns_projection(client, monkeypatch):
     body = response.json()
     assert body["site"] == "Sidi Salem"
     assert body["insufficient_history"] is True
+    assert body["deep_learning"] is None
+
+
+def _forecast_with_deep(client, monkeypatch, deep):
+    from src import serve
+    monkeypatch.setattr(
+        "src.serve.fetch_rain_forecast",
+        lambda *a, **k: {"days": 7, "dates": [], "daily_mm": [], "total_mm": 0.0, "level": "faible"},
+    )
+    monkeypatch.setattr(serve.forecast_dl, "model_available", lambda: True)
+    monkeypatch.setattr(serve.forecast_dl, "deep_forecast", deep)
+    record_reading(serve._state["params"]["paths"]["history_db"], "Sidi Salem", 75.0, source="live")
+    return client.get("/forecast/Sidi Salem")
+
+
+def test_forecast_includes_the_deep_learning_prediction(client, monkeypatch):
+    prediction = {"available": True, "current_pct": 70.0, "horizons": [{"weeks": 1, "predicted_pct": 69.0}]}
+
+    response = _forecast_with_deep(client, monkeypatch, lambda dam, project=None: prediction)
+
+    assert response.status_code == 200
+    assert response.json()["deep_learning"] == prediction
+
+
+def test_forecast_survives_a_deep_learning_failure(client, monkeypatch):
+    def broken(dam, project=None):
+        raise RuntimeError("earth engine down")
+
+    response = _forecast_with_deep(client, monkeypatch, broken)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["deep_learning"]["available"] is False
+    assert body["insufficient_history"] is True
+
+
+def test_world_benchmark_endpoint_serves_the_map_data_and_summary(client, monkeypatch, tmp_path):
+    from src import serve
+    tiles = tmp_path / "tiles.json"
+    tiles.write_text(json.dumps({"served_model": "v1 (served)", "tiles": [{"id": 1, "lat": 1.0, "lon": 2.0, "iou": {"v1 (served)": 0.7}}]}))
+    summary = tmp_path / "summary.json"
+    summary.write_text(json.dumps({"v1 (served)": {"clean": {"overall": {"iou": 0.45}, "by_type": {"reservoir": {"iou": 0.73}}}}}))
+    tunisia = tmp_path / "metrics.json"
+    tunisia.write_text(json.dumps({"iou": 0.72}))
+    monkeypatch.setattr(serve, "WORLD_TILES_PATH", str(tiles))
+    monkeypatch.setattr(serve, "WORLD_SUMMARY_PATH", str(summary))
+    monkeypatch.setattr(serve, "TUNISIA_EVAL_PATH", str(tunisia))
+
+    body = client.get("/world/benchmark").json()
+
+    assert body["tiles"][0]["id"] == 1
+    assert body["summary"]["by_type"]["reservoir"]["iou"] == 0.73 and body["summary"]["tunisia_iou"] == 0.72
+
+
+def test_world_benchmark_without_results_is_a_clear_404(client, monkeypatch, tmp_path):
+    from src import serve
+    monkeypatch.setattr(serve, "WORLD_TILES_PATH", str(tmp_path / "missing.json"))
+    assert client.get("/world/benchmark").status_code == 404
+
+
+def test_lake_lookup_returns_the_outline_and_facts(client, monkeypatch):
+    from src import serve
+    lake = {"id": 5, "name": "Test", "type": "reservoir", "area_km2": 12.0, "polygon": [[0, 0], [1, 0], [1, 1], [0, 0]]}
+    monkeypatch.setattr(serve.lakes, "lake_at", lambda lat, lon, project=None: lake)
+    assert client.get("/lake_at", params={"lat": 36.6, "lon": 9.4}).json() == lake
+
+
+def test_lake_lookup_404_when_no_water_body_and_422_for_bad_coordinates(client, monkeypatch):
+    from src import serve
+    monkeypatch.setattr(serve.lakes, "lake_at", lambda lat, lon, project=None: None)
+    assert client.get("/lake_at", params={"lat": 20.0, "lon": 20.0}).status_code == 404
+    assert client.get("/lake_at", params={"lat": 120.0, "lon": 20.0}).status_code == 422
+
+
+def test_predict_is_logged_for_monitoring_and_counted_in_metrics(client):
+    from src import serve
+
+    def predictions_total():
+        line = next(l for l in client.get("/metrics").text.splitlines() if l.startswith("model_predictions_total "))
+        return float(line.split()[1])
+
+    before = predictions_total()
+    client.post("/predict", data={"site": "Sidi Salem"}, files={"file": ("t.png", _sample_image_bytes(), "image/png")})
+
+    recent = serve.monitoring.recent_predictions(serve._monitoring_db())
+    assert len(recent) == 1 and recent.loc[0, "site"] == "Sidi Salem"
+    text = client.get("/metrics").text
+    assert 'http_requests_total{method="POST",route="/predict",status="200"}' in text
+    assert predictions_total() == before + 1
+    assert "process_memory_bytes" in text and "host_cpu_percent" in text
+
+
+def test_metrics_label_routes_by_template_not_by_url(client):
+    client.get("/history/Sidi Salem")
+    client.get("/history/Nowhere")
+    text = client.get("/metrics").text
+    assert 'route="/history/{site}"' in text and "Nowhere" not in text
+
+
+def test_monitoring_endpoint_reports_system_and_model_state(client):
+    body = client.get("/monitoring").json()
+    assert {"system", "data_drift", "forecast_performance", "retrain_needed", "recent_predictions"} <= set(body)
+    assert body["system"]["host_memory_percent"] > 0
