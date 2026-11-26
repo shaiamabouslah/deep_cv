@@ -196,7 +196,9 @@ def test_forecast_includes_the_deep_learning_prediction(client, monkeypatch):
     response = _forecast_with_deep(client, monkeypatch, lambda dam, project=None: prediction)
 
     assert response.status_code == 200
-    assert response.json()["deep_learning"] == prediction
+    deep = response.json()["deep_learning"]
+    assert deep["horizons"][0]["predicted_pct"] == 69.0 and deep["current_pct"] == 70.0
+    assert "fill_pct" in deep["horizons"][0] and "current_fill_pct" in deep
 
 
 def test_forecast_survives_a_deep_learning_failure(client, monkeypatch):
@@ -278,3 +280,17 @@ def test_monitoring_endpoint_reports_system_and_model_state(client):
     body = client.get("/monitoring").json()
     assert {"system", "data_drift", "forecast_performance", "retrain_needed", "recent_predictions"} <= set(body)
     assert body["system"]["host_memory_percent"] > 0
+
+
+def test_sites_and_history_carry_the_calibrated_fill_rate(client):
+    from src import serve
+
+    db_path = serve._state["params"]["paths"]["history_db"]
+    record_reading(db_path, "Sidi Salem", 75.0, source="live")
+
+    sites = {s["name"]: s for s in client.get("/sites").json()}
+    fill = sites["Sidi Salem"]["latest_reading"]["fill_estimate"]
+    assert fill is None or 0 <= fill["fill_pct"] <= 100
+    history = client.get("/history/Sidi Salem").json()
+    assert "fill_pct" in history[-1]
+    assert (history[-1]["fill_pct"] is None) == (fill is None)

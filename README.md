@@ -212,7 +212,7 @@ Sans `GROQ_API_KEY`, le briefing IA bascule sur un résumé par règles.
 - **Pluviométrie réelle** (CHIRPS) et explication croisée : une baisse malgré la pluie est signalée comme anormale
 - **Carte interactive** : sites prédéfinis + création de nouveaux sites par clic ou dessin de zone (polygone)
 - **Alertes automatiques** sur chute anormale du niveau d'eau, bannière visible en haut du dashboard
-- **Agent IA** (Groq) qui synthétise l'état de tous les sites et fusionne tous les signaux d'une analyse (segmentation, couleur, indices GEE, pluie, bilan hydrique) en une recommandation unique, avec repli par règles si aucune clé API
+- **Interface en quatre onglets** : Suivi (liste des barrages avec taux de remplissage, carte satellite, mesure, courbe, prévision), Tester une image (l'eau détectée superposée à l'image, avec curseur), Précision dans le monde (carte du benchmark), Comment ça marche. Le briefing de l'agent a été retiré de l'interface ; le code de l'agent (`src/agent.py`, endpoint `/briefing`) reste disponible mais n'est plus affiché
 - **Prévision par apprentissage profond** (GRU, +1/+2/+4 semaines) affichée après chaque analyse live avec son erreur mesurée sur des semaines jamais vues ; repli sur l'extrapolation linéaire + prévision de pluie Open-Meteo si le modèle ou les images récentes ne sont pas disponibles
 - **Rate limiting** sur les endpoints déclenchant un appel Earth Engine (protège le quota gratuit)
 

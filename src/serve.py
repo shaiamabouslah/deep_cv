@@ -382,6 +382,21 @@ def create_site(req: NewSiteRequest):
     return result
 
 
+def _with_fill_rates(site, deep):
+    """The forecaster predicts the surface index; add the official-style fill
+    rate through the dam's calibration curve (None if it has no usable curve)."""
+    def fill(value):
+        estimate = _fill_for(site, value)
+        return estimate["fill_pct"] if estimate else None
+
+    return {**deep, "current_fill_pct": fill(deep["current_pct"]),
+            "horizons": [{**h, "fill_pct": fill(h["predicted_pct"])} for h in deep["horizons"]]}
+
+
+def _fill_for(site, surface_pct):
+    return calibration.estimate_fill(site, surface_pct, _state.get("calibration"))
+
+
 @app.get("/sites")
 def sites():
     db_path = _state["params"]["paths"]["history_db"]
@@ -389,6 +404,8 @@ def sites():
     result = []
     for dam in all_sites:
         latest = get_latest_reading(db_path, dam["name"])
+        if latest:
+            latest = {**latest, "fill_estimate": _fill_for(dam["name"], latest["water_area_pct"])}
         result.append({
             **dam,
             "latest_reading": latest,
@@ -446,7 +463,11 @@ def briefing():
 
 @app.get("/history/{site}")
 def history(site: str):
-    return get_history(_state["params"]["paths"]["history_db"], site)
+    points = get_history(_state["params"]["paths"]["history_db"], site)
+    for point in points:
+        estimate = _fill_for(site, point["water_area_pct"])
+        point["fill_pct"] = estimate["fill_pct"] if estimate else None
+    return points
 
 
 @app.get("/forecast/{site}", dependencies=[Depends(forecast_rate_limit)])
@@ -482,6 +503,8 @@ def forecast(site: str, request: Request):
         except Exception as exc:
             logger.warning("deep forecast failed for site=%s: %s", site, exc)
             deep = {"available": False, "reason": "Prévision par modèle indisponible (Earth Engine injoignable)."}
+    if deep and deep.get("available") and deep.get("horizons"):
+        deep = _with_fill_rates(site, deep)
     if deep and deep.get("available", True) and deep.get("horizons"):
         try:
             monitoring.log_forecast(_monitoring_db(), site, deep)
